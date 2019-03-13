@@ -1,0 +1,31 @@
+.sidebar-item-spacing {
+  cursor: pointer;
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+}
+.triangle {
+  width: 0;
+  height: 0;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 5px solid #fff;
+  justify-content: right;
+}
+
+.sidebar-menu-item-content-icon {
+  float: none !important;
+  margin: 0 15px 0 0 !important;
+}
+
+.sidebar-menu-item-title-icon {
+  margin: 0 15px 0 0 !important;
+}
+
+.sidebar-menu-item-active {
+  border-radius: 4px !important;
+  background-color: gray !important;
+  line-height: 1.2 !important;
+}

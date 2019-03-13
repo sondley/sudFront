@@ -1,0 +1,22 @@
+.topbar-container {
+  height: 60px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.topbar-profile-notification-container {
+  display: flex;
+  align-items: center;
+  margin-right: 20px;
+}
+
+.topbar-menu-button-label {
+  margin-left: 30px;
+}
+
+.searchbar-container {
+  width: 50%;
+}

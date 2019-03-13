@@ -1,0 +1,47 @@
+.homepage-logo-container {
+  background-image: url("../../assets/landscape.jpeg");
+  width: 280px;
+  display: flex;
+  height: 100vh;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+}
+
+.homepage-blackcover {
+  background-color: rgba(0, 0, 0, 0.9);
+  height: 100vh;
+  padding: 10px;
+  width: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.home-divider-color {
+  background-color: rgba(255, 255, 255);
+}
+
+.home-text-style {
+  font-family: "Lato";
+  font-size: 17px;
+  line-height: 20px;
+}
+
+.home-text-center {
+  text-align: center;
+}
+
+.sidebar-menu-item-container {
+  display: flex !important;
+  background: none !important;
+  font-size: 17px !important;
+  width: 100% !important;
+}
+
+.sidebar-menu-item {
+  line-height: 1.2 !important;
+}
+
+.sidebar-menu-item-active {
+  border-radius: 4px !important;
+  background-color: gray !important;
+  line-height: 1.2 !important;
+}

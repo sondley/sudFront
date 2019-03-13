@@ -1,0 +1,13 @@
+.cellSpacing {
+	width: 95px !important;
+	display: flex !important;
+	justify-content: space-between !important;
+}
+
+.rightSpacing {
+	margin-right: 10px !important;
+}
+
+.leftSpacing {
+	margin-left: 10px !important;
+}
