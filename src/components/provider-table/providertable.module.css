@@ -1,5 +1,5 @@
 .cellSpacing {
-	width: 150px !important;
+	width: 100px !important;
 	display: flex !important;
 	justify-content: space-between !important;
 }
@@ -12,20 +12,8 @@
 	margin-left: 10px !important;
 }
 
-.spacing {
-	display: flex !important;
-	justify-content: space-around !important;
-}
-
-.centered {
-	text-align: center !important;
-	justify-content: center !important;
-}
-
-.basicFormSpacing {
-	font-weight: bold !important;
+.fontSize {
 	font-size: 14px !important;
-	padding: 5px 0px !important;
 }
 
 .noStyleList {

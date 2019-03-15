@@ -1,11 +1,17 @@
 import React, { PureComponent } from "react";
+import { Button, Icon, Grid, Dimmer, Modal } from "semantic-ui-react";
 import { connect } from "react-redux";
 
 //Components
 import CustomMenu from "../../components/custom-menu/custom-menu";
+import ProduitTable from "../../components/produit-table/produittable";
+import ProduitForm from "../../components/produit-form/produitform";
 
 //Logic
 import { endNavigation, getPageIndexByRoute } from "../../redux/actions/navigate";
+
+//Styles
+import styles from "./stock.module.css";
 
 class Stock extends PureComponent {
 	constructor(props) {
@@ -20,18 +26,36 @@ class Stock extends PureComponent {
 		this.props.dispatch(getPageIndexByRoute(window.location.pathname));
 	}
 
-	handleNavigate = e => {
+	handleAdd = e => {
 		e.preventDefault();
-		this.setState({ toRegister: true });
+		this.setState({ modalIsOpen: true });
+	};
+
+	handleCloseModal = () => {
+		this.setState({ modalIsOpen: false });
 	};
 
 	render() {
 		return (
-			<CustomMenu screenName="Stock">
-				<div className="prueba-de-contenido">
-					<h3>Stock</h3>
-				</div>
-			</CustomMenu>
+			<Dimmer.Dimmable blurring dimmed={this.state.modalIsOpen}>
+				<Modal open={this.state.modalIsOpen} onClose={this.handleCloseModal}>
+					<ProduitForm onClose={this.handleCloseModal} />
+				</Modal>
+				<CustomMenu screenName="Produits">
+					<div>
+						<Grid className={styles.noMarginBottom}>
+							<Grid.Row>
+								<Grid.Column floated="right" className={styles.rightAligned}>
+									<Button icon labelPosition="left" positive size="small" onClick={this.handleAdd}>
+										<Icon name="add" /> Ajouter un Produit
+									</Button>
+								</Grid.Column>
+							</Grid.Row>
+						</Grid>
+						<ProduitTable />
+					</div>
+				</CustomMenu>
+			</Dimmer.Dimmable>
 		);
 	}
 }

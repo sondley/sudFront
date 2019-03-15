@@ -16,6 +16,7 @@ import Achats from "./screens/achats/achats";
 import Ventes from "./screens/ventes/ventes";
 import Stock from "./screens/stock/stock";
 import Solicitude from "./screens/solicitude/solicitude";
+import TauxDeChange from "./screens/tauxDeChange/tauxdechange";
 //Caissier Screens
 import ValidateSolicitude from "./screens/validateSolicitude/validateSolicitude";
 import ValidateCommande from "./screens/validateCommande/validateCommande";
@@ -25,6 +26,7 @@ import VoirTransactions from "./screens/voirTransactions/voirTransactions";
 import Commande from "./screens/commande/commande";
 import Produits from "./screens/produits/produits";
 import VendorRapports from "./screens/vendorRapports/vendorRapports";
+import TradeCoin from "./screens/tradeCoin/tradecoin";
 //Comite Screens
 import BanqueRapports from "./screens/banqueRapports/banqueRapports";
 import BeneficesRapports from "./screens/beneficesRapports/beneficesRapports";
@@ -80,15 +82,19 @@ class App extends PureComponent {
 	};
 
 	handleOpenModal = () => {
-		const { user, product } = this.props.state;
+		const { user, product, order, provider, taux, cointrade } = this.props.state;
 		if (user.error) {
 			return this.setState({ errorModal: true, message: user.message });
 		} else if (product.error) {
 			return this.setState({ errorModal: true, message: product.message });
-			// } else if (country.error) {
-			// 	return this.setState({ errorModal: true, message: country.message });
-			// } else if (branches.error) {
-			// 	return this.setState({ errorModal: true, message: branches.message });
+		} else if (order.error) {
+			return this.setState({ errorModal: true, message: order.message });
+		} else if (provider.error) {
+			return this.setState({ errorModal: true, message: provider.message });
+		} else if (taux.error) {
+			return this.setState({ errorModal: true, message: taux.message });
+		} else if (cointrade.error) {
+			return this.setState({ errorModal: true, message: cointrade.message });
 		} else {
 			return this.setState({ errorModal: false });
 		}
@@ -155,6 +161,8 @@ class App extends PureComponent {
 							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/salary"} component={Salaire} />
 							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/solicitude"} component={Solicitude} />
 							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/comite_monitor"} component={ComiteMonitor} />
+							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/exchange_rate"} component={TauxDeChange} />
+							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/trade_coin"} component={TradeCoin} />
 						</Switch>
 					</div>
 				</Dimmer.Dimmable>

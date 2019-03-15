@@ -49,11 +49,13 @@ export function createProduct(product, onClose) {
 		return api
 			.requestPOST("/Iproduits", {
 				nom: product.name,
+				provider: product.fournisseur,
 				unit: product.qty,
 				sellPrice: product.sellPrice,
 				buyPrice: product.buyPrice,
 				size: product.size,
-				Description: product.description
+				Description: product.description,
+				limit: parseInt(product.limit)
 			})
 			.then(objResponse => {
 				if (objResponse.data.success) {
@@ -75,11 +77,13 @@ export function modifyProduct(product, onClose) {
 		return api
 			.requestPUT(`/Iproduits/${product._id}`, {
 				nom: product.name,
+				provider: product.fournisseur,
 				unit: product.qty,
 				sellPrice: product.sellPrice,
 				buyPrice: product.buyPrice,
 				size: product.size,
-				Description: product.description
+				Description: product.description,
+				limit: parseInt(product.limit)
 			})
 			.then(objResponse => {
 				if (objResponse.data.success) {

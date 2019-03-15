@@ -326,6 +326,7 @@ class CommandeForm extends PureComponent {
 									<Form.Field required>
 										<label className={styles.basicFormSpacing}>Search a Produit</label>
 										<Search
+											input={{ icon: "search", iconPosition: "left" }}
 											size="small"
 											disabled={this.state.view}
 											placeholder="Search a Produit"

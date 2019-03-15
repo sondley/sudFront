@@ -1,7 +1,9 @@
 import React, { PureComponent } from "react";
 import { connect } from "react-redux";
-import { Form, Input, TextArea, Button, Message, Dimmer, Icon, Card } from "semantic-ui-react";
+import { Form, Input, TextArea, Button, Message, Dimmer, Icon, Card, Search } from "semantic-ui-react";
 import { createProduct, modifyProduct } from "../../redux/actions/product";
+import { getProviders } from "../../redux/actions/provider";
+import { escapeRegExp, filter, debounce, isEmpty, slice } from "lodash";
 
 //Styles
 import styles from "./produitform.module.css";
@@ -15,30 +17,41 @@ class ProductForm extends PureComponent {
 			view: false || this.props.view,
 			headerErrorMessage: "",
 			name: "",
+			fournisseur: "",
 			size: "",
 			qty: "",
 			sellPrice: "",
 			buyPrice: "",
 			description: "",
+			limit: "",
 			nameError: false,
 			sizeError: false,
 			qtyError: false,
 			sellPriceError: false,
 			buyPriceError: false,
+			limitError: false,
 			formError: false,
-			isModalOpen: false
+			isModalOpen: false,
+			results: [],
+			item: {},
+			isLoading: false
 		};
+		if (isEmpty(this.props.provider.providers)) {
+			this.props.dispatch(getProviders());
+		}
 	}
 
 	componentDidMount = () => {
 		if (this.state.edit || this.state.view) {
 			this.setState({
 				name: this.props.data.nom,
+				fournisseur: this.props.data.provider,
 				size: this.props.data.size,
 				qty: this.props.data.unit,
 				sellPrice: this.props.data.sellPrice,
 				buyPrice: this.props.data.buyPrice,
-				description: this.props.data.Description
+				description: this.props.data.Description,
+				limit: this.props.data.limit
 			});
 		}
 	};
@@ -126,6 +139,20 @@ class ProductForm extends PureComponent {
 				});
 			}
 		}
+		if (name === "limit") {
+			const numVal = parseInt(value);
+			if (value.length === 0 || numVal <= 0) {
+				return this.setState({
+					limitError: true,
+					formError: true
+				});
+			} else {
+				return this.setState({
+					limitError: false,
+					formError: false
+				});
+			}
+		}
 		if (name === "description") {
 			if (value.length === 0) {
 				return this.setState({
@@ -143,32 +170,63 @@ class ProductForm extends PureComponent {
 
 	handleSubmit = event => {
 		event.preventDefault();
-		const { name, qty, size, sellPrice, buyPrice, description } = this.state;
-		if (!this.state.formError) {
+		const { name, qty, size, sellPrice, buyPrice, description, item, limit } = this.state;
+		if (!this.state.formError && this.state.fournisseur.length > 0) {
 			if (this.state.edit) {
 				const product = {
 					...this.props.data,
 					name,
+					fournisseur: item._id,
 					qty,
 					size,
 					sellPrice,
 					buyPrice,
-					description
+					description,
+					limit
 				};
 				return this.props.dispatch(modifyProduct(product, this.props.onClose));
 			}
 			const product = {
 				name,
+				fournisseur: item._id,
 				qty,
 				size,
 				sellPrice,
 				buyPrice,
-				description
+				description,
+				limit
 			};
 			this.props.dispatch(createProduct(product, this.props.onClose));
 		} else {
 			this.setState({ isModalOpen: true });
 		}
+	};
+
+	resetComponent = name => this.setState({ isLoading: false, results: [], [name]: "" });
+
+	handleResultSelect = (e, data) => {
+		const getProvider = id => filter(this.props.provider.providers, { _id: id });
+		const item = getProvider(data.result.id);
+		this.setState({ results: [], fournisseur: item[0].nom, item: item[0] });
+	};
+
+	handleSearchChange = (e, { value, name }) => {
+		this.setState({ [name]: value, isLoading: true });
+
+		setTimeout(() => {
+			if (this.state[name].length < 1) return this.resetComponent(name);
+			let source = this.props.provider.providers.map(item => {
+				return { id: item._id, title: item.nom };
+			});
+			let trimmedString = new RegExp(escapeRegExp(this.state[name]), "i");
+			const isMatch = result => trimmedString.test(result.title);
+			const matchedResults = filter(source, isMatch);
+			const limitedResults = slice(matchedResults, 0, 5);
+			return this.setState({
+				isLoading: false,
+				results: limitedResults
+			});
+		}, 500);
 	};
 
 	renderMessages = field => {
@@ -190,6 +248,9 @@ class ProductForm extends PureComponent {
 			case "qty":
 				list = ["La Quantité ne peut pas être vide", "La Quantité doit être un numero > 0"];
 				break;
+			case "limit":
+				list = ["La Limite ne peut pas être vide", "La Limite doit être un numero > 0"];
+				break;
 			default:
 				list = [];
 		}
@@ -199,6 +260,8 @@ class ProductForm extends PureComponent {
 	};
 
 	render() {
+		const { isLoading, results } = this.state;
+
 		let title = "Entrain de Ajouter";
 		let label = "Ajouter";
 		if (this.state.edit) {
@@ -246,6 +309,23 @@ class ProductForm extends PureComponent {
 										{this.renderMessages("name")}
 									</Form.Field>
 									<Form.Field required>
+										<label className={styles.basicFormSpacing}>Fournisseur</label>
+										<Search
+											input={{ icon: "search", iconPosition: "left" }}
+											size="small"
+											disabled={this.state.view}
+											placeholder="Fournisseur"
+											loading={isLoading}
+											onResultSelect={this.handleResultSelect}
+											onSearchChange={debounce(this.handleSearchChange, 500, {
+												leading: true
+											})}
+											results={results}
+											value={this.state.fournisseur}
+											name="fournisseur"
+										/>
+									</Form.Field>
+									<Form.Field required>
 										<label className={styles.basicFormSpacing}>Taille</label>
 										<Input
 											disabled={this.state.view}
@@ -264,7 +344,7 @@ class ProductForm extends PureComponent {
 										<label className={styles.basicFormSpacing}>Prix de Vente</label>
 										<Input
 											disabled={this.state.view}
-											icon="phone"
+											icon="money"
 											iconPosition="left"
 											placeholder="Prix de Vente"
 											name="sellPrice"
@@ -279,7 +359,7 @@ class ProductForm extends PureComponent {
 										<label className={styles.basicFormSpacing}>Prix d'Achat</label>
 										<Input
 											disabled={this.state.view}
-											icon="phone"
+											icon="money"
 											iconPosition="left"
 											placeholder="Prix d'Achat"
 											name="buyPrice"
@@ -294,7 +374,7 @@ class ProductForm extends PureComponent {
 										<label className={styles.basicFormSpacing}>Quantite</label>
 										<Input
 											disabled={this.state.view}
-											icon="phone"
+											icon="archive"
 											iconPosition="left"
 											placeholder="Quantite"
 											name="qty"
@@ -304,6 +384,21 @@ class ProductForm extends PureComponent {
 											onBlur={this.state.qtyError ? null : this.handleInputError}
 										/>
 										{this.renderMessages("qty")}
+									</Form.Field>
+									<Form.Field required>
+										<label className={styles.basicFormSpacing}>Limite</label>
+										<Input
+											disabled={this.state.view}
+											icon="certificate"
+											iconPosition="left"
+											placeholder="Limite"
+											name="limit"
+											onChange={this.handleChange}
+											value={this.state.limit}
+											onKeyUp={this.handleInputError}
+											onBlur={this.state.limitError ? null : this.handleInputError}
+										/>
+										{this.renderMessages("limit")}
 									</Form.Field>
 									<Form.Field>
 										<label className={styles.basicFormSpacing}>Description</label>
@@ -329,4 +424,8 @@ class ProductForm extends PureComponent {
 	}
 }
 
-export default connect()(ProductForm);
+function mapStateToProps({ provider }) {
+	return { provider };
+}
+
+export default connect(mapStateToProps)(ProductForm);

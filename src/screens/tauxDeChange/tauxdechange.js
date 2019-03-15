@@ -4,16 +4,16 @@ import { connect } from "react-redux";
 
 //Components
 import CustomMenu from "../../components/custom-menu/custom-menu";
-import ProviderTable from "../../components/provider-table/providertable";
-import ProviderForm from "../../components/provider-form/providerform";
+import TauxTable from "../../components/taux-table/tauxtable";
+import TauxForm from "../../components/taux-form/tauxform";
 
 //Logic
 import { endNavigation, getPageIndexByRoute } from "../../redux/actions/navigate";
 
 //Styles
-import styles from "./fournisseurs.module.css";
+import styles from "./tauxdechange.module.css";
 
-class Fournisseurs extends PureComponent {
+class TauxDeChange extends PureComponent {
 	constructor(props) {
 		super(props);
 
@@ -39,20 +39,20 @@ class Fournisseurs extends PureComponent {
 		return (
 			<Dimmer.Dimmable blurring dimmed={this.state.modalIsOpen}>
 				<Modal open={this.state.modalIsOpen} onClose={this.handleCloseModal}>
-					<ProviderForm onClose={this.handleCloseModal} />
+					<TauxForm onClose={this.handleCloseModal} />
 				</Modal>
-				<CustomMenu screenName="Fournisseurs">
+				<CustomMenu screenName="Taux de Change">
 					<div>
 						<Grid className={styles.noMarginBottom}>
 							<Grid.Row>
 								<Grid.Column floated="right" className={styles.rightAligned}>
 									<Button icon labelPosition="left" positive size="small" onClick={this.handleAdd}>
-										<Icon name="add" /> Ajouter un Fournisseur
+										<Icon name="add" /> Ajouter Monnaie
 									</Button>
 								</Grid.Column>
 							</Grid.Row>
 						</Grid>
-						<ProviderTable />
+						<TauxTable />
 					</div>
 				</CustomMenu>
 			</Dimmer.Dimmable>
@@ -64,4 +64,4 @@ function mapStateToProps({ navigation }) {
 	return { navigation };
 }
 
-export default connect(mapStateToProps)(Fournisseurs);
+export default connect(mapStateToProps)(TauxDeChange);

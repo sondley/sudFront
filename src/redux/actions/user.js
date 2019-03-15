@@ -76,10 +76,16 @@ export function login(username, password, rememberMe) {
 									index: 1
 								},
 								{
+									name: "/trade_coin",
+									icon: "money",
+									label: "Monnaie",
+									index: 2
+								},
+								{
 									name: "/vendor_reports",
 									icon: "chart bar outline",
 									label: "Rapports",
-									index: 2
+									index: 3
 								}
 							];
 							break;
@@ -162,10 +168,16 @@ export function login(username, password, rememberMe) {
 									index: 7
 								},
 								{
+									name: "/exchange_rate",
+									icon: "sync",
+									label: "Taux de Change",
+									index: 8
+								},
+								{
 									name: "/comite_monitor",
 									icon: "sign-in",
 									label: "Rentrez de Comite",
-									index: 8
+									index: 9
 								}
 							];
 							break;

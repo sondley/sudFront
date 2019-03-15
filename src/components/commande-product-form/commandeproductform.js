@@ -7,7 +7,7 @@ class CommandeProductForm extends PureComponent {
 		super(props);
 
 		this.state = {
-			quantite: 0
+			quantite: ""
 		};
 	}
 

@@ -1,5 +1,4 @@
 import React, { PureComponent } from "react";
-import { Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import { Form, Button, Card, Input, Dimmer, Loader, Message, Icon, Divider, TextArea, Select } from "semantic-ui-react";
 
@@ -232,10 +231,6 @@ class RegisterForm extends PureComponent {
 	};
 
 	render() {
-		if (this.props.navigation.navigate === true && window.location.pathname !== this.props.navigation.route) {
-			return <Redirect push to={this.props.navigation.route} />;
-		}
-
 		let title = "Entrain de Ajouter un Utilisateur";
 		let label = "Ajouter";
 		if (this.state.edit) {
@@ -273,7 +268,7 @@ class RegisterForm extends PureComponent {
 						</Card.Header>
 						<div className={styles.basicFormContainer}>
 							<div className={styles.basicFormSecond}>
-								<Divider horizontal>Datos Requeridos</Divider>
+								<Divider horizontal>Informations requises</Divider>
 								<Form size="small">
 									<Form.Group grouped>
 										<Form.Field required>
@@ -367,7 +362,7 @@ class RegisterForm extends PureComponent {
 								</Form>
 							</div>
 							<div className={styles.basicFormSecond}>
-								<Divider horizontal>Datos Personales</Divider>
+								<Divider horizontal>Informations personnelles</Divider>
 								<Form size="small">
 									<Form.Group grouped>
 										<Form.Field>
@@ -433,8 +428,8 @@ class RegisterForm extends PureComponent {
 	}
 }
 
-function mapStateToProps({ user, navigation }) {
-	return { user, navigation };
+function mapStateToProps({ user }) {
+	return { user };
 }
 
 export default connect(mapStateToProps)(RegisterForm);

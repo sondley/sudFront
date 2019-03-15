@@ -77,8 +77,9 @@ class CommandeTable extends PureComponent {
 			const rows = data.map(item => {
 				const estado = item.etat === "0" ? "check" : "close";
 				const color = item.etat === "0" ? "green" : "red";
+				const total = "$" + item.totalFinal + ".00 HTG";
 				const date = new Date(item.created);
-				if (item.etat === "0") {
+				if (item.etat === "0" && this.props.proxy) {
 					return (
 						<Table.Row
 							key={item._id}
@@ -92,7 +93,24 @@ class CommandeTable extends PureComponent {
 								<Icon name={estado} color={color} />
 							</Table.Cell>
 							<Table.Cell>{date.toLocaleString("en-US")}</Table.Cell>
-							<Table.Cell>{item.totalFinal}</Table.Cell>
+							<Table.Cell>{total}</Table.Cell>
+						</Table.Row>
+					);
+				} else if (item.etat === "0") {
+					return (
+						<Table.Row
+							key={item._id}
+							onClick={e => {
+								this.handleRowClick(e, item);
+							}}
+						>
+							<Table.Cell>{item.client}</Table.Cell>
+							<Table.Cell>{item.vendeur}</Table.Cell>
+							<Table.Cell>
+								<Icon name={estado} color={color} />
+							</Table.Cell>
+							<Table.Cell>{date.toLocaleString("en-US")}</Table.Cell>
+							<Table.Cell>{total}</Table.Cell>
 							<Table.Cell collapsing disabled>
 								<div className={styles.cellSpacing}>
 									<Button
@@ -113,45 +131,41 @@ class CommandeTable extends PureComponent {
 							</Table.Cell>
 						</Table.Row>
 					);
-				} else {
-					if (this.props.proxy) {
-						return null;
-					}
-					return (
-						<Table.Row
-							key={item._id}
-							onClick={e => {
-								this.handleRowClick(e, item);
-							}}
-						>
-							<Table.Cell>{item.client}</Table.Cell>
-							<Table.Cell>{item.vendeur}</Table.Cell>
-							<Table.Cell>
-								<Icon name={estado} color={color} />
-							</Table.Cell>
-							<Table.Cell>{date.toLocaleString("en-US")}</Table.Cell>
-							<Table.Cell>{item.totalFinal}</Table.Cell>
-							<Table.Cell collapsing>
-								<div className={styles.cellSpacing}>
-									<Button
-										icon="edit"
-										color="blue"
-										onClick={e => {
-											this.handleEdit(e, item);
-										}}
-									/>
-									<Button
-										icon="trash"
-										color="red"
-										onClick={e => {
-											this.handleOpenModal(e, item._id);
-										}}
-									/>
-								</div>
-							</Table.Cell>
-						</Table.Row>
-					);
 				}
+				return (
+					<Table.Row
+						key={item._id}
+						onClick={e => {
+							this.handleRowClick(e, item);
+						}}
+					>
+						<Table.Cell>{item.client}</Table.Cell>
+						<Table.Cell>{item.vendeur}</Table.Cell>
+						<Table.Cell>
+							<Icon name={estado} color={color} />
+						</Table.Cell>
+						<Table.Cell>{date.toLocaleString("en-US")}</Table.Cell>
+						<Table.Cell>{total}</Table.Cell>
+						<Table.Cell collapsing>
+							<div className={styles.cellSpacing}>
+								<Button
+									icon="edit"
+									color="blue"
+									onClick={e => {
+										this.handleEdit(e, item);
+									}}
+								/>
+								<Button
+									icon="trash"
+									color="red"
+									onClick={e => {
+										this.handleOpenModal(e, item._id);
+									}}
+								/>
+							</div>
+						</Table.Cell>
+					</Table.Row>
+				);
 			});
 			return rows;
 		}
@@ -204,7 +218,6 @@ class CommandeTable extends PureComponent {
 									<Table.HeaderCell>Etat</Table.HeaderCell>
 									<Table.HeaderCell>Date</Table.HeaderCell>
 									<Table.HeaderCell>Total</Table.HeaderCell>
-									<Table.HeaderCell>Actions</Table.HeaderCell>
 								</Table.Row>
 							</Table.Header>
 
@@ -220,7 +233,7 @@ class CommandeTable extends PureComponent {
 							totalPages={this.state.totalPages}
 							onPageChange={this.onPageChanged}
 						/>
-						<div className={styles.labelSpacing}>Total: {this.renderTotal(this.props.order.orders)}</div>
+						<div className={styles.labelSpacing}>Total: ${this.renderTotal(this.props.order.orders)}.00 HTG</div>
 					</div>
 				</Dimmer.Dimmable>
 			);

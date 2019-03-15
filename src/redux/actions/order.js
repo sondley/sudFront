@@ -108,13 +108,15 @@ export function deleteOrder(orderID, onClose) {
 	};
 }
 
-export function validateOrder(userID, orderID, onClose) {
+export function validateOrder(item, onClose) {
 	return dispatch => {
 		dispatch(requestBegin(MODIFY_ORDER));
 		return api
 			.requestPOST("/validateOrden", {
-				idUser: userID,
-				idCommande: orderID
+				idUser: item.idUser,
+				idCommande: item.idCommande,
+				typePaiement: item.typePaiement,
+				totalDonne: item.totalDonne
 			})
 			.then(objResponse => {
 				if (objResponse.data.success) {

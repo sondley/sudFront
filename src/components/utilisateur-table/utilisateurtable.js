@@ -1,6 +1,6 @@
 import React, { PureComponent } from "react";
 import { connect } from "react-redux";
-import { Button, Icon, Table, Pagination, Dimmer, Loader, Modal } from "semantic-ui-react";
+import { Button, Icon, Table, Pagination, Dimmer, Loader, Modal, Message } from "semantic-ui-react";
 import { isEmpty } from "lodash";
 
 //Internal Components
@@ -20,6 +20,7 @@ class UtilisateurTable extends PureComponent {
 			editModal: false,
 			viewModal: false,
 			deleteModal: false,
+			errorModal: false,
 			allProducts: [],
 			currentProducts: [],
 			currentPage: 1,
@@ -50,7 +51,10 @@ class UtilisateurTable extends PureComponent {
 		e.preventDefault();
 		const etat = this.state.data.etat === "1" ? "0" : "1";
 		const user = { _id: this.state.data.id, etat };
-		this.props.dispatch(modifyUser(user, this.handleCloseModal));
+		if (user._id !== this.props.user.authedUser._id) {
+			return this.props.dispatch(modifyUser(user, this.handleCloseModal));
+		}
+		return this.setState({ errorModal: true });
 	};
 
 	handleOpenModal = (e, id, etat) => {
@@ -61,7 +65,7 @@ class UtilisateurTable extends PureComponent {
 	};
 
 	handleCloseModal = () => {
-		this.setState({ editModal: false, deleteModal: false, viewModal: false });
+		this.setState({ editModal: false, deleteModal: false, viewModal: false, errorModal: false });
 	};
 
 	renderTableRows = data => {
@@ -162,6 +166,14 @@ class UtilisateurTable extends PureComponent {
 				</Modal>
 				<Modal open={this.state.viewModal} onClose={this.handleCloseModal}>
 					<RegisterForm view data={this.state.data} onClose={this.handleCloseModal} />
+				</Modal>
+				<Modal open={this.state.errorModal} onClose={this.handleCloseModal}>
+					<Message className={styles.dimmerMargin} error>
+						<Message.Item className={styles.noStyleList}>
+							<Icon name="warning sign" size="huge" />
+						</Message.Item>
+						<Message.Content content="Tu ne peux pas te suspendre" className={styles.paddingBottom} />
+					</Message>
 				</Modal>
 				<Modal size="small" open={this.state.deleteModal} onClose={this.handleCloseModal}>
 					<Modal.Header>{title}</Modal.Header>
