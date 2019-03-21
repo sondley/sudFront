@@ -1,6 +1,19 @@
 import React, { PureComponent } from "react";
 import { connect } from "react-redux";
-import { Form, Button, Card, Input, Dimmer, Loader, Message, Icon, Divider, TextArea, Select } from "semantic-ui-react";
+import {
+	Form,
+	Button,
+	Card,
+	Input,
+	Dimmer,
+	Loader,
+	Message,
+	Icon,
+	Divider,
+	TextArea,
+	Select,
+	Modal
+} from "semantic-ui-react";
 
 //Components
 import PasswordInput from "../password-input/passwordinput";
@@ -42,7 +55,8 @@ class RegisterForm extends PureComponent {
 			emailError: false,
 			salaireError: false,
 			roleError: false,
-			motDePasseError: false
+			motDePasseError: false,
+			isModalOpen: false
 		};
 	}
 
@@ -200,6 +214,10 @@ class RegisterForm extends PureComponent {
 		this.setState({ [name]: value });
 	};
 
+	handleModalClose = () => {
+		this.setState({ isModalOpen: false });
+	};
+
 	renderMessages = field => {
 		let list = [];
 		let error = field.concat("Error");
@@ -242,25 +260,19 @@ class RegisterForm extends PureComponent {
 
 		return (
 			<Dimmer.Dimmable dimmed={this.props.user.isFetching || this.state.isModalOpen}>
-				<Dimmer
-					verticalAlign="top"
-					page
-					active={this.props.user.isFetching || this.state.isModalOpen}
-					onClickOutside={this.handleModalClose}
-				>
-					{this.state.isModalOpen ? (
-						<Message className="dimmerMargin" negative>
-							<Message.Item className="noStyleList">
-								<Icon name="warning sign" size="huge" />
-							</Message.Item>
-							<Message.Content>
-								"Revise y complete correctamente los campos con las informaciones de lugar"
-							</Message.Content>
-						</Message>
-					) : (
-						<Loader size="huge">Loading...</Loader>
-					)}
+				<Dimmer verticalAlign="top" page active={this.props.user.isFetching}>
+					<Loader size="huge">Loading...</Loader>
 				</Dimmer>
+				<Modal open={this.state.isModalOpen} onClose={this.handleModalClose}>
+					<Message className="dimmerMargin" negative>
+						<Message.Item className="noStyleList">
+							<Icon name="warning sign" size="huge" />
+						</Message.Item>
+						<Message.Content>
+							"Revise y complete correctamente los campos con las informaciones de lugar"
+						</Message.Content>
+					</Message>
+				</Modal>
 				<Card fluid centered className={styles.boxContainerWide}>
 					<Card.Content>
 						<Card.Header className="font font-18" textAlign="center">

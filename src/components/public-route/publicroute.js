@@ -11,7 +11,7 @@ class PublicRoute extends PureComponent {
 					page = "/validate_solicitude";
 					break;
 				case "directeur":
-					page = "/director_reports";
+					page = "/cash_status";
 					break;
 				case "vendeur":
 					page = "/orders";
