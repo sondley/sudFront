@@ -29,13 +29,13 @@ class CommandeTable extends PureComponent {
 		};
 	}
 
-	async componentDidMount() {
+	componentDidMount = async () => {
 		await this.props.dispatch(getOrders());
 		const allItems = this.props.order.orders;
 		const totalPages = Math.ceil(allItems.length / this.state.pageLimit);
 		const currentItems = allItems.slice(0, this.state.pageLimit);
 		this.setState({ allItems, currentItems, totalPages });
-	}
+	};
 
 	componentDidUpdate = () => {
 		if (this.state.allItems !== this.props.order.orders) {

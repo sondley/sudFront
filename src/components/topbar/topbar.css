@@ -1,22 +1,26 @@
 .topbar-container {
-  height: 60px;
-  padding: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
+	height: 60px;
+	padding: 10px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
 }
 
 .topbar-profile-notification-container {
-  display: flex;
-  align-items: center;
-  margin-right: 20px;
+	display: flex;
+	align-items: center;
+	margin-right: 20px;
 }
 
 .topbar-menu-button-label {
-  margin-left: 30px;
+	margin-left: 30px;
 }
 
 .searchbar-container {
-  width: 50%;
+	width: 50%;
+}
+
+.menu-button-margin {
+	margin-right: 10px !important;
 }

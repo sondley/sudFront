@@ -32,7 +32,7 @@ export function getTransactions() {
 	return dispatch => {
 		dispatch(requestBegin(GET_TRANSACTIONS));
 		return api
-			.requestGET("/caisseTransactions")
+			.requestGET("/transactionCaisseToday")
 			.then(objResponse => {
 				if (objResponse.data.success) {
 					dispatch(requestSuccess(GET_TRANSACTIONS_SUCCESS, objResponse.data.data, objResponse.data.message));
@@ -50,7 +50,7 @@ export function getCompte() {
 	return dispatch => {
 		dispatch(requestBegin(GET_COMPTE));
 		return api
-			.requestGET("/totalDisponibleCaisse")
+			.requestGET("/totalDisponibleCaisseToday")
 			.then(objResponse => {
 				if (objResponse.data.success) {
 					dispatch(requestSuccess(GET_COMPTE_SUCCESS, objResponse.data.data, objResponse.data.message));
@@ -91,6 +91,7 @@ export function CloseCaisse(item, onClose) {
 		dispatch(requestBegin(CLOSE_CAISSE));
 		return api
 			.requestPOST("/closeCaisse", {
+				idUser: item.idUser,
 				quantiteRemise: item.quantiteRemise
 			})
 			.then(objResponse => {
@@ -115,7 +116,6 @@ export function getCaisseStatus() {
 			.then(objResponse => {
 				if (objResponse.data.success) {
 					dispatch(requestSuccess(GET_COMPTE_STATUS_SUCCESS, objResponse.data.data, objResponse.data.message));
-					console.log(objResponse.data.data);
 				} else {
 					dispatch(requestFail(GET_COMPTE_STATUS_FAIL, objResponse.data.message));
 				}

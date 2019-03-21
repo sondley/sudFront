@@ -25,7 +25,6 @@ class EtatDuCompte extends PureComponent {
 			vendeur: "",
 			idVendeur: "",
 			quantiteDonnee: "",
-			totalDuJour: "",
 			vendeurListe: [],
 			results: [],
 			isLoading: false
@@ -91,14 +90,16 @@ class EtatDuCompte extends PureComponent {
 	};
 
 	handleSubmit = () => {
-		const { openCaisseModal, idVendeur, totalDuJour, quantiteDonnee } = this.state;
+		const { openCaisseModal, idVendeur, quantiteDonnee } = this.state;
+		const { authedUser } = this.props.user;
+		const { moneyCompte } = this.props.compte;
 		if (openCaisseModal) {
 			//Open
 			const item = { idVendeur, quantiteDonnee };
 			return this.props.dispatch(OpenCaisse(item, this.handleCloseModal));
 		}
 		//Close
-		const item = { quantiteRemise: totalDuJour };
+		const item = { idUser: authedUser._id, quantiteRemise: moneyCompte };
 		return this.props.dispatch(CloseCaisse(item, this.handleCloseModal));
 	};
 
@@ -195,8 +196,8 @@ class EtatDuCompte extends PureComponent {
 
 	render() {
 		const { openCaisseModal, closeCaisseModal } = this.state;
-		const { moneyCompte, etat } = this.props.compte;
-		const etatDuCompte = etat === "1" ? "C'est Ouverte" : "C'est Fermée";
+		const { moneyCompte, caisse } = this.props.compte;
+		const etatDuCompte = caisse.etat === "1" ? "C'est Ouverte" : "C'est Fermée";
 		return (
 			<Dimmer.Dimmable blurring dimmed={openCaisseModal || closeCaisseModal}>
 				{this.renderOpenModal(openCaisseModal)}
@@ -213,7 +214,7 @@ class EtatDuCompte extends PureComponent {
 											color="brown"
 											size="small"
 											onClick={this.handleOpenCaisse}
-											disabled={etat === "1"}
+											disabled={caisse.etat === "1" || caisse.dateFermer !== ""}
 										>
 											<Icon name="sign-in" /> Ouverture du Caisse
 										</Button>
@@ -223,7 +224,7 @@ class EtatDuCompte extends PureComponent {
 											color="green"
 											size="small"
 											onClick={this.handleCloseCaisse}
-											disabled={etat === "0"}
+											disabled={caisse.etat === "0"}
 										>
 											<Icon name="sign-out" /> Fermeture du Caisse
 										</Button>

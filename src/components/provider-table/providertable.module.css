@@ -33,3 +33,9 @@
 .paddingBottom {
 	padding-bottom: 10px !important;
 }
+
+.itemCount {
+	font-size: 22px !important;
+	font-weight: 700 !important;
+	margin-left: 20px !important;
+}

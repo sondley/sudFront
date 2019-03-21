@@ -36,7 +36,7 @@ class LoginForm extends PureComponent {
 
 	handleSubmit = event => {
 		event.preventDefault();
-		this.props.dispatch(login(this.state.email, this.state.password, this.state.rememberMe));
+		this.props.dispatch(login(this.state.email.toLowerCase(), this.state.password, this.state.rememberMe));
 	};
 
 	handleInputOnChange = event => {

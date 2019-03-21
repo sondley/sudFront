@@ -58,8 +58,9 @@ class App extends PureComponent {
 	}
 
 	componentDidMount = async () => {
-		await this.props.dispatch(checkSession());
 		await this.props.dispatch(getCaisseStatus());
+		//Check Session should always be last
+		await this.props.dispatch(checkSession());
 	};
 
 	componentDidUpdate = () => {

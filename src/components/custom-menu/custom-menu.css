@@ -22,8 +22,16 @@
 	background-color: #eeeeee;
 }
 
+.fullWidth {
+	width: 100% !important;
+}
+
 .sidebar-box {
 	z-index: 5;
+}
+
+.responsive-sidebar {
+	overflow: hidden !important;
 }
 
 .contentContainer {
@@ -53,4 +61,24 @@
 	margin-top: 30px;
 	width: 100%;
 	justify-content: flex-end;
+}
+
+.fixedTitle {
+	margin: 0px !important;
+}
+
+.paddingPusher {
+	padding-right: 255px !important;
+	transform: 0.5s ease !important;
+	-webkit-transform: 0.5s ease !important;
+	transition: right 2s ease !important;
+}
+
+@media only screen and (max-width: 600px) {
+	.paddingPusher {
+		padding-right: 0px !important;
+		transform: 0.5s ease !important;
+		-webkit-transform: 0.5s ease !important;
+		transition: right 2s ease !important;
+	}
 }

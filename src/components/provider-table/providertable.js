@@ -9,6 +9,9 @@ import ProviderForm from "../provider-form/providerform";
 //Logic
 import { getProviders } from "../../redux/actions/provider";
 
+//Styles
+import styles from "./providertable.module.css";
+
 class ProviderTable extends PureComponent {
 	constructor(props) {
 		super(props);
@@ -18,16 +21,56 @@ class ProviderTable extends PureComponent {
 			viewModal: false,
 			deleteModal: false,
 			errorModal: false,
-			allProducts: [],
-			currentProducts: [],
-			currentPage: 1,
-			totalPages: 1,
+			allItems: [],
+			currentItems: [],
+			totalPages: 0,
+			activePage: 1,
+			pageLimit: 10,
 			data: {}
 		};
-		if (isEmpty(this.props.provider.providers)) {
-			this.props.dispatch(getProviders());
-		}
 	}
+
+	componentDidMount = async () => {
+		await this.props.dispatch(getProviders());
+		const allItems = this.props.provider.providers;
+		const totalPages = Math.ceil(allItems.length / this.state.pageLimit);
+		const currentItems = allItems.slice(0, this.state.pageLimit);
+		this.setState({ allItems, currentItems, totalPages });
+	};
+
+	componentDidUpdate = () => {
+		if (this.state.allItems !== this.props.provider.providers) {
+			const allItems = this.props.provider.providers;
+			const totalPages = Math.ceil(allItems.length / this.state.pageLimit);
+			const currentItems = allItems.slice(0, this.state.pageLimit);
+			this.setState({ allItems, currentItems, totalPages });
+		}
+	};
+
+	onPageChanged = (e, data) => {
+		e.preventDefault();
+		const { allItems, pageLimit } = this.state;
+		const { activePage } = data;
+		const offset = (activePage - 1) * pageLimit;
+		const currentItems = allItems.slice(offset, offset + pageLimit);
+		this.setState({ activePage, currentItems });
+	};
+
+	renderItemCount = (itemRange, currentItems, totalItems) => {
+		if (currentItems.length <= 1) {
+			return (
+				<label className={styles.itemCount}>
+					Items: {itemRange + currentItems.length}/{totalItems}
+				</label>
+			);
+		} else {
+			return (
+				<label className={styles.itemCount}>
+					Items: {itemRange + 1}-{itemRange + currentItems.length}/{totalItems}
+				</label>
+			);
+		}
+	};
 
 	handleEdit = (e, item) => {
 		e.preventDefault();
@@ -79,6 +122,9 @@ class ProviderTable extends PureComponent {
 	};
 
 	render() {
+		const { allItems, currentItems, activePage, totalPages, pageLimit } = this.state;
+		const itemRange = (activePage - 1) * pageLimit;
+		const totalItems = allItems.length;
 		return (
 			<Dimmer.Dimmable blurring dimmed={this.props.provider.isFetching}>
 				<Dimmer page active={this.props.provider.isFetching}>
@@ -102,18 +148,21 @@ class ProviderTable extends PureComponent {
 							</Table.Row>
 						</Table.Header>
 
-						<Table.Body>{this.renderTableRows(this.props.provider.providers)}</Table.Body>
+						<Table.Body>{this.renderTableRows(currentItems)}</Table.Body>
 					</Table>
-					<Pagination
-						defaultActivePage={1}
-						ellipsisItem={{ content: <Icon name="ellipsis horizontal" />, icon: true }}
-						firstItem={{ content: <Icon name="angle double left" />, icon: true }}
-						lastItem={{ content: <Icon name="angle double right" />, icon: true }}
-						prevItem={{ content: <Icon name="angle left" />, icon: true }}
-						nextItem={{ content: <Icon name="angle right" />, icon: true }}
-						totalPages={this.state.totalPages}
-						onPageChange={this.onPageChanged}
-					/>
+					<div>
+						<Pagination
+							activePage={activePage}
+							ellipsisItem={{ content: <Icon name="ellipsis horizontal" />, icon: true }}
+							firstItem={{ content: <Icon name="angle double left" />, icon: true }}
+							lastItem={{ content: <Icon name="angle double right" />, icon: true }}
+							prevItem={{ content: <Icon name="angle left" />, icon: true }}
+							nextItem={{ content: <Icon name="angle right" />, icon: true }}
+							totalPages={totalPages}
+							onPageChange={this.onPageChanged}
+						/>
+						{this.renderItemCount(itemRange, currentItems, totalItems)}
+					</div>
 				</div>
 			</Dimmer.Dimmable>
 		);

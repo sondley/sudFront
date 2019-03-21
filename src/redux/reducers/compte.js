@@ -23,7 +23,7 @@ export default function compte(
 		transactions: [],
 		moneyCompte: 0,
 		moneyCoffre: 0,
-		etat: "0",
+		caisse: {},
 		isFetching: false,
 		message: [],
 		error: false
@@ -63,7 +63,14 @@ export default function compte(
 			return { ...state, isFetching: true, error: false };
 		case OPEN_CAISSE_SUCCESS:
 			message = [].concat(payload.message);
-			return { ...state, isFetching: false, etat: payload.data.etat, error: false, message };
+			return {
+				...state,
+				isFetching: false,
+				caisse: payload.data,
+				moneyCompte: payload.data.quantiteDonnee,
+				error: false,
+				message
+			};
 		case OPEN_CAISSE_FAIL:
 			message = [].concat(payload.message);
 			return { ...state, isFetching: false, error: true, message };
@@ -73,7 +80,7 @@ export default function compte(
 			return { ...state, isFetching: true, error: false };
 		case CLOSE_CAISSE_SUCCESS:
 			message = [].concat(payload.message);
-			return { ...state, isFetching: false, etat: payload.data.etat, error: false, message };
+			return { ...state, isFetching: false, caisse: payload.data, error: false, message };
 		case CLOSE_CAISSE_FAIL:
 			message = [].concat(payload.message);
 			return { ...state, isFetching: false, error: true, message };
@@ -86,7 +93,7 @@ export default function compte(
 			return { ...state, isFetching: true, error: false };
 		case GET_COMPTE_STATUS_SUCCESS:
 			message = [].concat(payload.message);
-			return { ...state, isFetching: false, etat: payload.data.etat, error: false, message };
+			return { ...state, isFetching: false, caisse: payload.data[0], error: false, message };
 		case GET_COMPTE_STATUS_FAIL:
 			message = [].concat(payload.message);
 			return { ...state, isFetching: false, error: true, message };

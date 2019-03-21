@@ -62,18 +62,16 @@ class SidebarMenu extends PureComponent {
 		}
 
 		return (
-			<div className="home-main-container">
-				<div className="homepage-logo-container">
-					<div className="homepage-blackcover">
-						<div className="home-text-center">
-							<SidebarLogo imgUrl={process.env.PUBLIC_URL + "/logo.svg"} width={"180px"} />
-						</div>
-						<Divider className="home-divider-color" />
-						<div className="home-sidebarmenu-container">
-							<Accordion className="sidebar-menu-item-container" as={Menu} vertical inverted>
-								{this.renderMenuItems(data)}
-							</Accordion>
-						</div>
+			<div className="homepage-logo-container">
+				<div className="homepage-blackcover">
+					<div className="home-text-center">
+						<SidebarLogo imgUrl={process.env.PUBLIC_URL + "/logo.svg"} width={"180px"} />
+					</div>
+					<Divider className="home-divider-color" />
+					<div className="home-sidebarmenu-container">
+						<Accordion className="sidebar-menu-item-container" as={Menu} vertical inverted>
+							{this.renderMenuItems(data)}
+						</Accordion>
 					</div>
 				</div>
 			</div>
