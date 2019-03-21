@@ -104,9 +104,9 @@ export function login(username, password, rememberMe) {
 									index: 1
 								},
 								{
-									name: "/payment",
-									icon: "payment",
-									label: "Realiser Paiement",
+									name: "/validate_tradecoin",
+									icon: "check circle",
+									label: "Valider Changement Monnaie",
 									index: 2
 								},
 								{
@@ -184,22 +184,34 @@ export function login(username, password, rememberMe) {
 						case "comite":
 							Options = [
 								{
-									name: "/benefits_reports",
-									icon: "chart area",
-									label: "Rapports du Benefices",
+									name: "/comite_reports",
+									icon: "chart line",
+									label: "Rapports",
 									index: 0
 								},
 								{
-									name: "/banking_reports",
-									icon: "chart line",
-									label: "Rapports du Banque",
+									name: "/cash_status",
+									icon: "money",
+									label: "Etat du Compte",
 									index: 1
 								},
 								{
-									name: "/solicitude_reports",
-									icon: "chart bar",
-									label: "Rapports de Sollicitude",
+									name: "/buys",
+									icon: "cart",
+									label: "Reviser Achats",
 									index: 2
+								},
+								{
+									name: "/sales",
+									icon: "tags",
+									label: "Reviser Ventes",
+									index: 3
+								},
+								{
+									name: "/warehouse",
+									icon: "archive",
+									label: "Stock",
+									index: 4
 								}
 							];
 							break;
@@ -224,16 +236,22 @@ export function login(username, password, rememberMe) {
 									index: 2
 								},
 								{
+									name: "/payment",
+									icon: "payment",
+									label: "Realiser Paiement",
+									index: 3
+								},
+								{
 									name: "/banking",
 									icon: "lock",
 									label: "Banque",
-									index: 3
+									index: 4
 								},
 								{
 									name: "/accounting_reports",
 									icon: "chart bar outline",
 									label: "Rapports",
-									index: 4
+									index: 5
 								}
 							];
 							break;
@@ -254,7 +272,7 @@ export function login(username, password, rememberMe) {
 								{
 									name: "/buys",
 									icon: "cart",
-									label: "Reviser Achats",
+									label: "Achats",
 									index: 2
 								},
 								{
@@ -264,6 +282,9 @@ export function login(username, password, rememberMe) {
 									index: 3
 								}
 							];
+							break;
+						default:
+							Options = [];
 							break;
 					}
 					const data = { user, token, Options };
@@ -325,7 +346,7 @@ export function resetToken() {
 				}
 			})
 			.catch(objError => {
-				dispatch(requestFail(REFRESH_TOKEN_FAIL, objError.response.data.message));
+				dispatch(requestFail(REFRESH_TOKEN_FAIL, objError.response));
 			});
 	};
 }
@@ -343,7 +364,7 @@ export function getUsers() {
 				}
 			})
 			.catch(objError => {
-				dispatch(requestFail(GET_USERS_FAIL, objError.response.data.message));
+				dispatch(requestFail(GET_USERS_FAIL, objError.response));
 			});
 	};
 }
@@ -373,7 +394,7 @@ export function createUser(user, onClose) {
 				}
 			})
 			.catch(objError => {
-				dispatch(requestFail(CREATE_USER_FAIL, objError.response.data.message));
+				dispatch(requestFail(CREATE_USER_FAIL, objError.response));
 			});
 	};
 }
@@ -404,7 +425,7 @@ export function modifyUser(user, onClose) {
 				}
 			})
 			.catch(objError => {
-				dispatch(requestFail(MODIFY_USER_FAIL, objError.response.data.message));
+				dispatch(requestFail(MODIFY_USER_FAIL, objError.response));
 			});
 	};
 }

@@ -38,7 +38,7 @@ export function getProducts() {
 				}
 			})
 			.catch(objError => {
-				dispatch(requestFail(GET_PRODUCTS_FAIL, objError.response.data.message));
+				dispatch(requestFail(GET_PRODUCTS_FAIL, objError.response));
 			});
 	};
 }
@@ -66,7 +66,7 @@ export function createProduct(product, onClose) {
 				}
 			})
 			.catch(objError => {
-				dispatch(requestFail(CREATE_PRODUCT, objError.response.data.message));
+				dispatch(requestFail(CREATE_PRODUCT, objError.response));
 			});
 	};
 }
@@ -94,7 +94,7 @@ export function modifyProduct(product, onClose) {
 				}
 			})
 			.catch(objError => {
-				dispatch(requestFail(MODIFY_PRODUCT_FAIL, objError.response.data.message));
+				dispatch(requestFail(MODIFY_PRODUCT_FAIL, objError.response));
 			});
 	};
 }
@@ -113,7 +113,7 @@ export function deleteProduct(productID, onClose) {
 				}
 			})
 			.catch(objError => {
-				dispatch(requestFail(DELETE_PRODUCT_FAIL, objError.response.data.message));
+				dispatch(requestFail(DELETE_PRODUCT_FAIL, objError.response));
 			});
 	};
 }

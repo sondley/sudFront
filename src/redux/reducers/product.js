@@ -13,6 +13,7 @@ import {
 	MODIFY_PRODUCT_FAIL
 } from "../actions/product";
 import { RESET_ERRORS } from "../actions/utils";
+import { sortBy } from "lodash";
 
 export default function product(state = { products: [], isFetching: false, message: [], error: false }, action) {
 	const { payload, type } = action;
@@ -29,13 +30,14 @@ export default function product(state = { products: [], isFetching: false, messa
 
 		case GET_PRODUCTS_SUCCESS:
 			message = [].concat(payload.message);
-			return { ...state, isFetching: false, products: payload.data, error: false, message };
+			const products = sortBy(payload.data, ["created"]).reverse();
+			return { ...state, isFetching: false, products, error: false, message };
 		case CREATE_PRODUCT_SUCCESS:
 			message = [].concat(payload.message);
 			return {
 				...state,
 				isFetching: false,
-				products: state.products.concat(payload.data),
+				products: [payload.data, ...state.products],
 				error: false,
 				message
 			};

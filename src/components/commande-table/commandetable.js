@@ -20,16 +20,56 @@ class CommandeTable extends PureComponent {
 			editModal: false,
 			viewModal: false,
 			deleteModal: false,
-			allProducts: [],
-			currentProducts: [],
-			currentPage: 1,
-			totalPages: 1,
+			allItems: [],
+			currentItems: [],
+			totalPages: 0,
+			activePage: 1,
+			pageLimit: 10,
 			data: {}
 		};
-		if (isEmpty(this.props.order.orders)) {
-			this.props.dispatch(getOrders());
-		}
 	}
+
+	async componentDidMount() {
+		await this.props.dispatch(getOrders());
+		const allItems = this.props.order.orders;
+		const totalPages = Math.ceil(allItems.length / this.state.pageLimit);
+		const currentItems = allItems.slice(0, this.state.pageLimit);
+		this.setState({ allItems, currentItems, totalPages });
+	}
+
+	componentDidUpdate = () => {
+		if (this.state.allItems !== this.props.order.orders) {
+			const allItems = this.props.order.orders;
+			const totalPages = Math.ceil(allItems.length / this.state.pageLimit);
+			const currentItems = allItems.slice(0, this.state.pageLimit);
+			this.setState({ allItems, currentItems, totalPages });
+		}
+	};
+
+	onPageChanged = (e, data) => {
+		e.preventDefault();
+		const { allItems, pageLimit } = this.state;
+		const { activePage } = data;
+		const offset = (activePage - 1) * pageLimit;
+		const currentItems = allItems.slice(offset, offset + pageLimit);
+		this.setState({ activePage, currentItems });
+	};
+
+	renderItemCount = (itemRange, currentItems, totalItems) => {
+		if (currentItems.length <= 1) {
+			return (
+				<label className={styles.itemCount}>
+					Items: {itemRange + currentItems.length}/{totalItems}
+				</label>
+			);
+		} else {
+			return (
+				<label className={styles.itemCount}>
+					Items: {itemRange + 1}-{itemRange + currentItems.length}/{totalItems}
+				</label>
+			);
+		}
+	};
 
 	handleEdit = (e, item) => {
 		e.preventDefault();
@@ -92,6 +132,7 @@ class CommandeTable extends PureComponent {
 							<Table.Cell>
 								<Icon name={estado} color={color} />
 							</Table.Cell>
+							<Table.Cell>{item.valideur}</Table.Cell>
 							<Table.Cell>{date.toLocaleString("en-US")}</Table.Cell>
 							<Table.Cell>{total}</Table.Cell>
 						</Table.Row>
@@ -109,6 +150,7 @@ class CommandeTable extends PureComponent {
 							<Table.Cell>
 								<Icon name={estado} color={color} />
 							</Table.Cell>
+							<Table.Cell>{item.valideur}</Table.Cell>
 							<Table.Cell>{date.toLocaleString("en-US")}</Table.Cell>
 							<Table.Cell>{total}</Table.Cell>
 							<Table.Cell collapsing disabled>
@@ -131,6 +173,24 @@ class CommandeTable extends PureComponent {
 							</Table.Cell>
 						</Table.Row>
 					);
+				} else if (item.etat === "1" && this.props.proxy) {
+					return (
+						<Table.Row
+							key={item._id}
+							onClick={e => {
+								this.handleRowClick(e, item);
+							}}
+						>
+							<Table.Cell>{item.client}</Table.Cell>
+							<Table.Cell>{item.vendeur}</Table.Cell>
+							<Table.Cell>
+								<Icon name={estado} color={color} />
+							</Table.Cell>
+							<Table.Cell>{"Non-Valide"}</Table.Cell>
+							<Table.Cell>{date.toLocaleString("en-US")}</Table.Cell>
+							<Table.Cell>{total}</Table.Cell>
+						</Table.Row>
+					);
 				}
 				return (
 					<Table.Row
@@ -144,6 +204,7 @@ class CommandeTable extends PureComponent {
 						<Table.Cell>
 							<Icon name={estado} color={color} />
 						</Table.Cell>
+						<Table.Cell>{"Non-Valide"}</Table.Cell>
 						<Table.Cell>{date.toLocaleString("en-US")}</Table.Cell>
 						<Table.Cell>{total}</Table.Cell>
 						<Table.Cell collapsing>
@@ -173,6 +234,9 @@ class CommandeTable extends PureComponent {
 	};
 
 	render() {
+		const { allItems, currentItems, activePage, totalPages, pageLimit } = this.state;
+		const itemRange = (activePage - 1) * pageLimit;
+		const totalItems = allItems.length;
 		if (this.props.proxy) {
 			return (
 				<Dimmer.Dimmable blurring dimmed={this.props.order.isFetching}>
@@ -216,23 +280,26 @@ class CommandeTable extends PureComponent {
 									<Table.HeaderCell>Nom de Client</Table.HeaderCell>
 									<Table.HeaderCell>Nom de Vendeur</Table.HeaderCell>
 									<Table.HeaderCell>Etat</Table.HeaderCell>
+									<Table.HeaderCell>Nom de Valideur</Table.HeaderCell>
 									<Table.HeaderCell>Date</Table.HeaderCell>
 									<Table.HeaderCell>Total</Table.HeaderCell>
 								</Table.Row>
 							</Table.Header>
-
-							<Table.Body>{this.renderTableRows(this.props.order.orders)}</Table.Body>
+							<Table.Body>{this.renderTableRows(currentItems)}</Table.Body>
 						</Table>
-						<Pagination
-							defaultActivePage={1}
-							ellipsisItem={{ content: <Icon name="ellipsis horizontal" />, icon: true }}
-							firstItem={{ content: <Icon name="angle double left" />, icon: true }}
-							lastItem={{ content: <Icon name="angle double right" />, icon: true }}
-							prevItem={{ content: <Icon name="angle left" />, icon: true }}
-							nextItem={{ content: <Icon name="angle right" />, icon: true }}
-							totalPages={this.state.totalPages}
-							onPageChange={this.onPageChanged}
-						/>
+						<div>
+							<Pagination
+								activePage={activePage}
+								ellipsisItem={{ content: <Icon name="ellipsis horizontal" />, icon: true }}
+								firstItem={{ content: <Icon name="angle double left" />, icon: true }}
+								lastItem={{ content: <Icon name="angle double right" />, icon: true }}
+								prevItem={{ content: <Icon name="angle left" />, icon: true }}
+								nextItem={{ content: <Icon name="angle right" />, icon: true }}
+								totalPages={totalPages}
+								onPageChange={this.onPageChanged}
+							/>
+							{this.renderItemCount(itemRange, currentItems, totalItems)}
+						</div>
 						<div className={styles.labelSpacing}>Total: ${this.renderTotal(this.props.order.orders)}.00 HTG</div>
 					</div>
 				</Dimmer.Dimmable>
@@ -280,24 +347,28 @@ class CommandeTable extends PureComponent {
 								<Table.HeaderCell>Nom de Client</Table.HeaderCell>
 								<Table.HeaderCell>Nom de Vendeur</Table.HeaderCell>
 								<Table.HeaderCell>Etat</Table.HeaderCell>
+								<Table.HeaderCell>Nom de Valideur</Table.HeaderCell>
 								<Table.HeaderCell>Date</Table.HeaderCell>
 								<Table.HeaderCell>Total</Table.HeaderCell>
 								<Table.HeaderCell>Actions</Table.HeaderCell>
 							</Table.Row>
 						</Table.Header>
 
-						<Table.Body>{this.renderTableRows(this.props.order.orders)}</Table.Body>
+						<Table.Body>{this.renderTableRows(currentItems)}</Table.Body>
 					</Table>
-					<Pagination
-						defaultActivePage={1}
-						ellipsisItem={{ content: <Icon name="ellipsis horizontal" />, icon: true }}
-						firstItem={{ content: <Icon name="angle double left" />, icon: true }}
-						lastItem={{ content: <Icon name="angle double right" />, icon: true }}
-						prevItem={{ content: <Icon name="angle left" />, icon: true }}
-						nextItem={{ content: <Icon name="angle right" />, icon: true }}
-						totalPages={this.state.totalPages}
-						onPageChange={this.onPageChanged}
-					/>
+					<div>
+						<Pagination
+							activePage={activePage}
+							ellipsisItem={{ content: <Icon name="ellipsis horizontal" />, icon: true }}
+							firstItem={{ content: <Icon name="angle double left" />, icon: true }}
+							lastItem={{ content: <Icon name="angle double right" />, icon: true }}
+							prevItem={{ content: <Icon name="angle left" />, icon: true }}
+							nextItem={{ content: <Icon name="angle right" />, icon: true }}
+							totalPages={totalPages}
+							onPageChange={this.onPageChanged}
+						/>
+						{this.renderItemCount(itemRange, currentItems, totalItems)}
+					</div>
 				</div>
 			</Dimmer.Dimmable>
 		);

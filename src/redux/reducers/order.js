@@ -13,6 +13,7 @@ import {
 	MODIFY_ORDER_FAIL
 } from "../actions/order";
 import { RESET_ERRORS } from "../actions/utils";
+import { sortBy } from "lodash";
 
 export default function order(state = { orders: [], isFetching: false, message: [], error: false }, action) {
 	const { payload, type } = action;
@@ -29,13 +30,14 @@ export default function order(state = { orders: [], isFetching: false, message: 
 
 		case GET_ORDERS_SUCCESS:
 			message = [].concat(payload.message);
-			return { ...state, isFetching: false, orders: payload.data, error: false, message };
+			const orders = sortBy(payload.data, ["etat", "created"]).reverse();
+			return { ...state, isFetching: false, orders, error: false, message };
 		case CREATE_ORDER_SUCCESS:
 			message = [].concat(payload.message);
 			return {
 				...state,
 				isFetching: false,
-				orders: state.orders.concat(payload.data),
+				orders: [payload.data, ...state.orders],
 				error: false,
 				message
 			};

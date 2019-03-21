@@ -7,7 +7,7 @@ import CustomMenu from "../../components/custom-menu/custom-menu";
 //Logic
 import { endNavigation, getPageIndexByRoute } from "../../redux/actions/navigate";
 
-class BanqueRapports extends PureComponent {
+class ComiteRapports extends PureComponent {
 	constructor(props) {
 		super(props);
 
@@ -27,9 +27,9 @@ class BanqueRapports extends PureComponent {
 
 	render() {
 		return (
-			<CustomMenu screenName="Rapports du Banque">
+			<CustomMenu screenName="Comite Rapports">
 				<div className="prueba-de-contenido">
-					<h3>Rapport du Banque</h3>
+					<h3>Rapport du Comite</h3>
 				</div>
 			</CustomMenu>
 		);
@@ -40,4 +40,4 @@ function mapStateToProps({ navigation }) {
 	return { navigation };
 }
 
-export default connect(mapStateToProps)(BanqueRapports);
+export default connect(mapStateToProps)(ComiteRapports);

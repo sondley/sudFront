@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { Form, Input, Button, Message, Dimmer, Icon, Card, Search, Table, Modal } from "semantic-ui-react";
 import { createOrder, modifyOrder } from "../../redux/actions/order";
 import { getProducts } from "../../redux/actions/product";
-import { escapeRegExp, filter, debounce, isEmpty, slice } from "lodash";
+import { escapeRegExp, filter, debounce, isEmpty, slice, find } from "lodash";
 
 //
 import CommandeProduitForm from "../commande-product-form/commandeproductform";
@@ -23,6 +23,7 @@ class CommandeForm extends PureComponent {
 			total: 0,
 			products: "",
 			productList: [],
+			productModalType: "new",
 			clientNameError: false,
 			formError: false,
 			isModalOpen: false,
@@ -68,12 +69,45 @@ class CommandeForm extends PureComponent {
 		this.setState({ productList: newList });
 	};
 
+	reduceToList = (id, quantity) => {
+		let repeatedItem = find(this.state.productList, { idproduit: id });
+		const newProduct = {
+			...repeatedItem,
+			quantite: quantity + repeatedItem.quantite,
+			total: parseInt(repeatedItem.prixUnite) * parseInt(quantity + repeatedItem.quantite)
+		};
+		const newList = this.state.productList.map(item => {
+			if (item.idproduit !== newProduct.idproduit) {
+				return item;
+			}
+			return { ...item, ...newProduct };
+		});
+		this.setState({ productList: newList });
+	};
+
 	resetComponent = name => this.setState({ isLoading: false, results: [], [name]: "" });
 
 	handleResultSelect = (e, data) => {
 		const getProduct = id => filter(this.props.product.products, { _id: id });
 		const item = getProduct(data.result.id);
-		this.setState({ results: [], product: "", isProductModalOpen: true, item: item[0] });
+		let repeatedItem = find(this.state.productList, { idproduit: item[0]._id });
+		if (repeatedItem) {
+			return this.setState({
+				results: [],
+				product: "",
+				isProductModalOpen: true,
+				item: item[0],
+				productModalType: "repeat"
+			});
+		} else {
+			return this.setState({
+				results: [],
+				product: "",
+				isProductModalOpen: true,
+				item: item[0],
+				productModalType: "new"
+			});
+		}
 	};
 
 	handleSearchChange = (e, { value, name }) => {
@@ -232,9 +266,6 @@ class CommandeForm extends PureComponent {
 							<Message.Content>{this.state.contentErrorMessage}</Message.Content>
 						</Message>
 					</Dimmer>
-					<Modal open={this.state.isProductModalOpen} onClose={this.handleModalClose}>
-						<CommandeProduitForm item={this.state.item} addToList={this.addToList} onClose={this.handleModalClose} />
-					</Modal>
 					<Card fluid centered className={styles.boxContainerWide}>
 						<Card.Content>
 							<Card.Header className="font font-18" textAlign="center">
@@ -254,12 +285,8 @@ class CommandeForm extends PureComponent {
 												iconPosition="left"
 												placeholder="Nom du Client"
 												name="clientName"
-												onChange={this.handleChange}
 												value={this.state.clientName}
-												onKeyUp={this.handleInputError}
-												onBlur={this.state.clientNameError ? null : this.handleInputError}
 											/>
-											{this.renderMessages("clientName")}
 										</Form.Field>
 										<div className={styles.basicFormSpacing}>
 											<Table selectable compact celled striped size="small">
@@ -295,7 +322,13 @@ class CommandeForm extends PureComponent {
 					</Message>
 				</Dimmer>
 				<Modal open={this.state.isProductModalOpen} onClose={this.handleModalClose}>
-					<CommandeProduitForm item={this.state.item} addToList={this.addToList} onClose={this.handleModalClose} />
+					<CommandeProduitForm
+						type={this.state.productModalType}
+						item={this.state.item}
+						addToList={this.addToList}
+						reduceToList={this.reduceToList}
+						onClose={this.handleModalClose}
+					/>
 				</Modal>
 				<Card fluid centered className={styles.boxContainerWide}>
 					<Card.Content>

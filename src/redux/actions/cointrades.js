@@ -38,7 +38,7 @@ export function getCoinTrades() {
 				}
 			})
 			.catch(objError => {
-				dispatch(requestFail(GET_COINTRADES_FAIL, objError.response.data.message));
+				dispatch(requestFail(GET_COINTRADES_FAIL, objError.response));
 			});
 	};
 }
@@ -63,7 +63,7 @@ export function createCoinTrade(cointrade, onClose) {
 				}
 			})
 			.catch(objError => {
-				dispatch(requestFail(CREATE_COINTRADE, objError.response.data.message));
+				dispatch(requestFail(CREATE_COINTRADE, objError.response));
 			});
 	};
 }
@@ -107,7 +107,7 @@ export function deleteCoinTrade(cointradeID, onClose) {
 				}
 			})
 			.catch(objError => {
-				dispatch(requestFail(DELETE_COINTRADE_FAIL, objError.response.data.message));
+				dispatch(requestFail(DELETE_COINTRADE_FAIL, objError.response));
 			});
 	};
 }
@@ -116,11 +116,9 @@ export function validateCoinTrade(cointrade, onClose) {
 	return dispatch => {
 		dispatch(requestBegin(MODIFY_COINTRADE));
 		return api
-			.requestPOST("/validateOrden", {
+			.requestPOST("/ValidateTransactionEchange", {
 				idUser: cointrade.idUser,
-				idCommande: cointrade.idCommande,
-				typePaiement: cointrade.typePaiement,
-				totalDonne: cointrade.totalDonne
+				idTransactionEchange: cointrade.idTransactionEchange
 			})
 			.then(objResponse => {
 				if (objResponse.data.success) {
@@ -131,7 +129,7 @@ export function validateCoinTrade(cointrade, onClose) {
 				}
 			})
 			.catch(objError => {
-				dispatch(requestFail(MODIFY_COINTRADE_FAIL, objError.response.data.message));
+				dispatch(requestFail(MODIFY_COINTRADE_FAIL, objError.response));
 			});
 	};
 }

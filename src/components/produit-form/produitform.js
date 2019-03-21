@@ -15,6 +15,7 @@ class ProductForm extends PureComponent {
 		this.state = {
 			edit: false || this.props.edit,
 			view: false || this.props.view,
+			achat: false || this.props.achat,
 			headerErrorMessage: "",
 			name: "",
 			fournisseur: "",
@@ -36,13 +37,14 @@ class ProductForm extends PureComponent {
 			item: {},
 			isLoading: false
 		};
-		if (isEmpty(this.props.provider.providers)) {
-			this.props.dispatch(getProviders());
-		}
 	}
 
-	componentDidMount = () => {
+	async componentDidMount() {
+		if (isEmpty(this.props.provider.providers)) {
+			await this.props.dispatch(getProviders());
+		}
 		if (this.state.edit || this.state.view) {
+			const provider = filter(this.props.provider.providers, { nom: this.props.data.provider });
 			this.setState({
 				name: this.props.data.nom,
 				fournisseur: this.props.data.provider,
@@ -51,10 +53,19 @@ class ProductForm extends PureComponent {
 				sellPrice: this.props.data.sellPrice,
 				buyPrice: this.props.data.buyPrice,
 				description: this.props.data.Description,
-				limit: this.props.data.limit
+				limit: this.props.data.limit,
+				item: provider[0]
 			});
 		}
-	};
+		if (this.state.achat) {
+			console.log(this.props.data);
+			const provider = filter(this.props.provider.providers, { nom: this.props.data });
+			this.setState({
+				fournisseur: this.props.data,
+				item: provider[0]
+			});
+		}
+	}
 
 	handleChange = event => {
 		event.preventDefault();
@@ -98,7 +109,7 @@ class ProductForm extends PureComponent {
 
 		if (name === "sellPrice") {
 			const numVal = parseInt(value);
-			if (value.length === 0 || numVal <= 0) {
+			if (value.length === 0 || numVal < 0) {
 				return this.setState({
 					sellPriceError: true,
 					formError: true
@@ -113,7 +124,7 @@ class ProductForm extends PureComponent {
 
 		if (name === "buyPrice") {
 			const numVal = parseInt(value);
-			if (value.length === 0 || numVal <= 0) {
+			if (value.length === 0 || numVal < 0) {
 				return this.setState({
 					buyPriceError: true,
 					formError: true
@@ -127,7 +138,7 @@ class ProductForm extends PureComponent {
 		}
 		if (name === "qty") {
 			const numVal = parseInt(value);
-			if (value.length === 0 || numVal <= 0) {
+			if (value.length === 0 || numVal < 0) {
 				return this.setState({
 					qtyError: true,
 					formError: true
@@ -141,7 +152,7 @@ class ProductForm extends PureComponent {
 		}
 		if (name === "limit") {
 			const numVal = parseInt(value);
-			if (value.length === 0 || numVal <= 0) {
+			if (value.length === 0 || numVal < 0) {
 				return this.setState({
 					limitError: true,
 					formError: true
@@ -185,18 +196,31 @@ class ProductForm extends PureComponent {
 					limit
 				};
 				return this.props.dispatch(modifyProduct(product, this.props.onClose));
+			} else if (this.state.achat) {
+				const product = {
+					name,
+					fournisseur: item._id,
+					qty: 0,
+					size,
+					sellPrice: 0,
+					buyPrice: 0,
+					description,
+					limit: 0
+				};
+				this.props.dispatch(createProduct(product, this.props.onClose));
+			} else {
+				const product = {
+					name,
+					fournisseur: item._id,
+					qty,
+					size,
+					sellPrice,
+					buyPrice,
+					description,
+					limit
+				};
+				this.props.dispatch(createProduct(product, this.props.onClose));
 			}
-			const product = {
-				name,
-				fournisseur: item._id,
-				qty,
-				size,
-				sellPrice,
-				buyPrice,
-				description,
-				limit
-			};
-			this.props.dispatch(createProduct(product, this.props.onClose));
 		} else {
 			this.setState({ isModalOpen: true });
 		}
@@ -240,16 +264,16 @@ class ProductForm extends PureComponent {
 				list = ["La Taille ne peut pas être vide"];
 				break;
 			case "sellPrice":
-				list = ["Le Prix de Vente ne peut pas être vide", "Le Prix de Vente doit être un numero > 0"];
+				list = ["Le Prix de Vente ne peut pas être vide", "Le Prix de Vente doit être un numero >= 0"];
 				break;
 			case "buyPrice":
-				list = ["Le Prix d'Achat ne peut pas être vide", "Le Prix d'Achat doit être un numero > 0"];
+				list = ["Le Prix d'Achat ne peut pas être vide", "Le Prix d'Achat doit être un numero >= 0"];
 				break;
 			case "qty":
-				list = ["La Quantité ne peut pas être vide", "La Quantité doit être un numero > 0"];
+				list = ["La Quantité ne peut pas être vide", "La Quantité doit être un numero >= 0"];
 				break;
 			case "limit":
-				list = ["La Limite ne peut pas être vide", "La Limite doit être un numero > 0"];
+				list = ["La Limite ne peut pas être vide", "La Limite doit être un numero >= 0"];
 				break;
 			default:
 				list = [];
@@ -261,7 +285,6 @@ class ProductForm extends PureComponent {
 
 	render() {
 		const { isLoading, results } = this.state;
-
 		let title = "Entrain de Ajouter";
 		let label = "Ajouter";
 		if (this.state.edit) {
@@ -308,7 +331,7 @@ class ProductForm extends PureComponent {
 										/>
 										{this.renderMessages("name")}
 									</Form.Field>
-									<Form.Field required>
+									<Form.Field required style={this.state.achat ? { display: "none" } : { display: "block" }}>
 										<label className={styles.basicFormSpacing}>Fournisseur</label>
 										<Search
 											input={{ icon: "search", iconPosition: "left" }}
@@ -340,10 +363,11 @@ class ProductForm extends PureComponent {
 										/>
 										{this.renderMessages("size")}
 									</Form.Field>
-									<Form.Field required>
+									<Form.Field required style={this.state.achat ? { display: "none" } : { display: "block" }}>
 										<label className={styles.basicFormSpacing}>Prix de Vente</label>
 										<Input
 											disabled={this.state.view}
+											type="number"
 											icon="money"
 											iconPosition="left"
 											placeholder="Prix de Vente"
@@ -355,10 +379,11 @@ class ProductForm extends PureComponent {
 										/>
 										{this.renderMessages("sellPrice")}
 									</Form.Field>
-									<Form.Field required>
+									<Form.Field required style={this.state.achat ? { display: "none" } : { display: "block" }}>
 										<label className={styles.basicFormSpacing}>Prix d'Achat</label>
 										<Input
 											disabled={this.state.view}
+											type="number"
 											icon="money"
 											iconPosition="left"
 											placeholder="Prix d'Achat"
@@ -370,10 +395,14 @@ class ProductForm extends PureComponent {
 										/>
 										{this.renderMessages("buyPrice")}
 									</Form.Field>
-									<Form.Field required>
+									<Form.Field
+										required
+										style={this.state.edit || this.state.achat ? { display: "none" } : { display: "block" }}
+									>
 										<label className={styles.basicFormSpacing}>Quantite</label>
 										<Input
 											disabled={this.state.view}
+											type="number"
 											icon="archive"
 											iconPosition="left"
 											placeholder="Quantite"
@@ -385,10 +414,11 @@ class ProductForm extends PureComponent {
 										/>
 										{this.renderMessages("qty")}
 									</Form.Field>
-									<Form.Field required>
+									<Form.Field required style={this.state.achat ? { display: "none" } : { display: "block" }}>
 										<label className={styles.basicFormSpacing}>Limite</label>
 										<Input
 											disabled={this.state.view}
+											type="number"
 											icon="certificate"
 											iconPosition="left"
 											placeholder="Limite"

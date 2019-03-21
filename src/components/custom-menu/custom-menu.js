@@ -1,6 +1,7 @@
 import React, { PureComponent } from "react";
 import { isArray } from "lodash";
 import { connect } from "react-redux";
+import { Header } from "semantic-ui-react";
 
 //Internal Components
 import SidebarMenu from "../../components/sidebar-menu/sidebar-menu";
@@ -35,6 +36,11 @@ class CustomMenu extends PureComponent {
 				</div>
 				<div className="right-box">
 					<TopBar screenName={screenName} />
+					<div className="fixedContainer">
+						<Header className="fixedTitle" textAlign="center" as="h1">
+							{screenName}
+						</Header>
+					</div>
 					<div className="custom-menu-sidebar">{this.renderChildren(children)}</div>
 				</div>
 			</div>

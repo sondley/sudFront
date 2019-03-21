@@ -1,8 +1,8 @@
 import axios from "axios";
 
 const api = axios.create();
-api.defaults.baseURL = `https://grandsudapi.herokuapp.com/`;
-
+//api.defaults.baseURL = `https://grandsudapi.herokuapp.com
+api.defaults.baseURL = `http://localhost:8080/`;
 function requestGET(route, params) {
 	return api.get(route, params);
 }

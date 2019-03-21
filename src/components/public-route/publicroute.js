@@ -23,7 +23,7 @@ class PublicRoute extends PureComponent {
 					page = "/warehouse";
 					break;
 				case "comite":
-					page = "/benefits_reports";
+					page = "/comite_reports";
 					break;
 				default:
 					break;

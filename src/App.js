@@ -5,6 +5,7 @@ import IdleTimer from "react-idle-timer";
 import { Dimmer, Loader, Message, Icon, Modal } from "semantic-ui-react";
 import { resetError } from "./redux/actions/utils";
 import { checkSession, logout, resetToken } from "./redux/actions/user";
+import { getCaisseStatus } from "./redux/actions/compte";
 import PublicRoute from "./components/public-route/publicroute";
 import ProtectedRoute from "./components/protected-route/protectedroute";
 
@@ -20,6 +21,7 @@ import TauxDeChange from "./screens/tauxDeChange/tauxdechange";
 //Caissier Screens
 import ValidateSolicitude from "./screens/validateSolicitude/validateSolicitude";
 import ValidateCommande from "./screens/validateCommande/validateCommande";
+import ValidateTradeCoin from "./screens/validateTradeCoin/validatetradecoin";
 import RealiserPaiement from "./screens/realiserPaiement/realiserPaiement";
 import VoirTransactions from "./screens/voirTransactions/voirTransactions";
 //Vendeur Screens
@@ -28,9 +30,7 @@ import Produits from "./screens/produits/produits";
 import VendorRapports from "./screens/vendorRapports/vendorRapports";
 import TradeCoin from "./screens/tradeCoin/tradecoin";
 //Comite Screens
-import BanqueRapports from "./screens/banqueRapports/banqueRapports";
-import BeneficesRapports from "./screens/beneficesRapports/beneficesRapports";
-import SolicitudeRapports from "./screens/solicitudeRapports/solicitudeRapports";
+import ComiteRapports from "./screens/comiteRapports/comiteRapports";
 //Contable Screens
 import AccountingRapports from "./screens/accountingRapports/accountingRapports";
 import Banque from "./screens/banque/banque";
@@ -55,8 +55,12 @@ class App extends PureComponent {
 			message: []
 		};
 		this.idleTimer = null;
-		this.props.dispatch(checkSession());
 	}
+
+	componentDidMount = async () => {
+		await this.props.dispatch(checkSession());
+		await this.props.dispatch(getCaisseStatus());
+	};
 
 	componentDidUpdate = () => {
 		this.handleOpenModal();
@@ -82,7 +86,7 @@ class App extends PureComponent {
 	};
 
 	handleOpenModal = () => {
-		const { user, product, order, provider, taux, cointrade } = this.props.state;
+		const { user, product, order, provider, taux, cointrade, buy, compte, sollicitude } = this.props.state;
 		if (user.error) {
 			return this.setState({ errorModal: true, message: user.message });
 		} else if (product.error) {
@@ -95,6 +99,12 @@ class App extends PureComponent {
 			return this.setState({ errorModal: true, message: taux.message });
 		} else if (cointrade.error) {
 			return this.setState({ errorModal: true, message: cointrade.message });
+		} else if (buy.error) {
+			return this.setState({ errorModal: true, message: buy.message });
+		} else if (compte.error) {
+			return this.setState({ errorModal: true, message: compte.message });
+		} else if (sollicitude.error) {
+			return this.setState({ errorModal: true, message: sollicitude.message });
 		} else {
 			return this.setState({ errorModal: false });
 		}
@@ -145,9 +155,7 @@ class App extends PureComponent {
 							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/orders"} component={Commande} />
 							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/products"} component={Produits} />
 							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/vendor_reports"} component={VendorRapports} />
-							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/banking_reports"} component={BanqueRapports} />
-							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/benefits_reports"} component={BeneficesRapports} />
-							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/solicitude_reports"} component={SolicitudeRapports} />
+							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/comite_reports"} component={ComiteRapports} />
 							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/cash_status"} component={EtatDuCompte} />
 							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/buys"} component={Achats} />
 							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/sales"} component={Ventes} />
@@ -163,6 +171,7 @@ class App extends PureComponent {
 							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/comite_monitor"} component={ComiteMonitor} />
 							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/exchange_rate"} component={TauxDeChange} />
 							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/trade_coin"} component={TradeCoin} />
+							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/validate_tradecoin"} component={ValidateTradeCoin} />
 						</Switch>
 					</div>
 				</Dimmer.Dimmable>

@@ -35,7 +35,7 @@ export default function taux(state = { monnaies: [], isFetching: false, message:
 			return {
 				...state,
 				isFetching: false,
-				monnaies: state.monnaies.concat(payload.data),
+				monnaies: [payload.data, ...state.monnaies],
 				error: false,
 				message
 			};

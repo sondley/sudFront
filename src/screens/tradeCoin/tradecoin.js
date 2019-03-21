@@ -13,7 +13,7 @@ import { endNavigation, getPageIndexByRoute } from "../../redux/actions/navigate
 //Styles
 import styles from "./tradecoin.module.css";
 
-class TauxDeChange extends PureComponent {
+class TradeCoin extends PureComponent {
 	constructor(props) {
 		super(props);
 
@@ -47,17 +47,17 @@ class TauxDeChange extends PureComponent {
 				<Modal open={this.state.modalIsOpen} onClose={this.handleCloseModal}>
 					<CoinTradeForm type={this.state.type} onClose={this.handleCloseModal} />
 				</Modal>
-				<CustomMenu screenName="Monnaie">
+				<CustomMenu screenName="Changemente Monnaie">
 					<div>
 						<Grid className={styles.noMarginBottom}>
 							<Grid.Row>
-								<Grid.Column width={7} floated="right" className={styles.rightAligned}>
+								<Grid.Column width={10} floated="right" className={styles.rightAligned}>
 									<div className={styles.buttonSpacing}>
 										<Button icon labelPosition="left" color="brown" size="small" onClick={this.handleAddAcheter}>
-											<Icon name="sign-in" /> Acheter Monnaie
+											<Icon name="sign-in" /> Acheter de la monnaie au client
 										</Button>
 										<Button icon labelPosition="left" color="green" size="small" onClick={this.handleAddVendre}>
-											<Icon name="sign-out" /> Vendre Monnaie
+											<Icon name="sign-out" /> Vendre de la monnaie au client
 										</Button>
 									</div>
 								</Grid.Column>
@@ -75,4 +75,4 @@ function mapStateToProps({ navigation }) {
 	return { navigation };
 }
 
-export default connect(mapStateToProps)(TauxDeChange);
+export default connect(mapStateToProps)(TradeCoin);

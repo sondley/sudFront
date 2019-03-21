@@ -13,6 +13,7 @@ import {
 	MODIFY_PROVIDER_FAIL
 } from "../actions/provider";
 import { RESET_ERRORS } from "../actions/utils";
+import { sortBy } from "lodash";
 
 export default function provider(state = { providers: [], isFetching: false, message: [], error: false }, action) {
 	const { payload, type } = action;
@@ -29,13 +30,14 @@ export default function provider(state = { providers: [], isFetching: false, mes
 
 		case GET_PROVIDERS_SUCCESS:
 			message = [].concat(payload.message);
-			return { ...state, isFetching: false, providers: payload.data, error: false, message };
+			const providers = sortBy(payload.data, ["created"]).reverse();
+			return { ...state, isFetching: false, providers, error: false, message };
 		case CREATE_PROVIDER_SUCCESS:
 			message = [].concat(payload.message);
 			return {
 				...state,
 				isFetching: false,
-				providers: state.providers.concat(payload.data),
+				providers: [payload.data, ...state.providers],
 				error: false,
 				message
 			};

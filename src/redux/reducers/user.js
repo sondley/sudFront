@@ -18,9 +18,6 @@ import {
 	MODIFY_USER,
 	MODIFY_USER_SUCCESS,
 	MODIFY_USER_FAIL
-	// DELETE_USER,
-	// DELETE_USER_SUCCESS,
-	// DELETE_USER_FAIL
 } from "../actions/user";
 import { RESET_ERRORS } from "../actions/utils";
 
@@ -80,7 +77,7 @@ export default function user(
 			return { ...state, isFetching: true, error: false };
 		case CREATE_USER_SUCCESS:
 			message = [].concat(payload.message);
-			return { ...state, isFetching: false, users: state.users.concat(payload.user), error: false, message };
+			return { ...state, isFetching: false, users: [payload.user, ...state.users], error: false, message };
 		case CREATE_USER_FAIL:
 			message = [].concat(payload.message);
 			return { ...state, isFetching: false, error: true, message };

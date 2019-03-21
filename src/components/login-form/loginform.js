@@ -10,6 +10,9 @@ import PasswordInput from "../password-input/passwordinput";
 //Logic
 import { login } from "../../redux/actions/user";
 
+//Styles
+import styles from "./loginform.module.css";
+
 class LoginForm extends PureComponent {
 	constructor(props) {
 		super(props);
@@ -57,9 +60,9 @@ class LoginForm extends PureComponent {
 				<Dimmer page active={this.props.user.isFetching}>
 					<Loader size="huge">Loading...</Loader>
 				</Dimmer>
-				<Card fluid centered className="boxContainer">
+				<Card fluid centered className={styles.boxContainerWide}>
 					<Card.Content>
-						<Card.Header className="font font-22" textAlign="center">
+						<Card.Header className="font font-18" textAlign="center">
 							Enregistrer vos donnees
 						</Card.Header>
 						<Card.Meta className="font font-16" textAlign="center">

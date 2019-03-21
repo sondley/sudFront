@@ -38,7 +38,7 @@ export function getProviders() {
 				}
 			})
 			.catch(objError => {
-				dispatch(requestFail(GET_PROVIDERS_FAIL, objError.response.data.message));
+				dispatch(requestFail(GET_PROVIDERS_FAIL, objError.response));
 			});
 	};
 }
@@ -62,7 +62,7 @@ export function createProvider(provider, onClose) {
 				}
 			})
 			.catch(objError => {
-				dispatch(requestFail(CREATE_PROVIDER, objError.response.data.message));
+				dispatch(requestFail(CREATE_PROVIDER, objError.response));
 			});
 	};
 }
@@ -105,7 +105,7 @@ export function deleteProvider(providerID, onClose) {
 				}
 			})
 			.catch(objError => {
-				dispatch(requestFail(DELETE_PROVIDER_FAIL, objError.response.data.message));
+				dispatch(requestFail(DELETE_PROVIDER_FAIL, objError.response));
 			});
 	};
 }

@@ -8,6 +8,9 @@ import order from "./order";
 import provider from "./provider";
 import taux from "./taux";
 import cointrade from "./cointrades";
+import buy from "./buys";
+import compte from "./compte";
+import sollicitude from "./sollicitude";
 
 export default combineReducers({
 	user,
@@ -16,5 +19,8 @@ export default combineReducers({
 	order,
 	provider,
 	taux,
-	cointrade
+	cointrade,
+	buy,
+	compte,
+	sollicitude
 });

@@ -7,7 +7,8 @@ class CommandeProductForm extends PureComponent {
 		super(props);
 
 		this.state = {
-			quantite: ""
+			quantite: "",
+			type: this.props.type
 		};
 	}
 
@@ -22,14 +23,16 @@ class CommandeProductForm extends PureComponent {
 		this.setState({ [name]: value * 1 });
 	};
 
-	handleSumbit = (e, item, addToList, onClose) => {
+	handleSumbit = (e, item, addToList, reduceToList, onClose) => {
 		e.preventDefault();
-		addToList(item._id, item.nom, item.sellPrice, this.state.quantite);
+		if (this.state.type === "new") {
+			addToList(item._id, item.nom, item.sellPrice, this.state.quantite);
+		} else reduceToList(item._id, this.state.quantite);
 		onClose();
 	};
 
 	render() {
-		const { item, addToList, onClose } = this.props;
+		const { item, addToList, reduceToList, onClose } = this.props;
 		return (
 			<Card fluid centered className={styles.boxContainerWide}>
 				<Card.Content>
@@ -71,7 +74,7 @@ class CommandeProductForm extends PureComponent {
 						size="small"
 						color="teal"
 						content="Ajouter le Produit dans la list"
-						onClick={e => this.handleSumbit(e, item, addToList, onClose)}
+						onClick={e => this.handleSumbit(e, item, addToList, reduceToList, onClose)}
 					/>
 				</Card.Content>
 			</Card>

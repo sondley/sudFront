@@ -13,6 +13,7 @@ import {
 	MODIFY_COINTRADE_FAIL
 } from "../actions/cointrades";
 import { RESET_ERRORS } from "../actions/utils";
+import { sortBy } from "lodash";
 
 export default function cointrade(state = { transactions: [], isFetching: false, message: [], error: false }, action) {
 	const { payload, type } = action;
@@ -29,13 +30,14 @@ export default function cointrade(state = { transactions: [], isFetching: false,
 
 		case GET_COINTRADES_SUCCESS:
 			message = [].concat(payload.message);
-			return { ...state, isFetching: false, transactions: payload.data, error: false, message };
+			const transactions = sortBy(payload.data, ["etat", "created"]).reverse();
+			return { ...state, isFetching: false, transactions, error: false, message };
 		case CREATE_COINTRADE_SUCCESS:
 			message = [].concat(payload.message);
 			return {
 				...state,
 				isFetching: false,
-				transactions: state.transactions.concat(payload.data),
+				transactions: [payload.data, ...state.transactions],
 				error: false,
 				message
 			};

@@ -38,7 +38,7 @@ export function getTauxs() {
 				}
 			})
 			.catch(objError => {
-				dispatch(requestFail(GET_TAUXS_FAIL, objError.response.data.message));
+				dispatch(requestFail(GET_TAUXS_FAIL, objError.response));
 			});
 	};
 }
@@ -61,7 +61,7 @@ export function createTaux(taux, onClose) {
 				}
 			})
 			.catch(objError => {
-				dispatch(requestFail(CREATE_TAUX, objError.response.data.message));
+				dispatch(requestFail(CREATE_TAUX, objError.response));
 			});
 	};
 }
@@ -103,7 +103,7 @@ export function deleteTaux(tauxID, onClose) {
 				}
 			})
 			.catch(objError => {
-				dispatch(requestFail(DELETE_TAUX_FAIL, objError.response.data.message));
+				dispatch(requestFail(DELETE_TAUX_FAIL, objError.response));
 			});
 	};
 }
