@@ -1,0 +1,73 @@
+.cellSpacing {
+	width: 150px !important;
+	display: flex !important;
+	justify-content: space-between !important;
+}
+
+.rightSpacing {
+	margin-right: 10px !important;
+}
+
+.leftSpacing {
+	margin-left: 10px !important;
+}
+
+.spacing {
+	display: flex !important;
+	justify-content: space-around !important;
+}
+
+.centered {
+	text-align: center !important;
+	justify-content: center !important;
+}
+
+.basicFormSpacing {
+	font-weight: bold !important;
+	font-size: 14px !important;
+	padding: 5px 0px !important;
+}
+
+.noStyleList {
+	text-decoration: none !important;
+	list-style: none !important;
+	padding: 10px 0px 25px 0px !important;
+}
+
+.dimmerMargin {
+	width: 400px !important;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around !important;
+	text-align: center !important;
+}
+
+.paddingBottom {
+	padding-bottom: 10px !important;
+}
+
+.itemCount {
+	font-size: 22px !important;
+	font-weight: 700 !important;
+	margin-left: 20px !important;
+}
+
+.pagination {
+	display: flex !important;
+	align-items: center !important;
+}
+
+@media only screen and (max-width: 767px) {
+	.itemCount {
+		font-size: 22px !important;
+		font-weight: 700 !important;
+		margin-left: 0px !important;
+	}
+	.pagination {
+		height: 80px !important;
+		display: flex !important;
+		flex-direction: column !important;
+		align-items: flex-start !important;
+		justify-content: space-between !important;
+	}
+}
