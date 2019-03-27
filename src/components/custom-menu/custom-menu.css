@@ -6,7 +6,7 @@
 
 .custom-menu-sidebar {
 	overflow-y: scroll;
-	margin: 0px 25px 25px 25px;
+	margin: 0px 15px 15px 5px;
 	height: 83%;
 	width: 100%;
 	z-index: 0;
@@ -45,7 +45,7 @@
 
 .fixedContainer {
 	height: auto;
-	margin: 0px 47px 25px 37px;
+	margin: 0px 37px 15px 17px;
 	width: 100%;
 	background-color: #fff;
 	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);

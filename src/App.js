@@ -34,6 +34,8 @@ import ComiteRapports from "./screens/comiteRapports/comiteRapports";
 //Contable Screens
 import AccountingRapports from "./screens/accountingRapports/accountingRapports";
 import Banque from "./screens/banque/banque";
+import ComptesPayer from "./screens/comptesPayer/comptespayer";
+import ComptesRecevoir from "./screens/comptesRecevoir/comptesrecevoir";
 //Assistance Screens
 import AssistanceRapports from "./screens/assistanceRapports/assistanceRapports";
 import Fournisseurs from "./screens/fournisseurs/fournisseurs";
@@ -42,6 +44,7 @@ import DirecteurRapports from "./screens/directeurRapports/directeurRapports";
 import Utilisateurs from "./screens/utilisateurs/utilisateurs";
 import Salaire from "./screens/salaire/salaire";
 import ComiteMonitor from "./screens/comiteMonitor/comiteMonitor";
+import Devolution from "./screens/devolution/devolution";
 
 //Styles
 import styles from "./App.module.css";
@@ -87,7 +90,19 @@ class App extends PureComponent {
 	};
 
 	handleOpenModal = () => {
-		const { user, product, order, provider, taux, cointrade, buy, compte, sollicitude } = this.props.state;
+		const {
+			user,
+			product,
+			order,
+			provider,
+			taux,
+			cointrade,
+			buy,
+			compte,
+			sollicitude,
+			payment,
+			debt
+		} = this.props.state;
 		if (user.error) {
 			return this.setState({ errorModal: true, message: user.message });
 		} else if (product.error) {
@@ -106,6 +121,10 @@ class App extends PureComponent {
 			return this.setState({ errorModal: true, message: compte.message });
 		} else if (sollicitude.error) {
 			return this.setState({ errorModal: true, message: sollicitude.message });
+		} else if (payment.error) {
+			return this.setState({ errorModal: true, message: payment.message });
+		} else if (debt.error) {
+			return this.setState({ errorModal: true, message: debt.message });
 		} else {
 			return this.setState({ errorModal: false });
 		}
@@ -173,6 +192,9 @@ class App extends PureComponent {
 							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/exchange_rate"} component={TauxDeChange} />
 							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/trade_coin"} component={TradeCoin} />
 							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/validate_tradecoin"} component={ValidateTradeCoin} />
+							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/devolution"} component={Devolution} />
+							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/debt_payable"} component={ComptesPayer} />
+							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/debt_recievable"} component={ComptesRecevoir} />
 						</Switch>
 					</div>
 				</Dimmer.Dimmable>

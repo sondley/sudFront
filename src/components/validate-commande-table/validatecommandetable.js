@@ -22,18 +22,57 @@ class ValidateCommandeTable extends PureComponent {
 			viewModal: false,
 			errorModal: false,
 			data: {},
-			allProducts: [],
-			currentProducts: [],
-			currentPage: 1,
-			totalPages: 1,
+			allItems: [],
+			currentItems: [],
+			totalPages: 0,
+			activePage: 1,
+			pageLimit: 10,
 			value: "effectif",
 			ammount: ""
 		};
-
-		if (isEmpty(this.props.order.orders)) {
-			this.props.dispatch(getOrders());
-		}
 	}
+
+	componentDidMount = async () => {
+		await this.props.dispatch(getOrders());
+		const allItems = this.props.order.orders;
+		const totalPages = Math.ceil(allItems.length / this.state.pageLimit);
+		const currentItems = allItems.slice(0, this.state.pageLimit);
+		this.setState({ allItems, currentItems, totalPages });
+	};
+
+	componentDidUpdate = () => {
+		if (this.state.allItems !== this.props.order.orders) {
+			const allItems = this.props.order.orders;
+			const totalPages = Math.ceil(allItems.length / this.state.pageLimit);
+			const currentItems = allItems.slice(0, this.state.pageLimit);
+			this.setState({ allItems, currentItems, totalPages });
+		}
+	};
+
+	onPageChanged = (e, data) => {
+		e.preventDefault();
+		const { allItems, pageLimit } = this.state;
+		const { activePage } = data;
+		const offset = (activePage - 1) * pageLimit;
+		const currentItems = allItems.slice(offset, offset + pageLimit);
+		this.setState({ activePage, currentItems });
+	};
+
+	renderItemCount = (itemRange, currentItems, totalItems) => {
+		if (currentItems.length <= 1) {
+			return (
+				<label className={styles.itemCount}>
+					Items: {itemRange + currentItems.length}/{totalItems}
+				</label>
+			);
+		} else {
+			return (
+				<label className={styles.itemCount}>
+					Items: {itemRange + 1}-{itemRange + currentItems.length}/{totalItems}
+				</label>
+			);
+		}
+	};
 
 	handleEdit = (e, item) => {
 		e.preventDefault();
@@ -107,22 +146,10 @@ class ValidateCommandeTable extends PureComponent {
 							<Table.Cell>{item.valideur}</Table.Cell>
 							<Table.Cell>{date.toLocaleString("en-US")}</Table.Cell>
 							<Table.Cell>{total}</Table.Cell>
-							<Table.Cell collapsing disabled>
+							<Table.Cell collapsing disabled width={3}>
 								<div className={styles.cellSpacing}>
-									<Button
-										icon="edit"
-										color="grey"
-										onClick={e => {
-											this.handleEdit(e, item);
-										}}
-									/>
-									<Button
-										content="Valider"
-										color="grey"
-										onClick={e => {
-											this.handleValidate(e, item);
-										}}
-									/>
+									<Button icon="edit" color="grey" />
+									<Button content="Valider" color="grey" />
 								</div>
 							</Table.Cell>
 						</Table.Row>
@@ -143,7 +170,7 @@ class ValidateCommandeTable extends PureComponent {
 							<Table.Cell>{"Non-Valide"}</Table.Cell>
 							<Table.Cell>{date.toLocaleString("en-US")}</Table.Cell>
 							<Table.Cell>{total}</Table.Cell>
-							<Table.Cell collapsing>
+							<Table.Cell collapsing width={3}>
 								<div className={styles.cellSpacing}>
 									<Button
 										icon="edit"
@@ -242,6 +269,9 @@ class ValidateCommandeTable extends PureComponent {
 	};
 
 	render() {
+		const { allItems, currentItems, activePage, totalPages, pageLimit } = this.state;
+		const itemRange = (activePage - 1) * pageLimit;
+		const totalItems = allItems.length;
 		return (
 			<Dimmer.Dimmable blurring dimmed={this.props.order.isFetching}>
 				<Dimmer page active={this.props.order.isFetching}>
@@ -276,18 +306,21 @@ class ValidateCommandeTable extends PureComponent {
 							</Table.Row>
 						</Table.Header>
 
-						<Table.Body>{this.renderTableRows(this.props.order.orders)}</Table.Body>
+						<Table.Body>{this.renderTableRows(currentItems)}</Table.Body>
 					</Table>
-					<Pagination
-						defaultActivePage={1}
-						ellipsisItem={{ content: <Icon name="ellipsis horizontal" />, icon: true }}
-						firstItem={{ content: <Icon name="angle double left" />, icon: true }}
-						lastItem={{ content: <Icon name="angle double right" />, icon: true }}
-						prevItem={{ content: <Icon name="angle left" />, icon: true }}
-						nextItem={{ content: <Icon name="angle right" />, icon: true }}
-						totalPages={this.state.totalPages}
-						onPageChange={this.onPageChanged}
-					/>
+					<div className={styles.pagination}>
+						<Pagination
+							activePage={activePage}
+							ellipsisItem={{ content: <Icon name="ellipsis horizontal" />, icon: true }}
+							firstItem={{ content: <Icon name="angle double left" />, icon: true }}
+							lastItem={{ content: <Icon name="angle double right" />, icon: true }}
+							prevItem={{ content: <Icon name="angle left" />, icon: true }}
+							nextItem={{ content: <Icon name="angle right" />, icon: true }}
+							totalPages={totalPages}
+							onPageChange={this.onPageChanged}
+						/>
+						{this.renderItemCount(itemRange, currentItems, totalItems)}
+					</div>
 				</div>
 			</Dimmer.Dimmable>
 		);

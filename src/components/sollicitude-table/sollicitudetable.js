@@ -386,7 +386,7 @@ class TauxTable extends PureComponent {
 						</Table.Header>
 						<Table.Body>{this.renderTableRows(currentItems)}</Table.Body>
 					</Table>
-					<div>
+					<div className={styles.pagination}>
 						<Pagination
 							activePage={activePage}
 							ellipsisItem={{ content: <Icon name="ellipsis horizontal" />, icon: true }}

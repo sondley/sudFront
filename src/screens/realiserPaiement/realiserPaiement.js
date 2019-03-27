@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 
 //Components
 import CustomMenu from "../../components/custom-menu/custom-menu";
+import PaiementTable from "../../components/paiement-table/paiementtable";
 
 //Logic
 import { endNavigation, getPageIndexByRoute } from "../../redux/actions/navigate";
@@ -28,9 +29,7 @@ class RealiserPaiement extends PureComponent {
 	render() {
 		return (
 			<CustomMenu screenName="Realiser Paiement">
-				<div className="prueba-de-contenido">
-					<h3>Realiser Paiement</h3>
-				</div>
+				<PaiementTable />
 			</CustomMenu>
 		);
 	}

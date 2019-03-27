@@ -28,18 +28,19 @@ class BuyTable extends PureComponent {
 			activePage: 1,
 			pageLimit: 10,
 			data: {},
-			transportFrais: "",
-			autres: ""
+			transportFrais: 0,
+			autres: 0,
+			ammount: ""
 		};
 	}
 
-	async componentDidMount() {
+	componentDidMount = async () => {
 		await this.props.dispatch(getBuys());
 		const allItems = this.props.buy.buys;
 		const totalPages = Math.ceil(allItems.length / this.state.pageLimit);
 		const currentItems = allItems.slice(0, this.state.pageLimit);
 		this.setState({ allItems, currentItems, totalPages });
-	}
+	};
 
 	componentDidUpdate = () => {
 		if (this.state.allItems !== this.props.buy.buys) {
@@ -81,10 +82,10 @@ class BuyTable extends PureComponent {
 		this.setState({ data: item, editModal: true });
 	};
 
-	handleValidate = (e, id) => {
+	handleValidate = (e, item) => {
 		e.preventDefault();
 		e.stopPropagation();
-		this.setState({ data: id, validateModal: true });
+		this.setState({ data: item, validateModal: true });
 	};
 
 	handleRowClick = (e, item) => {
@@ -113,27 +114,17 @@ class BuyTable extends PureComponent {
 
 	handleSubmit = e => {
 		e.preventDefault();
-		if (this.state.transportFrais !== "" && this.state.autres !== "") {
+		if (this.state.ammount !== "") {
 			const valider = {
 				idUser: this.props.user.authedUser._id,
 				idAchat: this.state.data,
 				transportFrais: this.state.transportFrais,
-				autres: this.state.autres
+				autres: this.state.autres,
+				montant: this.state.ammount
 			};
 			return this.props.dispatch(validateBuy(valider, this.handleCloseModal));
 		}
 		this.setState({ errorModal: true });
-	};
-
-	renderTotal = data => {
-		const total = data.reduce((intTotal, objItem) => {
-			if (objItem.etat === "0") {
-				return intTotal + parseInt(objItem.totalFinal);
-			}
-			return intTotal;
-		}, 0);
-
-		return total;
 	};
 
 	handleInputOnChange = event => {
@@ -143,6 +134,8 @@ class BuyTable extends PureComponent {
 		}
 		this.setState({ [name]: value });
 	};
+
+	handleChange = (e, { value }) => this.setState({ value });
 
 	renderTableRows = data => {
 		if (!isEmpty(data)) {
@@ -171,9 +164,11 @@ class BuyTable extends PureComponent {
 								<Table.Cell>{totalFinal}</Table.Cell>
 								<Table.Cell collapsing disabled>
 									<div className={styles.cellSpacingFor3}>
-										<Button icon="edit" color="grey" />
 										<Button content="Valider" color="grey" />
-										<Button icon="trash" color="grey" />
+										<div className={styles.responsiveCell}>
+											<Button icon="edit" color="grey" />
+											<Button icon="trash" color="grey" />
+										</div>
 									</div>
 								</Table.Cell>
 							</Table.Row>
@@ -197,26 +192,28 @@ class BuyTable extends PureComponent {
 							<Table.Cell collapsing>
 								<div className={styles.cellSpacingFor3}>
 									<Button
-										icon="edit"
-										color="blue"
-										onClick={e => {
-											this.handleEdit(e, item);
-										}}
-									/>
-									<Button
 										content="Valider"
 										color="green"
 										onClick={e => {
-											this.handleValidate(e, item._id);
+											this.handleValidate(e, item);
 										}}
 									/>
-									<Button
-										icon="trash"
-										color="red"
-										onClick={e => {
-											this.handleOpenModal(e, item._id);
-										}}
-									/>
+									<div className={styles.responsiveCell}>
+										<Button
+											icon="edit"
+											color="blue"
+											onClick={e => {
+												this.handleEdit(e, item);
+											}}
+										/>
+										<Button
+											icon="trash"
+											color="red"
+											onClick={e => {
+												this.handleOpenModal(e, item._id);
+											}}
+										/>
+									</div>
 								</div>
 							</Table.Cell>
 						</Table.Row>
@@ -289,12 +286,38 @@ class BuyTable extends PureComponent {
 		return;
 	};
 
+	renderEffectif = payer => {
+		const monnaie = this.state.ammount - payer;
+		const text = monnaie > 0 ? "Monnaie: $" + monnaie + ".00 HTG" : "Dette: $" + monnaie + ".00 HTG";
+		return (
+			<div>
+				<Form.Field required>
+					<label className={styles.basicFormSpacing}>Montant donné</label>
+					<Input
+						icon="money"
+						iconPosition="left"
+						placeholder="montant donné"
+						name="ammount"
+						type="number"
+						onChange={this.handleInputOnChange}
+						value={this.state.ammount}
+					/>
+				</Form.Field>
+				<Form.Field className={styles.centered}>{text}</Form.Field>
+			</div>
+		);
+	};
+
 	renderModal = validateModal => {
+		const payer = parseInt(this.state.data.total) + parseInt(this.state.autres) + parseInt(this.state.transportFrais);
 		return (
 			<Modal size="small" open={validateModal} onClose={this.handleCloseModal}>
 				<Modal.Header>Valider Achat</Modal.Header>
 				<Modal.Content>
 					<Form>
+						<Form.Field className={styles.centered}>
+							Total Achat: <strong>${parseInt(this.state.data.total)}.00 HTG</strong>
+						</Form.Field>
 						<Form.Field required>
 							<label className={styles.basicFormSpacing}>Transport Frais</label>
 							<Input
@@ -319,6 +342,10 @@ class BuyTable extends PureComponent {
 								value={this.state.autres}
 							/>
 						</Form.Field>
+						<Form.Field className={styles.centered}>
+							Montant a Payer: <strong>${payer}.00 HTG</strong>
+						</Form.Field>
+						{this.renderEffectif(payer)}
 					</Form>
 				</Modal.Content>
 				<Modal.Actions>
@@ -327,7 +354,7 @@ class BuyTable extends PureComponent {
 						negative
 						icon="cancel"
 						labelPosition="right"
-						content="No"
+						content="Non"
 						onClick={this.handleCloseModal}
 					/>
 					<Button
@@ -335,7 +362,7 @@ class BuyTable extends PureComponent {
 						positive
 						icon="checkmark"
 						labelPosition="right"
-						content="Yes"
+						content="Oui"
 						onClick={this.handleSubmit}
 					/>
 				</Modal.Actions>
@@ -409,7 +436,7 @@ class BuyTable extends PureComponent {
 						</Table.Header>
 						<Table.Body>{this.renderTableRows(currentItems)}</Table.Body>
 					</Table>
-					<div>
+					<div className={styles.pagination}>
 						<Pagination
 							activePage={activePage}
 							ellipsisItem={{ content: <Icon name="ellipsis horizontal" />, icon: true }}

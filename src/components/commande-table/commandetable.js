@@ -127,6 +127,7 @@ class CommandeTable extends PureComponent {
 								this.handleRowClick(e, item);
 							}}
 						>
+							<Table.Cell>{item.numero}</Table.Cell>
 							<Table.Cell>{item.client}</Table.Cell>
 							<Table.Cell>{item.vendeur}</Table.Cell>
 							<Table.Cell>
@@ -145,6 +146,7 @@ class CommandeTable extends PureComponent {
 								this.handleRowClick(e, item);
 							}}
 						>
+							<Table.Cell>{item.numero}</Table.Cell>
 							<Table.Cell>{item.client}</Table.Cell>
 							<Table.Cell>{item.vendeur}</Table.Cell>
 							<Table.Cell>
@@ -181,6 +183,7 @@ class CommandeTable extends PureComponent {
 								this.handleRowClick(e, item);
 							}}
 						>
+							<Table.Cell>{item.numero}</Table.Cell>
 							<Table.Cell>{item.client}</Table.Cell>
 							<Table.Cell>{item.vendeur}</Table.Cell>
 							<Table.Cell>
@@ -199,6 +202,7 @@ class CommandeTable extends PureComponent {
 							this.handleRowClick(e, item);
 						}}
 					>
+						<Table.Cell>{item.numero}</Table.Cell>
 						<Table.Cell>{item.client}</Table.Cell>
 						<Table.Cell>{item.vendeur}</Table.Cell>
 						<Table.Cell>
@@ -277,17 +281,18 @@ class CommandeTable extends PureComponent {
 						<Table selectable compact celled striped size="small">
 							<Table.Header>
 								<Table.Row>
-									<Table.HeaderCell>Nom de Client</Table.HeaderCell>
-									<Table.HeaderCell>Nom de Vendeur</Table.HeaderCell>
+									<Table.HeaderCell>No.</Table.HeaderCell>
+									<Table.HeaderCell>Client</Table.HeaderCell>
+									<Table.HeaderCell>Vendeur</Table.HeaderCell>
 									<Table.HeaderCell>Etat</Table.HeaderCell>
-									<Table.HeaderCell>Nom de Valideur</Table.HeaderCell>
+									<Table.HeaderCell>Valideur</Table.HeaderCell>
 									<Table.HeaderCell>Date</Table.HeaderCell>
 									<Table.HeaderCell>Total</Table.HeaderCell>
 								</Table.Row>
 							</Table.Header>
 							<Table.Body>{this.renderTableRows(currentItems)}</Table.Body>
 						</Table>
-						<div>
+						<div className={styles.pagination}>
 							<Pagination
 								activePage={activePage}
 								ellipsisItem={{ content: <Icon name="ellipsis horizontal" />, icon: true }}
@@ -344,10 +349,11 @@ class CommandeTable extends PureComponent {
 					<Table selectable compact celled striped size="small">
 						<Table.Header>
 							<Table.Row>
-								<Table.HeaderCell>Nom de Client</Table.HeaderCell>
-								<Table.HeaderCell>Nom de Vendeur</Table.HeaderCell>
+								<Table.HeaderCell>No.</Table.HeaderCell>
+								<Table.HeaderCell>Client</Table.HeaderCell>
+								<Table.HeaderCell>Vendeur</Table.HeaderCell>
 								<Table.HeaderCell>Etat</Table.HeaderCell>
-								<Table.HeaderCell>Nom de Valideur</Table.HeaderCell>
+								<Table.HeaderCell>Valideur</Table.HeaderCell>
 								<Table.HeaderCell>Date</Table.HeaderCell>
 								<Table.HeaderCell>Total</Table.HeaderCell>
 								<Table.HeaderCell>Actions</Table.HeaderCell>
@@ -356,7 +362,7 @@ class CommandeTable extends PureComponent {
 
 						<Table.Body>{this.renderTableRows(currentItems)}</Table.Body>
 					</Table>
-					<div>
+					<div className={styles.pagination}>
 						<Pagination
 							activePage={activePage}
 							ellipsisItem={{ content: <Icon name="ellipsis horizontal" />, icon: true }}

@@ -43,6 +43,27 @@ export function getCoinTrades() {
 	};
 }
 
+export function getCoinTradesByRange(startDate, endDate) {
+	return dispatch => {
+		dispatch(requestBegin(GET_COINTRADES));
+		return api
+			.requestPOST("/rangeEchanges", {
+				start: startDate,
+				end: endDate
+			})
+			.then(objResponse => {
+				if (objResponse.data.success) {
+					dispatch(requestSuccess(GET_COINTRADES_SUCCESS, objResponse.data.data, objResponse.data.message));
+				} else {
+					dispatch(requestFail(GET_COINTRADES_FAIL, objResponse.data.message));
+				}
+			})
+			.catch(objError => {
+				dispatch(requestFail(GET_COINTRADES_FAIL, objError.response));
+			});
+	};
+}
+
 export function createCoinTrade(cointrade, onClose) {
 	return dispatch => {
 		dispatch(requestBegin(CREATE_COINTRADE));

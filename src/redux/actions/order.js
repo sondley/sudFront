@@ -43,6 +43,27 @@ export function getOrders() {
 	};
 }
 
+export function getOrdersByRange(startDate, endDate) {
+	return dispatch => {
+		dispatch(requestBegin(GET_ORDERS));
+		return api
+			.requestPOST("/rangeOrdens", {
+				start: startDate,
+				end: endDate
+			})
+			.then(objResponse => {
+				if (objResponse.data.success) {
+					dispatch(requestSuccess(GET_ORDERS_SUCCESS, objResponse.data.data, objResponse.data.message));
+				} else {
+					dispatch(requestFail(GET_ORDERS_FAIL, objResponse.data.message));
+				}
+			})
+			.catch(objError => {
+				dispatch(requestFail(GET_ORDERS_FAIL, objError.response));
+			});
+	};
+}
+
 export function createOrder(order, onClose) {
 	return dispatch => {
 		dispatch(requestBegin(CREATE_ORDER));

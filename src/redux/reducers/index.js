@@ -11,6 +11,8 @@ import cointrade from "./cointrades";
 import buy from "./buys";
 import compte from "./compte";
 import sollicitude from "./sollicitude";
+import payment from "./payment";
+import debt from "./debt";
 
 export default combineReducers({
 	user,
@@ -22,5 +24,7 @@ export default combineReducers({
 	cointrade,
 	buy,
 	compte,
-	sollicitude
+	sollicitude,
+	payment,
+	debt
 });

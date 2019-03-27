@@ -36,14 +36,12 @@ class BuyForm extends PureComponent {
 			fournisseur: {},
 			isLoading: false
 		};
-		if (!this.state.view) {
-			this.props.dispatch(getProducts());
-		}
 	}
 
-	async componentDidMount() {
-		if (isEmpty(this.props.provider.providers)) {
+	componentDidMount = async () => {
+		if (!this.state.view) {
 			await this.props.dispatch(getProviders());
+			await this.props.dispatch(getProducts());
 		}
 		if (this.state.edit || this.state.view) {
 			const provider = filter(this.props.provider.providers, { nom: this.props.data.provider });
@@ -54,7 +52,7 @@ class BuyForm extends PureComponent {
 				fournisseur: provider[0]
 			});
 		}
-	}
+	};
 
 	handleChange = event => {
 		event.preventDefault();

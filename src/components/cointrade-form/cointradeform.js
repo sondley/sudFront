@@ -157,9 +157,14 @@ class CoinTradeForm extends PureComponent {
 	};
 
 	render() {
-		const options = this.props.taux.monnaies.map(item => {
-			return { text: item.nom, value: item._id };
-		});
+		const options =
+			this.state.type === "vendre"
+				? this.props.taux.monnaies.map(item => {
+						return { text: item.nom + " $" + item.prixVente + " HTG", value: item._id };
+				  })
+				: this.props.taux.monnaies.map(item => {
+						return { text: item.nom + " $" + item.prixAchat + " HTG", value: item._id };
+				  });
 		let title = "Entrain de Ajouter";
 		let label = "Ajouter";
 		if (this.state.edit) {

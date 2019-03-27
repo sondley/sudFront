@@ -43,6 +43,27 @@ export function getBuys() {
 	};
 }
 
+export function getBuysByRange(startDate, endDate) {
+	return dispatch => {
+		dispatch(requestBegin(GET_BUYS));
+		return api
+			.requestPOST("/rangeAchats", {
+				start: startDate,
+				end: endDate
+			})
+			.then(objResponse => {
+				if (objResponse.data.success) {
+					dispatch(requestSuccess(GET_BUYS_SUCCESS, objResponse.data.data, objResponse.data.message));
+				} else {
+					dispatch(requestFail(GET_BUYS_FAIL, objResponse.data.message));
+				}
+			})
+			.catch(objError => {
+				dispatch(requestFail(GET_BUYS_FAIL, objError.response));
+			});
+	};
+}
+
 export function createBuy(buy, onClose) {
 	return dispatch => {
 		dispatch(requestBegin(CREATE_BUY));
@@ -116,7 +137,8 @@ export function validateBuy(item, onClose) {
 				idUser: item.idUser,
 				idAchat: item.idAchat,
 				transportFrais: parseInt(item.transportFrais),
-				autres: parseInt(item.autres)
+				autres: parseInt(item.autres),
+				montant: parseInt(item.montant)
 			})
 			.then(objResponse => {
 				if (objResponse.data.success) {

@@ -19,16 +19,56 @@ class ValiderCoinTradeTable extends PureComponent {
 		this.state = {
 			editModal: false,
 			deleteModal: false,
-			allProducts: [],
-			currentProducts: [],
-			currentPage: 1,
-			totalPages: 1,
+			allItems: [],
+			currentItems: [],
+			totalPages: 0,
+			activePage: 1,
+			pageLimit: 10,
 			data: {}
 		};
-		if (isEmpty(this.props.cointrade.transactions)) {
-			this.props.dispatch(getCoinTrades());
-		}
 	}
+
+	componentDidMount = async () => {
+		await this.props.dispatch(getCoinTrades());
+		const allItems = this.props.cointrade.transactions;
+		const totalPages = Math.ceil(allItems.length / this.state.pageLimit);
+		const currentItems = allItems.slice(0, this.state.pageLimit);
+		this.setState({ allItems, currentItems, totalPages });
+	};
+
+	componentDidUpdate = () => {
+		if (this.state.allItems !== this.props.cointrade.transactions) {
+			const allItems = this.props.cointrade.transactions;
+			const totalPages = Math.ceil(allItems.length / this.state.pageLimit);
+			const currentItems = allItems.slice(0, this.state.pageLimit);
+			this.setState({ allItems, currentItems, totalPages });
+		}
+	};
+
+	onPageChanged = (e, data) => {
+		e.preventDefault();
+		const { allItems, pageLimit } = this.state;
+		const { activePage } = data;
+		const offset = (activePage - 1) * pageLimit;
+		const currentItems = allItems.slice(offset, offset + pageLimit);
+		this.setState({ activePage, currentItems });
+	};
+
+	renderItemCount = (itemRange, currentItems, totalItems) => {
+		if (currentItems.length <= 1) {
+			return (
+				<label className={styles.itemCount}>
+					Items: {itemRange + currentItems.length}/{totalItems}
+				</label>
+			);
+		} else {
+			return (
+				<label className={styles.itemCount}>
+					Items: {itemRange + 1}-{itemRange + currentItems.length}/{totalItems}
+				</label>
+			);
+		}
+	};
 
 	handleEdit = (e, item) => {
 		e.preventDefault();
@@ -78,22 +118,10 @@ class ValiderCoinTradeTable extends PureComponent {
 							<Table.Cell>{item.monnaie}</Table.Cell>
 							<Table.Cell>{item.quantite}</Table.Cell>
 							{moneyCell(item.type)}
-							<Table.Cell collapsing disabled>
+							<Table.Cell collapsing disabled width={3}>
 								<div className={styles.cellSpacing}>
-									<Button
-										icon="edit"
-										color="grey"
-										onClick={e => {
-											this.handleEdit(e, item);
-										}}
-									/>
-									<Button
-										content="Valider"
-										color="grey"
-										onClick={e => {
-											this.handleOpenModal(e, item._id);
-										}}
-									/>
+									<Button icon="edit" color="grey" />
+									<Button content="Valider" color="grey" />
 								</div>
 							</Table.Cell>
 						</Table.Row>
@@ -112,7 +140,7 @@ class ValiderCoinTradeTable extends PureComponent {
 						<Table.Cell>{item.monnaie}</Table.Cell>
 						<Table.Cell>{item.quantite}</Table.Cell>
 						{moneyCell(item.type)}
-						<Table.Cell collapsing>
+						<Table.Cell collapsing width={3}>
 							<div className={styles.cellSpacing}>
 								<Button
 									icon="edit"
@@ -139,6 +167,9 @@ class ValiderCoinTradeTable extends PureComponent {
 	};
 
 	render() {
+		const { allItems, currentItems, activePage, totalPages, pageLimit } = this.state;
+		const itemRange = (activePage - 1) * pageLimit;
+		const totalItems = allItems.length;
 		return (
 			<Dimmer.Dimmable blurring dimmed={this.props.cointrade.isFetching}>
 				<Dimmer page active={this.props.cointrade.isFetching}>
@@ -188,18 +219,21 @@ class ValiderCoinTradeTable extends PureComponent {
 							</Table.Row>
 						</Table.Header>
 
-						<Table.Body>{this.renderTableRows(this.props.cointrade.transactions)}</Table.Body>
+						<Table.Body>{this.renderTableRows(currentItems)}</Table.Body>
 					</Table>
-					<Pagination
-						defaultActivePage={1}
-						ellipsisItem={{ content: <Icon name="ellipsis horizontal" />, icon: true }}
-						firstItem={{ content: <Icon name="angle double left" />, icon: true }}
-						lastItem={{ content: <Icon name="angle double right" />, icon: true }}
-						prevItem={{ content: <Icon name="angle left" />, icon: true }}
-						nextItem={{ content: <Icon name="angle right" />, icon: true }}
-						totalPages={this.state.totalPages}
-						onPageChange={this.onPageChanged}
-					/>
+					<div className={styles.pagination}>
+						<Pagination
+							activePage={activePage}
+							ellipsisItem={{ content: <Icon name="ellipsis horizontal" />, icon: true }}
+							firstItem={{ content: <Icon name="angle double left" />, icon: true }}
+							lastItem={{ content: <Icon name="angle double right" />, icon: true }}
+							prevItem={{ content: <Icon name="angle left" />, icon: true }}
+							nextItem={{ content: <Icon name="angle right" />, icon: true }}
+							totalPages={totalPages}
+							onPageChange={this.onPageChanged}
+						/>
+						{this.renderItemCount(itemRange, currentItems, totalItems)}
+					</div>
 				</div>
 			</Dimmer.Dimmable>
 		);

@@ -258,7 +258,7 @@ class ProduitTable extends PureComponent {
 
 						<Table.Body>{this.renderTableRows(currentItems)}</Table.Body>
 					</Table>
-					<div>
+					<div className={styles.pagination}>
 						<Pagination
 							activePage={activePage}
 							ellipsisItem={{ content: <Icon name="ellipsis horizontal" />, icon: true }}

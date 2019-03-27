@@ -1,6 +1,6 @@
 .topbar-container {
 	height: 60px;
-	padding: 10px;
+	padding: 0px 37px 0px 17px;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -10,11 +10,6 @@
 .topbar-profile-notification-container {
 	display: flex;
 	align-items: center;
-	margin-right: 20px;
-}
-
-.topbar-menu-button-label {
-	margin-left: 30px;
 }
 
 .searchbar-container {

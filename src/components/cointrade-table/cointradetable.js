@@ -98,6 +98,7 @@ class CoinTradeTable extends PureComponent {
 				const estado = item.etat === "0" ? "check" : "close";
 				const color = item.etat === "0" ? "green" : "red";
 				const parsedtotal = "$" + item.total + ".00 HTG";
+				const prix = "$" + item.total / item.quantite + ".00 HTG";
 				const moneyCell = type => {
 					if (type === "vendre") return <Table.Cell positive>{parsedtotal}</Table.Cell>;
 					else return <Table.Cell negative>{parsedtotal}</Table.Cell>;
@@ -112,6 +113,7 @@ class CoinTradeTable extends PureComponent {
 								<Icon name={estado} color={color} />
 							</Table.Cell>
 							<Table.Cell>{item.monnaie}</Table.Cell>
+							<Table.Cell>{prix}</Table.Cell>
 							<Table.Cell>{item.quantite}</Table.Cell>
 							{moneyCell(item.type)}
 							<Table.Cell collapsing disabled>
@@ -144,6 +146,7 @@ class CoinTradeTable extends PureComponent {
 							<Icon name={estado} color={color} />
 						</Table.Cell>
 						<Table.Cell>{item.monnaie}</Table.Cell>
+						<Table.Cell>{prix}</Table.Cell>
 						<Table.Cell>{item.quantite}</Table.Cell>
 						{moneyCell(item.type)}
 						<Table.Cell collapsing>
@@ -213,10 +216,11 @@ class CoinTradeTable extends PureComponent {
 						<Table.Header>
 							<Table.Row>
 								<Table.HeaderCell>Type</Table.HeaderCell>
-								<Table.HeaderCell>Nom de Client</Table.HeaderCell>
-								<Table.HeaderCell>Nom de Vendeur</Table.HeaderCell>
+								<Table.HeaderCell>Client</Table.HeaderCell>
+								<Table.HeaderCell>Vendeur</Table.HeaderCell>
 								<Table.HeaderCell>Etat</Table.HeaderCell>
 								<Table.HeaderCell>Monnaie</Table.HeaderCell>
+								<Table.HeaderCell>Prix</Table.HeaderCell>
 								<Table.HeaderCell>Quantite</Table.HeaderCell>
 								<Table.HeaderCell>Total</Table.HeaderCell>
 								<Table.HeaderCell>Actions</Table.HeaderCell>
@@ -225,7 +229,7 @@ class CoinTradeTable extends PureComponent {
 
 						<Table.Body>{this.renderTableRows(currentItems)}</Table.Body>
 					</Table>
-					<div>
+					<div className={styles.pagination}>
 						<Pagination
 							activePage={activePage}
 							ellipsisItem={{ content: <Icon name="ellipsis horizontal" />, icon: true }}

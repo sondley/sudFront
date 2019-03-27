@@ -34,12 +34,6 @@
 	padding: 5px 0px !important;
 }
 
-.itemCount {
-	font-size: 22px !important;
-	font-weight: 700 !important;
-	margin-left: 20px !important;
-}
-
 .spacing {
 	display: flex !important;
 	justify-content: space-around !important;
@@ -72,4 +66,30 @@
 
 .paddingBottom {
 	padding-bottom: 10px !important;
+}
+
+.itemCount {
+	font-size: 22px !important;
+	font-weight: 700 !important;
+	margin-left: 20px !important;
+}
+
+.pagination {
+	display: flex !important;
+	align-items: center !important;
+}
+
+@media only screen and (max-width: 767px) {
+	.itemCount {
+		font-size: 22px !important;
+		font-weight: 700 !important;
+		margin-left: 0px !important;
+	}
+	.pagination {
+		height: 80px !important;
+		display: flex !important;
+		flex-direction: column !important;
+		align-items: flex-start !important;
+		justify-content: space-between !important;
+	}
 }

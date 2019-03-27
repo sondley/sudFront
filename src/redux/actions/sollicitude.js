@@ -43,6 +43,27 @@ export function getSollicitudes() {
 	};
 }
 
+export function getSollicitudesByRange(startDate, endDate) {
+	return dispatch => {
+		dispatch(requestBegin(GET_SOLLICITUDES));
+		return api
+			.requestPOST("/rangeSollicitudes", {
+				start: startDate,
+				end: endDate
+			})
+			.then(objResponse => {
+				if (objResponse.data.success) {
+					dispatch(requestSuccess(GET_SOLLICITUDES_SUCCESS, objResponse.data.data, objResponse.data.message));
+				} else {
+					dispatch(requestFail(GET_SOLLICITUDES_FAIL, objResponse.data.message));
+				}
+			})
+			.catch(objError => {
+				dispatch(requestFail(GET_SOLLICITUDES_FAIL, objError.response));
+			});
+	};
+}
+
 export function createSollicitude(sollicitude, onClose) {
 	return dispatch => {
 		dispatch(requestBegin(CREATE_SOLLICITUDE));

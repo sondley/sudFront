@@ -174,10 +174,16 @@ export function login(username, password, rememberMe) {
 									index: 8
 								},
 								{
+									name: "/devolution",
+									icon: "sync",
+									label: "Devolution du Produit",
+									index: 9
+								},
+								{
 									name: "/comite_monitor",
 									icon: "sign-in",
 									label: "Rentrez de Comite",
-									index: 9
+									index: 10
 								}
 							];
 							break;
@@ -242,16 +248,28 @@ export function login(username, password, rememberMe) {
 									index: 3
 								},
 								{
+									name: "/debt_payable",
+									icon: "payment",
+									label: "Comptes à Payer",
+									index: 4
+								},
+								{
+									name: "/debt_recievable",
+									icon: "payment",
+									label: "Comptes à Recevoir",
+									index: 5
+								},
+								{
 									name: "/banking",
 									icon: "lock",
 									label: "Banque",
-									index: 4
+									index: 6
 								},
 								{
 									name: "/accounting_reports",
 									icon: "chart bar outline",
 									label: "Rapports",
-									index: 5
+									index: 7
 								}
 							];
 							break;
