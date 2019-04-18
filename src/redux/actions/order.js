@@ -12,6 +12,9 @@ export const DELETE_ORDER_FAIL = "DELETE_ORDER_FAIL";
 export const MODIFY_ORDER = "MODIFY_ORDER";
 export const MODIFY_ORDER_SUCCESS = "MODIFY_ORDER_SUCCESS";
 export const MODIFY_ORDER_FAIL = "MODIFY_ORDER_FAIL";
+export const VALIDATE_ORDER = "VALIDATE_ORDER";
+export const VALIDATE_ORDER_SUCCESS = "VALIDATE_ORDER_SUCCESS";
+export const VALIDATE_ORDER_FAIL = "VALIDATE_ORDER_FAIL";
 
 function requestBegin(type) {
 	return { type };
@@ -131,7 +134,7 @@ export function deleteOrder(orderID, onClose) {
 
 export function validateOrder(item, onClose) {
 	return dispatch => {
-		dispatch(requestBegin(MODIFY_ORDER));
+		dispatch(requestBegin(VALIDATE_ORDER));
 		return api
 			.requestPOST("/validateOrden", {
 				idUser: item.idUser,
@@ -141,14 +144,14 @@ export function validateOrder(item, onClose) {
 			})
 			.then(objResponse => {
 				if (objResponse.data.success) {
-					dispatch(requestSuccess(MODIFY_ORDER_SUCCESS, objResponse.data.data, objResponse.data.message));
+					dispatch(requestSuccess(VALIDATE_ORDER_SUCCESS, objResponse.data.data, objResponse.data.message));
 					onClose();
 				} else {
-					dispatch(requestFail(MODIFY_ORDER_FAIL, objResponse.data.message));
+					dispatch(requestFail(VALIDATE_ORDER_FAIL, objResponse.data.message));
 				}
 			})
 			.catch(objError => {
-				dispatch(requestFail(MODIFY_ORDER_FAIL, objError.response));
+				dispatch(requestFail(VALIDATE_ORDER_FAIL, objError.response));
 			});
 	};
 }

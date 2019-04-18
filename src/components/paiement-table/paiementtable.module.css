@@ -57,3 +57,7 @@
 		justify-content: space-between !important;
 	}
 }
+
+.bold {
+	font-weight: 700;
+}

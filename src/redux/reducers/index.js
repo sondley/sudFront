@@ -13,6 +13,7 @@ import compte from "./compte";
 import sollicitude from "./sollicitude";
 import payment from "./payment";
 import debt from "./debt";
+import tax from "./tax";
 
 export default combineReducers({
 	user,
@@ -26,5 +27,6 @@ export default combineReducers({
 	compte,
 	sollicitude,
 	payment,
-	debt
+	debt,
+	tax
 });

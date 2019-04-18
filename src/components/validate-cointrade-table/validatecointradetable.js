@@ -5,6 +5,7 @@ import { isEmpty } from "lodash";
 
 //Internal Components
 import CoinTradeForm from "../cointrade-form/cointradeform";
+import Receipt from "../receiptMonnaie/receiptMonnaie";
 
 //Logic
 import { getCoinTrades, validateCoinTrade } from "../../redux/actions/cointrades";
@@ -19,6 +20,7 @@ class ValiderCoinTradeTable extends PureComponent {
 		this.state = {
 			editModal: false,
 			deleteModal: false,
+			printModal: false,
 			allItems: [],
 			currentItems: [],
 			totalPages: 0,
@@ -76,10 +78,11 @@ class ValiderCoinTradeTable extends PureComponent {
 		this.setState({ data: item, editModal: true });
 	};
 
-	handleValidate = e => {
+	handleValidate = async e => {
 		e.preventDefault();
 		const cointrade = { idUser: this.props.user.authedUser._id, idTransactionEchange: this.state.data.id };
-		this.props.dispatch(validateCoinTrade(cointrade, this.handleCloseModal));
+		await this.props.dispatch(validateCoinTrade(cointrade, this.handleCloseModal));
+		return this.setState({ printModal: true });
 	};
 
 	handleOpenModal = (e, id) => {
@@ -90,7 +93,7 @@ class ValiderCoinTradeTable extends PureComponent {
 	};
 
 	handleCloseModal = () => {
-		this.setState({ editModal: false, deleteModal: false });
+		this.setState({ editModal: false, deleteModal: false, printModal: false });
 	};
 
 	renderTableRows = data => {
@@ -177,6 +180,9 @@ class ValiderCoinTradeTable extends PureComponent {
 				</Dimmer>
 				<Modal open={this.state.editModal} onClose={this.handleCloseModal}>
 					<CoinTradeForm edit data={this.state.data} onClose={this.handleCloseModal} />
+				</Modal>
+				<Modal open={this.state.printModal} onClose={this.handleCloseModal}>
+					<Receipt data={this.props.cointrade.printCoinTrade} />
 				</Modal>
 				<Modal size="small" open={this.state.deleteModal} onClose={this.handleCloseModal}>
 					<Modal.Header>Valider change du Monnaie</Modal.Header>

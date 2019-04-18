@@ -72,7 +72,10 @@ class ProviderForm extends PureComponent {
 
 	handleInputOnChange = event => {
 		const { name, value } = event.target;
-		this.setState({ [name]: value });
+		if (name === "tel") {
+			const tel = value.match(new RegExp("^[0-9]+$"));
+			if (tel !== null) return this.setState({ [name]: value });
+		} else return this.setState({ [name]: value });
 	};
 
 	renderMessages = field => {

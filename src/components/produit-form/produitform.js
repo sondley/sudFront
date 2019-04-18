@@ -397,7 +397,11 @@ class ProductForm extends PureComponent {
 									</Form.Field>
 									<Form.Field
 										required
-										style={this.state.edit || this.state.achat ? { display: "none" } : { display: "block" }}
+										style={
+											(this.state.edit && this.props.user.authedUser.role !== "directeur") || this.state.achat
+												? { display: "none" }
+												: { display: "block" }
+										}
 									>
 										<label className={styles.basicFormSpacing}>Quantite</label>
 										<Input
@@ -454,8 +458,8 @@ class ProductForm extends PureComponent {
 	}
 }
 
-function mapStateToProps({ provider }) {
-	return { provider };
+function mapStateToProps({ provider, user }) {
+	return { provider, user };
 }
 
 export default connect(mapStateToProps)(ProductForm);

@@ -10,12 +10,18 @@ import {
 	DELETE_ORDER_FAIL,
 	MODIFY_ORDER,
 	MODIFY_ORDER_SUCCESS,
-	MODIFY_ORDER_FAIL
+	MODIFY_ORDER_FAIL,
+	VALIDATE_ORDER,
+	VALIDATE_ORDER_SUCCESS,
+	VALIDATE_ORDER_FAIL
 } from "../actions/order";
 import { RESET_ERRORS } from "../actions/utils";
 import { sortBy } from "lodash";
 
-export default function order(state = { orders: [], isFetching: false, message: [], error: false }, action) {
+export default function order(
+	state = { orders: [], printOrder: {}, isFetching: false, message: [], error: false },
+	action
+) {
 	const { payload, type } = action;
 	let message;
 	switch (type) {
@@ -24,6 +30,8 @@ export default function order(state = { orders: [], isFetching: false, message: 
 		case CREATE_ORDER:
 			return { ...state, isFetching: true, error: false };
 		case MODIFY_ORDER:
+			return { ...state, isFetching: true, error: false };
+		case VALIDATE_ORDER:
 			return { ...state, isFetching: true, error: false };
 		case DELETE_ORDER:
 			return { ...state, isFetching: true, error: false };
@@ -50,6 +58,15 @@ export default function order(state = { orders: [], isFetching: false, message: 
 				return { ...order, ...payload.data };
 			});
 			return { ...state, isFetching: false, orders: array, error: false, message };
+		case VALIDATE_ORDER_SUCCESS:
+			message = [].concat(payload.message);
+			const array2 = state.orders.map(order => {
+				if (order._id !== payload.data._id) {
+					return order;
+				}
+				return { ...order, ...payload.data };
+			});
+			return { ...state, isFetching: false, orders: array2, printOrder: payload.data, error: false, message };
 		case DELETE_ORDER_SUCCESS:
 			message = [].concat(payload.message);
 			return {
@@ -67,6 +84,9 @@ export default function order(state = { orders: [], isFetching: false, message: 
 			message = [].concat(payload.message);
 			return { ...state, isFetching: false, error: true, message };
 		case MODIFY_ORDER_FAIL:
+			message = [].concat(payload.message);
+			return { ...state, isFetching: false, error: true, message };
+		case VALIDATE_ORDER_FAIL:
 			message = [].concat(payload.message);
 			return { ...state, isFetching: false, error: true, message };
 		case DELETE_ORDER_FAIL:

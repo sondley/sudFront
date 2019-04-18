@@ -6,8 +6,8 @@
 
 .dimmerMargin {
 	width: 400px !important;
-	display: flex;
-	flex-direction: column;
+	display: flex !important;
+	flex-direction: column !important;
 	justify-content: space-around !important;
 	text-align: center !important;
 }

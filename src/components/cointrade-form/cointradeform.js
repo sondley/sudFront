@@ -1,9 +1,9 @@
 import React, { PureComponent } from "react";
 import { connect } from "react-redux";
-import { Form, Input, Button, Message, Dimmer, Icon, Card, Select } from "semantic-ui-react";
+import { Form, Input, Button, Message, Dimmer, Icon, Card, Select, Modal } from "semantic-ui-react";
 import { createCoinTrade, modifyCoinTrade } from "../../redux/actions/cointrades";
 import { getTauxs } from "../../redux/actions/taux";
-import { isEmpty, filter } from "lodash";
+import { isEmpty, filter, find } from "lodash";
 
 //Styles
 import styles from "./cointradeform.module.css";
@@ -24,6 +24,7 @@ class CoinTradeForm extends PureComponent {
 			monnaieError: false,
 			formError: false,
 			isModalOpen: false,
+			helpModal: false,
 			results: [],
 			item: {},
 			isLoading: false
@@ -61,6 +62,11 @@ class CoinTradeForm extends PureComponent {
 
 	handleModalClose = () => {
 		this.setState({ isModalOpen: false });
+	};
+
+	handleFullClose = () => {
+		this.setState({ helpModal: false });
+		this.props.onClose();
 	};
 
 	handleInputError = event => {
@@ -107,7 +113,7 @@ class CoinTradeForm extends PureComponent {
 		}
 	};
 
-	handleSubmit = event => {
+	handleSubmit = async event => {
 		event.preventDefault();
 		const { clientName, quantite, monnaie, type } = this.state;
 		if (!this.state.formError) {
@@ -120,7 +126,8 @@ class CoinTradeForm extends PureComponent {
 					idVendeur: this.props.user.authedUser._id,
 					type
 				};
-				return this.props.dispatch(modifyCoinTrade(coinTrade, this.props.onClose));
+				this.props.dispatch(modifyCoinTrade(coinTrade));
+				return this.setState({ helpModal: true });
 			}
 			const coinTrade = {
 				client: clientName,
@@ -129,7 +136,8 @@ class CoinTradeForm extends PureComponent {
 				idVendeur: this.props.user.authedUser._id,
 				type
 			};
-			this.props.dispatch(createCoinTrade(coinTrade, this.props.onClose));
+			this.props.dispatch(createCoinTrade(coinTrade));
+			return this.setState({ helpModal: true });
 		} else {
 			this.setState({ isModalOpen: true });
 		}
@@ -156,6 +164,40 @@ class CoinTradeForm extends PureComponent {
 		);
 	};
 
+	renderModal = isOpen => {
+		let Monnaie = find(this.props.taux.monnaies, { _id: this.state.monnaie });
+		let Recevoir = "";
+		let Payer = "";
+		if (Monnaie !== undefined) {
+			Recevoir =
+				this.state.type === "vendre"
+					? "$" + this.state.quantite + " HTG"
+					: "$" + this.state.quantite + " " + Monnaie.nom;
+			Payer =
+				this.state.type === "vendre"
+					? "$" + this.state.quantite / Monnaie.prixVente + " " + Monnaie.nom
+					: "$" + this.state.quantite * Monnaie.prixAchat + " HTG";
+		}
+
+		return (
+			<Modal open={isOpen} onClose={this.handleFullClose} size="small">
+				<Modal.Content>
+					<Form>
+						<Form.Field className={styles.centered}>
+							Montant a Recevoir: <strong>{Recevoir}</strong>
+						</Form.Field>
+						<Form.Field className={styles.centered}>
+							Montant a Payer: <strong>{Payer}</strong>
+						</Form.Field>
+					</Form>
+				</Modal.Content>
+				<Modal.Actions>
+					<Button primary content="Ok" onClick={this.handleFullClose} />
+				</Modal.Actions>
+			</Modal>
+		);
+	};
+
 	render() {
 		const options =
 			this.state.type === "vendre"
@@ -171,6 +213,7 @@ class CoinTradeForm extends PureComponent {
 			title = "Entrain de Modifier";
 			label = "Modifier";
 		}
+		let QuantiteLabel = this.state.type === "vendre" ? "Quantite en Gourde" : "Quantite";
 
 		return (
 			<Dimmer.Dimmable dimmed={this.state.isModalOpen}>
@@ -183,6 +226,7 @@ class CoinTradeForm extends PureComponent {
 						<Message.Content>{this.state.contentErrorMessage}</Message.Content>
 					</Message>
 				</Dimmer>
+				{this.renderModal(this.state.helpModal)}
 				<Card fluid centered className={styles.boxContainerWide}>
 					<Card.Content>
 						<Card.Header className="font font-18" textAlign="center">
@@ -222,12 +266,12 @@ class CoinTradeForm extends PureComponent {
 										{this.renderMessages("monnaie")}
 									</Form.Field>
 									<Form.Field required>
-										<label className={styles.basicFormSpacing}>Quantite</label>
+										<label className={styles.basicFormSpacing}>{QuantiteLabel}</label>
 										<Input
 											type="number"
 											icon="archive"
 											iconPosition="left"
-											placeholder="Quantite"
+											placeholder={QuantiteLabel}
 											name="quantite"
 											onChange={this.handleChange}
 											value={this.state.quantite}

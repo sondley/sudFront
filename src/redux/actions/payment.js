@@ -42,10 +42,7 @@ export function createPayment(payment, onClose) {
 		dispatch(requestBegin(CREATE_PAYMENT));
 		return api
 			.requestPOST("/paiements", {
-				idUser: payment.idUser,
-				idRealisateur: payment.idRealisateur,
-				montant: payment.montant,
-				type: payment.type
+				idRealisateur: payment.idRealisateur
 			})
 			.then(objResponse => {
 				if (objResponse.data.success) {

@@ -12,6 +12,9 @@ export const DELETE_COINTRADE_FAIL = "DELETE_COINTRADE_FAIL";
 export const MODIFY_COINTRADE = "MODIFY_COINTRADE";
 export const MODIFY_COINTRADE_SUCCESS = "MODIFY_COINTRADE_SUCCESS";
 export const MODIFY_COINTRADE_FAIL = "MODIFY_COINTRADE_FAIL";
+export const VALIDATE_COINTRADE = "VALIDATE_COINTRADE";
+export const VALIDATE_COINTRADE_SUCCESS = "VALIDATE_COINTRADE_SUCCESS";
+export const VALIDATE_COINTRADE_FAIL = "VALIDATE_COINTRADE_FAIL";
 
 function requestBegin(type) {
 	return { type };
@@ -78,7 +81,6 @@ export function createCoinTrade(cointrade, onClose) {
 			.then(objResponse => {
 				if (objResponse.data.success) {
 					dispatch(requestSuccess(CREATE_COINTRADE_SUCCESS, objResponse.data.data, objResponse.data.message));
-					onClose();
 				} else {
 					dispatch(requestFail(CREATE_COINTRADE_FAIL, objResponse.data.message));
 				}
@@ -122,7 +124,6 @@ export function deleteCoinTrade(cointradeID, onClose) {
 			.then(objResponse => {
 				if (objResponse.data.success) {
 					dispatch(requestSuccess(DELETE_COINTRADE_SUCCESS, cointradeID, objResponse.data.message));
-					onClose();
 				} else {
 					dispatch(requestFail(DELETE_COINTRADE_FAIL, objResponse.data.message));
 				}
@@ -135,7 +136,7 @@ export function deleteCoinTrade(cointradeID, onClose) {
 
 export function validateCoinTrade(cointrade, onClose) {
 	return dispatch => {
-		dispatch(requestBegin(MODIFY_COINTRADE));
+		dispatch(requestBegin(VALIDATE_COINTRADE));
 		return api
 			.requestPOST("/ValidateTransactionEchange", {
 				idUser: cointrade.idUser,
@@ -143,14 +144,14 @@ export function validateCoinTrade(cointrade, onClose) {
 			})
 			.then(objResponse => {
 				if (objResponse.data.success) {
-					dispatch(requestSuccess(MODIFY_COINTRADE_SUCCESS, objResponse.data.data, objResponse.data.message));
+					dispatch(requestSuccess(VALIDATE_COINTRADE_SUCCESS, objResponse.data.data, objResponse.data.message));
 					onClose();
 				} else {
-					dispatch(requestFail(MODIFY_COINTRADE_FAIL, objResponse.data.message));
+					dispatch(requestFail(VALIDATE_COINTRADE_FAIL, objResponse.data.message));
 				}
 			})
 			.catch(objError => {
-				dispatch(requestFail(MODIFY_COINTRADE_FAIL, objError.response));
+				dispatch(requestFail(VALIDATE_COINTRADE_FAIL, objError.response));
 			});
 	};
 }

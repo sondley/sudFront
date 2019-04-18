@@ -197,6 +197,7 @@ class EtatDuCompte extends PureComponent {
 	render() {
 		const { openCaisseModal, closeCaisseModal } = this.state;
 		const { moneyCompte, caisse } = this.props.compte;
+		const { role } = this.props.user.authedUser;
 		const etatDuCompte = caisse.etat === "1" ? "C'est Ouverte" : "C'est Fermée";
 		return (
 			<Dimmer.Dimmable blurring dimmed={openCaisseModal || closeCaisseModal}>
@@ -205,7 +206,7 @@ class EtatDuCompte extends PureComponent {
 				<CustomMenu screenName="Etat du Compte">
 					<div>
 						<Grid className={styles.noMarginBottom}>
-							<Grid.Row>
+							<Grid.Row style={role === "contable" ? { display: "block" } : { display: "none" }}>
 								<Grid.Column width={16} floated="right" className={styles.rightAligned}>
 									<div className={styles.buttonSpacing}>
 										<Button

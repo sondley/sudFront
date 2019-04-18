@@ -174,16 +174,22 @@ export function login(username, password, rememberMe) {
 									index: 8
 								},
 								{
+									name: "/taxes",
+									icon: "law",
+									label: "Impots",
+									index: 9
+								},
+								{
 									name: "/devolution",
 									icon: "sync",
 									label: "Devolution du Produit",
-									index: 9
+									index: 10
 								},
 								{
 									name: "/comite_monitor",
 									icon: "sign-in",
 									label: "Rentrez de Comite",
-									index: 10
+									index: 11
 								}
 							];
 							break;

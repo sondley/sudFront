@@ -1,6 +1,6 @@
 import React, { PureComponent } from "react";
 import { connect } from "react-redux";
-import { Button, Icon, Table, Pagination, Dimmer, Loader, Modal, Radio, Form } from "semantic-ui-react";
+import { Button, Icon, Table, Pagination, Dimmer, Loader, Modal, Form } from "semantic-ui-react";
 import { isEmpty } from "lodash";
 
 //Logic
@@ -71,10 +71,7 @@ class PaiementTable extends PureComponent {
 	handleSubmit = e => {
 		e.preventDefault();
 		const item = {
-			idUser: this.state.data._id,
-			idRealisateur: this.props.user.authedUser._id,
-			montant: this.state.data.montant,
-			type: this.state.value
+			idRealisateur: this.props.user.authedUser._id
 		};
 		this.props.dispatch(createPayment(item, this.handleCloseModal));
 	};
@@ -82,7 +79,7 @@ class PaiementTable extends PureComponent {
 	handleOpenModal = (e, item) => {
 		e.preventDefault();
 		e.stopPropagation();
-		const data = { item };
+		const data = item;
 		this.setState({ data, editModal: true });
 	};
 
@@ -95,25 +92,59 @@ class PaiementTable extends PureComponent {
 	renderTableRows = data => {
 		if (!isEmpty(data)) {
 			const rows = data.map(item => {
-				const salaire = "$" + item.salaire + ".00 HTG";
-				const date = new Date(item.date);
+				const estado = item.etat === "0" ? "check" : "close";
+				const color = item.etat === "0" ? "green" : "red";
+				const total = "$" + item.total + ".00 HTG";
+				const date = new Date(item.created);
+				if (item.etat === "1") {
+					return (
+						<Table.Row key={item._id}>
+							<Table.Cell>{total}</Table.Cell>
+							<Table.Cell>{date.toLocaleString("en-US")}</Table.Cell>
+							<Table.Cell>
+								<Icon name={estado} color={color} />
+							</Table.Cell>
+							<Table.Cell>{"Non-Realiser"}</Table.Cell>
+							<Table.Cell collapsing>
+								<Button
+									className={styles.fontSize}
+									content="Realiser Paiement"
+									color="green"
+									onClick={e => {
+										this.handleOpenModal(e, item);
+									}}
+								/>
+							</Table.Cell>
+						</Table.Row>
+					);
+				}
 				return (
 					<Table.Row key={item._id}>
-						<Table.Cell>{item.employee}</Table.Cell>
-						<Table.Cell>{salaire}</Table.Cell>
-						<Table.Cell>{item.etat}</Table.Cell>
+						<Table.Cell>{total}</Table.Cell>
 						<Table.Cell>{date.toLocaleString("en-US")}</Table.Cell>
-						<Table.Cell>{item.realisateur}</Table.Cell>
-						<Table.Cell collapsing>
-							<Button
-								className={styles.fontSize}
-								content="Realiser Paiement"
-								color="green"
-								onClick={e => {
-									this.handleOpenModal(e, item);
-								}}
-							/>
+						<Table.Cell>
+							<Icon name={estado} color={color} />
 						</Table.Cell>
+						<Table.Cell>{item.realisateur}</Table.Cell>
+						<Table.Cell collapsing disabled>
+							<Button className={styles.fontSize} content="Realiser Paiement" color="grey" />
+						</Table.Cell>
+					</Table.Row>
+				);
+			});
+			return rows;
+		}
+		return;
+	};
+
+	renderConfirmTableRows = data => {
+		if (!isEmpty(data)) {
+			const rows = data.map(item => {
+				const total = "$" + item.montant + ".00 HTG";
+				return (
+					<Table.Row key={item._id}>
+						<Table.Cell>{item.nom}</Table.Cell>
+						<Table.Cell>{total}</Table.Cell>
 					</Table.Row>
 				);
 			});
@@ -126,10 +157,6 @@ class PaiementTable extends PureComponent {
 		const { allItems, currentItems, activePage, totalPages, pageLimit } = this.state;
 		const itemRange = (activePage - 1) * pageLimit;
 		const totalItems = allItems.length;
-		const message =
-			this.state.value === "caisse"
-				? "Vous venez de faire une Sollicitude de " + this.state.data.salaire + " dans la Caisse"
-				: "Vous venez de faire une transaction de retrait de " + this.state.data.salaire + " dans le coffre";
 		return (
 			<Dimmer.Dimmable blurring dimmed={this.props.user.isFetching}>
 				<Dimmer page active={this.props.user.isFetching}>
@@ -139,22 +166,21 @@ class PaiementTable extends PureComponent {
 					<Modal.Header>Realiser Paiement</Modal.Header>
 					<Modal.Content>
 						<Form>
+							<Table selectable compact celled striped size="small">
+								<Table.Header>
+									<Table.Row>
+										<Table.HeaderCell>Nom de Employee</Table.HeaderCell>
+										<Table.HeaderCell>Montant</Table.HeaderCell>
+									</Table.Row>
+								</Table.Header>
+								<Table.Body>{this.renderConfirmTableRows(this.state.data.arrayPaiement)}</Table.Body>
+							</Table>
 							<Form.Field className={styles.centered}>d'où voulez-vous payer?</Form.Field>
-							<Form.Field className={styles.spacing}>
-								<Radio
-									label="Caisse"
-									value="caisse"
-									checked={this.state.value === "caisse"}
-									onChange={this.handleChange}
-								/>
-								<Radio
-									label="Coffre"
-									value="coffre"
-									checked={this.state.value === "coffre"}
-									onChange={this.handleChange}
-								/>
+							<Form.Field className={styles.centered}>
+								{"Vous venez d'effectuer un retrait de "}
+								<div className={styles.bold}>${this.state.data.total}.00 HTG</div>
+								{"dans le coffre"}
 							</Form.Field>
-							<Form.Field className={styles.centered}>{message}</Form.Field>
 						</Form>
 					</Modal.Content>
 					<Modal.Actions>
@@ -180,11 +206,10 @@ class PaiementTable extends PureComponent {
 					<Table selectable compact celled striped size="small">
 						<Table.Header>
 							<Table.Row>
-								<Table.HeaderCell>Employée</Table.HeaderCell>
-								<Table.HeaderCell>Salaire</Table.HeaderCell>
+								<Table.HeaderCell>Montant</Table.HeaderCell>
+								<Table.HeaderCell>Date</Table.HeaderCell>
 								<Table.HeaderCell>Etat</Table.HeaderCell>
 								<Table.HeaderCell>Realisateur</Table.HeaderCell>
-								<Table.HeaderCell>Date</Table.HeaderCell>
 								<Table.HeaderCell>Actions</Table.HeaderCell>
 							</Table.Row>
 						</Table.Header>

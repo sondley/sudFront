@@ -5,6 +5,7 @@ import { isEmpty } from "lodash";
 
 //Internal Components
 import CommandeForm from "../commande-form/commandeform";
+import Receipt from "../receipt/receipt";
 
 //Logic
 import { getOrders, validateOrder } from "../../redux/actions/order";
@@ -21,6 +22,7 @@ class ValidateCommandeTable extends PureComponent {
 			validateModal: false,
 			viewModal: false,
 			errorModal: false,
+			printModal: false,
 			data: {},
 			allItems: [],
 			currentItems: [],
@@ -86,9 +88,9 @@ class ValidateCommandeTable extends PureComponent {
 		this.setState({ data: item, validateModal: true });
 	};
 
-	handleSubmit = e => {
+	handleSubmit = async e => {
 		e.preventDefault();
-		if (this.state.ammount !== "" || this.state.value === "cheque") {
+		if (this.state.value === "cheque" || this.state.ammount !== "") {
 			const totalDonne = this.state.value === "effectif" ? this.state.ammount : this.state.data.totalFinal;
 			const valider = {
 				idUser: this.props.user.authedUser._id,
@@ -96,7 +98,8 @@ class ValidateCommandeTable extends PureComponent {
 				typePaiement: this.state.value,
 				totalDonne
 			};
-			return this.props.dispatch(validateOrder(valider, this.handleCloseModal));
+			await this.props.dispatch(validateOrder(valider, this.handleCloseModal));
+			return this.setState({ printModal: true, ammount: "" });
 		}
 		this.setState({ errorModal: true });
 	};
@@ -110,7 +113,7 @@ class ValidateCommandeTable extends PureComponent {
 	};
 
 	handleCloseModal = () => {
-		this.setState({ editModal: false, viewModal: false, validateModal: false, errorModal: false });
+		this.setState({ editModal: false, viewModal: false, validateModal: false, errorModal: false, printModal: false });
 	};
 
 	handleChange = (e, { value }) => this.setState({ value });
@@ -146,7 +149,7 @@ class ValidateCommandeTable extends PureComponent {
 							<Table.Cell>{item.valideur}</Table.Cell>
 							<Table.Cell>{date.toLocaleString("en-US")}</Table.Cell>
 							<Table.Cell>{total}</Table.Cell>
-							<Table.Cell collapsing disabled width={3}>
+							<Table.Cell collapsing disabled>
 								<div className={styles.cellSpacing}>
 									<Button icon="edit" color="grey" />
 									<Button content="Valider" color="grey" />
@@ -170,7 +173,7 @@ class ValidateCommandeTable extends PureComponent {
 							<Table.Cell>{"Non-Valide"}</Table.Cell>
 							<Table.Cell>{date.toLocaleString("en-US")}</Table.Cell>
 							<Table.Cell>{total}</Table.Cell>
-							<Table.Cell collapsing width={3}>
+							<Table.Cell collapsing>
 								<div className={styles.cellSpacing}>
 									<Button
 										icon="edit"
@@ -291,15 +294,19 @@ class ValidateCommandeTable extends PureComponent {
 						<Message.Content content="vous devez insérer un montant" className={styles.paddingBottom} />
 					</Message>
 				</Modal>
+				<Modal open={this.state.printModal} onClose={this.handleCloseModal}>
+					<Receipt data={this.props.order.printOrder} />
+				</Modal>
 				{this.renderModal(this.state.validateModal)}
+				<div style={{ display: "none" }} />
 				<div>
 					<Table selectable compact celled striped size="small">
 						<Table.Header>
 							<Table.Row>
-								<Table.HeaderCell>Nom de Client</Table.HeaderCell>
-								<Table.HeaderCell>Nom de Vendeur</Table.HeaderCell>
+								<Table.HeaderCell>Client</Table.HeaderCell>
+								<Table.HeaderCell>Vendeur</Table.HeaderCell>
 								<Table.HeaderCell>Etat</Table.HeaderCell>
-								<Table.HeaderCell>Nom de Valideur</Table.HeaderCell>
+								<Table.HeaderCell>Valideur</Table.HeaderCell>
 								<Table.HeaderCell>Date</Table.HeaderCell>
 								<Table.HeaderCell>Total</Table.HeaderCell>
 								<Table.HeaderCell>Actions</Table.HeaderCell>

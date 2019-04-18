@@ -54,3 +54,8 @@
 	font-size: 18px !important;
 	padding: 5px 0px !important;
 }
+
+.centered {
+	text-align: center !important;
+	justify-content: center !important;
+}

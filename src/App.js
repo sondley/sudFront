@@ -45,6 +45,7 @@ import Utilisateurs from "./screens/utilisateurs/utilisateurs";
 import Salaire from "./screens/salaire/salaire";
 import ComiteMonitor from "./screens/comiteMonitor/comiteMonitor";
 import Devolution from "./screens/devolution/devolution";
+import Impots from "./screens/impots/impots";
 
 //Styles
 import styles from "./App.module.css";
@@ -58,13 +59,9 @@ class App extends PureComponent {
 			message: []
 		};
 		this.idleTimer = null;
+		this.props.dispatch(getCaisseStatus());
+		this.props.dispatch(checkSession());
 	}
-
-	componentDidMount = async () => {
-		await this.props.dispatch(getCaisseStatus());
-		//Check Session should always be last
-		await this.props.dispatch(checkSession());
-	};
 
 	componentDidUpdate = () => {
 		this.handleOpenModal();
@@ -101,7 +98,8 @@ class App extends PureComponent {
 			compte,
 			sollicitude,
 			payment,
-			debt
+			debt,
+			tax
 		} = this.props.state;
 		if (user.error) {
 			return this.setState({ errorModal: true, message: user.message });
@@ -125,6 +123,8 @@ class App extends PureComponent {
 			return this.setState({ errorModal: true, message: payment.message });
 		} else if (debt.error) {
 			return this.setState({ errorModal: true, message: debt.message });
+		} else if (tax.error) {
+			return this.setState({ errorModal: true, message: tax.message });
 		} else {
 			return this.setState({ errorModal: false });
 		}
@@ -195,6 +195,7 @@ class App extends PureComponent {
 							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/devolution"} component={Devolution} />
 							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/debt_payable"} component={ComptesPayer} />
 							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/debt_recievable"} component={ComptesRecevoir} />
+							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/taxes"} component={Impots} />
 						</Switch>
 					</div>
 				</Dimmer.Dimmable>
