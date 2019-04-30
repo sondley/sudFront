@@ -73,7 +73,7 @@ class CompteTable extends PureComponent {
 	renderTableRows = data => {
 		if (!isEmpty(data)) {
 			const rows = data.map(item => {
-				const montant = "$" + item.montant + ".00 HTG";
+				const montant = "$" + item.montant + ".00 HTD";
 				const date = new Date(item.created);
 				if (item.flux === "Rentree") {
 					return (

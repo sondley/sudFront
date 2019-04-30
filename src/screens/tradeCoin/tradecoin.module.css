@@ -54,3 +54,21 @@
 		margin-bottom: 4px !important;
 	}
 }
+
+.noStyleList {
+	text-decoration: none !important;
+	list-style: none !important;
+	padding: 10px 0px 25px 0px !important;
+}
+
+.dimmerMargin {
+	width: 400px !important;
+	display: flex !important;
+	flex-direction: column !important;
+	justify-content: space-around !important;
+	text-align: center !important;
+}
+
+.paddingBottom {
+	padding-bottom: 10px !important;
+}

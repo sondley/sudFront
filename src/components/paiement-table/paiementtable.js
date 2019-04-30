@@ -94,7 +94,7 @@ class PaiementTable extends PureComponent {
 			const rows = data.map(item => {
 				const estado = item.etat === "0" ? "check" : "close";
 				const color = item.etat === "0" ? "green" : "red";
-				const total = "$" + item.total + ".00 HTG";
+				const total = "$" + item.total + ".00 HTD";
 				const date = new Date(item.created);
 				if (item.etat === "1") {
 					return (
@@ -140,7 +140,7 @@ class PaiementTable extends PureComponent {
 	renderConfirmTableRows = data => {
 		if (!isEmpty(data)) {
 			const rows = data.map(item => {
-				const total = "$" + item.montant + ".00 HTG";
+				const total = "$" + item.montant + ".00 HTD";
 				return (
 					<Table.Row key={item._id}>
 						<Table.Cell>{item.nom}</Table.Cell>
@@ -178,7 +178,7 @@ class PaiementTable extends PureComponent {
 							<Form.Field className={styles.centered}>d'où voulez-vous payer?</Form.Field>
 							<Form.Field className={styles.centered}>
 								{"Vous venez d'effectuer un retrait de "}
-								<div className={styles.bold}>${this.state.data.total}.00 HTG</div>
+								<div className={styles.bold}>${this.state.data.total}.00 HTD</div>
 								{"dans le coffre"}
 							</Form.Field>
 						</Form>

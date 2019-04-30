@@ -4,8 +4,8 @@ import { connect } from "react-redux";
 
 //Components
 import CustomMenu from "../../components/custom-menu/custom-menu";
-import CommandeTable from "../../components/commande-table/commandetable";
-import CommandeForm from "../../components/commande-form/commandeform";
+import DevolutionTable from "../../components//devolution-table/devolutiontable";
+import DevolutionForm from "../../components/devolution-form/devolutionform";
 
 //Logic
 import { endNavigation, getPageIndexByRoute } from "../../redux/actions/navigate";
@@ -39,7 +39,7 @@ class Devolution extends PureComponent {
 		return (
 			<Dimmer.Dimmable blurring dimmed={this.state.modalIsOpen}>
 				<Modal open={this.state.modalIsOpen} onClose={this.handleCloseModal}>
-					<CommandeForm onClose={this.handleCloseModal} />
+					<DevolutionForm onClose={this.handleCloseModal} />
 				</Modal>
 				<CustomMenu screenName="Devolution">
 					<div>
@@ -52,7 +52,7 @@ class Devolution extends PureComponent {
 								</Grid.Column>
 							</Grid.Row>
 						</Grid>
-						<CommandeTable />
+						<DevolutionTable />
 					</div>
 				</CustomMenu>
 			</Dimmer.Dimmable>

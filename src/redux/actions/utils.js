@@ -10,7 +10,3 @@ export function resetError() {
 		return dispatch(requestBegin(RESET_ERRORS));
 	};
 }
-
-export function paginationChange() {
-	return dispatch => {};
-}

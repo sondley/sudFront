@@ -36,6 +36,7 @@ import AccountingRapports from "./screens/accountingRapports/accountingRapports"
 import Banque from "./screens/banque/banque";
 import ComptesPayer from "./screens/comptesPayer/comptespayer";
 import ComptesRecevoir from "./screens/comptesRecevoir/comptesrecevoir";
+import Finances from "./screens/finances/finances";
 //Assistance Screens
 import AssistanceRapports from "./screens/assistanceRapports/assistanceRapports";
 import Fournisseurs from "./screens/fournisseurs/fournisseurs";
@@ -99,7 +100,9 @@ class App extends PureComponent {
 			sollicitude,
 			payment,
 			debt,
-			tax
+			tax,
+			devolution,
+			finance
 		} = this.props.state;
 		if (user.error) {
 			return this.setState({ errorModal: true, message: user.message });
@@ -125,6 +128,10 @@ class App extends PureComponent {
 			return this.setState({ errorModal: true, message: debt.message });
 		} else if (tax.error) {
 			return this.setState({ errorModal: true, message: tax.message });
+		} else if (devolution.error) {
+			return this.setState({ errorModal: true, message: devolution.message });
+		} else if (finance.error) {
+			return this.setState({ errorModal: true, message: finance.message });
 		} else {
 			return this.setState({ errorModal: false });
 		}
@@ -196,6 +203,7 @@ class App extends PureComponent {
 							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/debt_payable"} component={ComptesPayer} />
 							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/debt_recievable"} component={ComptesRecevoir} />
 							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/taxes"} component={Impots} />
+							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/finances"} component={Finances} />
 						</Switch>
 					</div>
 				</Dimmer.Dimmable>

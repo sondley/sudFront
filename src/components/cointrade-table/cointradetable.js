@@ -28,13 +28,13 @@ class CoinTradeTable extends PureComponent {
 		};
 	}
 
-	async componentDidMount() {
+	componentDidMount = async () => {
 		await this.props.dispatch(getCoinTrades());
 		const allItems = this.props.cointrade.transactions;
 		const totalPages = Math.ceil(allItems.length / this.state.pageLimit);
 		const currentItems = allItems.slice(0, this.state.pageLimit);
 		this.setState({ allItems, currentItems, totalPages });
-	}
+	};
 
 	componentDidUpdate = () => {
 		if (this.state.allItems !== this.props.cointrade.transactions) {
@@ -97,8 +97,8 @@ class CoinTradeTable extends PureComponent {
 			const rows = data.map(item => {
 				const estado = item.etat === "0" ? "check" : "close";
 				const color = item.etat === "0" ? "green" : "red";
-				const parsedtotal = "$" + item.total + ".00 HTG";
-				const prix = "$" + item.total / item.quantite + ".00 HTG";
+				const parsedtotal = "$" + item.total + ".00 HTD";
+				const prix = "$" + item.total / item.quantite + ".00 HTD";
 				const moneyCell = type => {
 					if (type === "vendre") return <Table.Cell positive>{parsedtotal}</Table.Cell>;
 					else return <Table.Cell negative>{parsedtotal}</Table.Cell>;

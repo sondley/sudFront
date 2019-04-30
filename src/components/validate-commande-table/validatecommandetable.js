@@ -9,6 +9,7 @@ import Receipt from "../receipt/receipt";
 
 //Logic
 import { getOrders, validateOrder } from "../../redux/actions/order";
+import { currencyFormat } from "../../assets/utils";
 
 //Styles
 import styles from "./validatecommandetable.module.css";
@@ -30,7 +31,8 @@ class ValidateCommandeTable extends PureComponent {
 			activePage: 1,
 			pageLimit: 10,
 			value: "effectif",
-			ammount: ""
+			ammount: "",
+			rabais: 0
 		};
 	}
 
@@ -96,7 +98,8 @@ class ValidateCommandeTable extends PureComponent {
 				idUser: this.props.user.authedUser._id,
 				idCommande: this.state.data._id,
 				typePaiement: this.state.value,
-				totalDonne
+				totalDonne,
+				rabais: this.state.rabais
 			};
 			await this.props.dispatch(validateOrder(valider, this.handleCloseModal));
 			return this.setState({ printModal: true, ammount: "" });
@@ -131,7 +134,7 @@ class ValidateCommandeTable extends PureComponent {
 			const rows = data.map(item => {
 				const estado = item.etat === "0" ? "check" : "close";
 				const color = item.etat === "0" ? "green" : "red";
-				const total = "$" + item.totalFinal + ".00 HTG";
+				const total = currencyFormat(item.totalFinal) + " HTD";
 				const date = new Date(item.created);
 				if (item.etat === "0") {
 					return (
@@ -201,8 +204,8 @@ class ValidateCommandeTable extends PureComponent {
 
 	renderEffectif = value => {
 		if (value === "effectif") {
-			const monnaie = this.state.ammount - this.state.data.totalFinal;
-			const text = monnaie > 0 ? "Monnaie: $" + monnaie + ".00 HTG" : "Dette: $" + monnaie + ".00 HTG";
+			const monnaie = currencyFormat(this.state.ammount - this.state.data.totalFinal);
+			const text = monnaie > 0 ? "Monnaie: " + monnaie + " HTD" : "Dette: " + monnaie + " HTD";
 			return (
 				<div>
 					<Form.Field required>
@@ -229,8 +232,20 @@ class ValidateCommandeTable extends PureComponent {
 				<Modal.Header>Valider Commande</Modal.Header>
 				<Modal.Content>
 					<Form>
+						<Form.Field required>
+							<label className={styles.basicFormSpacing}>Rabais</label>
+							<Input
+								icon="money"
+								iconPosition="left"
+								placeholder="rabais"
+								name="rabais"
+								type="number"
+								onChange={this.handleInputOnChange}
+								value={this.state.rabais}
+							/>
+						</Form.Field>
 						<Form.Field className={styles.centered}>
-							Montant a Payer: <strong>${this.state.data.totalFinal}.00 HTG</strong>
+							Montant a Payer: <strong>{currencyFormat(this.state.data.totalFinal - this.state.rabais)} HTD</strong>
 						</Form.Field>
 						<Form.Field className={styles.spacing}>
 							<Radio

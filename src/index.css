@@ -144,6 +144,10 @@ body {
 	background-color: #eeeeee !important;
 }
 
+body::-webkit-scrollbar {
+	width: 0px;
+}
+
 .ui.checkbox label {
 	padding-left: 22px !important;
 }

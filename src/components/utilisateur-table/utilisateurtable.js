@@ -111,7 +111,7 @@ class UtilisateurTable extends PureComponent {
 	renderTableRows = data => {
 		if (!isEmpty(data)) {
 			const rows = data.map(item => {
-				const salaire = "$" + item.salaire + ".00 HTG";
+				const salaire = "$" + item.salaire + ".00 HTD";
 				if (item.etat === "1") {
 					return (
 						<Table.Row

@@ -4,13 +4,13 @@ import { Button, Icon, Table, Pagination, Dimmer, Loader, Modal } from "semantic
 import { isEmpty } from "lodash";
 
 //Internal Components
-import CommandeForm from "../commande-form/commandeform";
+import DevolutionForm from "../devolution-form/devolutionform";
 
 //Logic
-import { getOrders, deleteOrder } from "../../redux/actions/order";
+import { getDevolutions, deleteDevolution, validateDevolution } from "../../redux/actions/devolution";
 
 //Styles
-import styles from "./commandetable.module.css";
+import styles from "./devolutiontable.module.css";
 
 class DevolutionTable extends PureComponent {
 	constructor(props) {
@@ -20,6 +20,7 @@ class DevolutionTable extends PureComponent {
 			editModal: false,
 			viewModal: false,
 			deleteModal: false,
+			validateModal: false,
 			allItems: [],
 			currentItems: [],
 			totalPages: 0,
@@ -30,16 +31,16 @@ class DevolutionTable extends PureComponent {
 	}
 
 	componentDidMount = async () => {
-		await this.props.dispatch(getOrders());
-		const allItems = this.props.order.orders;
+		await this.props.dispatch(getDevolutions());
+		const allItems = this.props.devolution.devolutions;
 		const totalPages = Math.ceil(allItems.length / this.state.pageLimit);
 		const currentItems = allItems.slice(0, this.state.pageLimit);
 		this.setState({ allItems, currentItems, totalPages });
 	};
 
 	componentDidUpdate = () => {
-		if (this.state.allItems !== this.props.order.orders) {
-			const allItems = this.props.order.orders;
+		if (this.state.allItems !== this.props.devolution.devolutions) {
+			const allItems = this.props.devolution.devolutions;
 			const totalPages = Math.ceil(allItems.length / this.state.pageLimit);
 			const currentItems = allItems.slice(0, this.state.pageLimit);
 			this.setState({ allItems, currentItems, totalPages });
@@ -77,6 +78,22 @@ class DevolutionTable extends PureComponent {
 		this.setState({ data: item, editModal: true, viewModal: false });
 	};
 
+	handleValidate = (e, id) => {
+		e.preventDefault();
+		e.stopPropagation();
+		const data = { id };
+		this.setState({ data, validateModal: true });
+	};
+
+	handleSubmit = e => {
+		e.preventDefault();
+		const valider = {
+			idUser: this.props.user.authedUser._id,
+			idDevolution: this.state.data.id
+		};
+		return this.props.dispatch(validateDevolution(valider, this.handleCloseModal));
+	};
+
 	handleRowClick = (e, item) => {
 		e.preventDefault();
 		e.stopPropagation();
@@ -87,7 +104,7 @@ class DevolutionTable extends PureComponent {
 
 	handleDelete = e => {
 		e.preventDefault();
-		this.props.dispatch(deleteOrder(this.state.data.id, this.handleCloseModal));
+		this.props.dispatch(deleteDevolution(this.state.data.id, this.handleCloseModal));
 	};
 
 	handleOpenModal = (e, id) => {
@@ -98,18 +115,7 @@ class DevolutionTable extends PureComponent {
 	};
 
 	handleCloseModal = () => {
-		this.setState({ editModal: false, deleteModal: false, viewModal: false });
-	};
-
-	renderTotal = data => {
-		const total = data.reduce((intTotal, objItem) => {
-			if (objItem.etat === "0") {
-				return intTotal + parseInt(objItem.totalFinal);
-			}
-			return intTotal;
-		}, 0);
-
-		return total;
+		this.setState({ editModal: false, deleteModal: false, viewModal: false, validateModal: false });
 	};
 
 	renderTableRows = data => {
@@ -117,7 +123,6 @@ class DevolutionTable extends PureComponent {
 			const rows = data.map(item => {
 				const estado = item.etat === "0" ? "check" : "close";
 				const color = item.etat === "0" ? "green" : "red";
-				const total = "$" + item.totalFinal + ".00 HTG";
 				const date = new Date(item.created);
 				if (item.etat === "0") {
 					return (
@@ -128,29 +133,19 @@ class DevolutionTable extends PureComponent {
 							}}
 						>
 							<Table.Cell>{item.client}</Table.Cell>
-							<Table.Cell>{item.vendeur}</Table.Cell>
+							<Table.Cell>{item.realisateur}</Table.Cell>
 							<Table.Cell>
 								<Icon name={estado} color={color} />
 							</Table.Cell>
 							<Table.Cell>{item.valideur}</Table.Cell>
 							<Table.Cell>{date.toLocaleString("en-US")}</Table.Cell>
-							<Table.Cell>{total}</Table.Cell>
 							<Table.Cell collapsing disabled>
-								<div className={styles.cellSpacing}>
-									<Button
-										icon="edit"
-										color="grey"
-										onClick={e => {
-											this.handleEdit(e, item);
-										}}
-									/>
-									<Button
-										icon="trash"
-										color="grey"
-										onClick={e => {
-											this.handleOpenModal(e, item._id);
-										}}
-									/>
+								<div className={styles.cellSpacingFor3}>
+									<Button content="Valider" color="grey" />
+									<div className={styles.responsiveCell}>
+										<Button icon="edit" color="grey" />
+										<Button icon="trash" color="grey" />
+									</div>
 								</div>
 							</Table.Cell>
 						</Table.Row>
@@ -164,29 +159,37 @@ class DevolutionTable extends PureComponent {
 						}}
 					>
 						<Table.Cell>{item.client}</Table.Cell>
-						<Table.Cell>{item.vendeur}</Table.Cell>
+						<Table.Cell>{item.realisateur}</Table.Cell>
 						<Table.Cell>
 							<Icon name={estado} color={color} />
 						</Table.Cell>
 						<Table.Cell>{"Non-Valide"}</Table.Cell>
 						<Table.Cell>{date.toLocaleString("en-US")}</Table.Cell>
-						<Table.Cell>{total}</Table.Cell>
 						<Table.Cell collapsing>
-							<div className={styles.cellSpacing}>
+							<div className={styles.cellSpacingFor3}>
 								<Button
-									icon="edit"
-									color="blue"
+									content="Valider"
+									color="green"
 									onClick={e => {
-										this.handleEdit(e, item);
+										this.handleValidate(e, item._id);
 									}}
 								/>
-								<Button
-									icon="trash"
-									color="red"
-									onClick={e => {
-										this.handleOpenModal(e, item._id);
-									}}
-								/>
+								<div className={styles.responsiveCell}>
+									<Button
+										icon="edit"
+										color="blue"
+										onClick={e => {
+											this.handleEdit(e, item);
+										}}
+									/>
+									<Button
+										icon="trash"
+										color="red"
+										onClick={e => {
+											this.handleOpenModal(e, item._id);
+										}}
+									/>
+								</div>
 							</div>
 						</Table.Cell>
 					</Table.Row>
@@ -202,15 +205,39 @@ class DevolutionTable extends PureComponent {
 		const itemRange = (activePage - 1) * pageLimit;
 		const totalItems = allItems.length;
 		return (
-			<Dimmer.Dimmable blurring dimmed={this.props.order.isFetching}>
-				<Dimmer page active={this.props.order.isFetching}>
+			<Dimmer.Dimmable blurring dimmed={this.props.devolution.isFetching}>
+				<Dimmer page active={this.props.devolution.isFetching}>
 					<Loader size="huge">Loading...</Loader>
 				</Dimmer>
 				<Modal open={this.state.editModal} onClose={this.handleCloseModal}>
-					<CommandeForm edit data={this.state.data} onClose={this.handleCloseModal} />
+					<DevolutionForm edit data={this.state.data} onClose={this.handleCloseModal} />
 				</Modal>
 				<Modal open={this.state.viewModal} onClose={this.handleCloseModal}>
-					<CommandeForm view data={this.state.data} onClose={this.handleCloseModal} />
+					<DevolutionForm view data={this.state.data} onClose={this.handleCloseModal} />
+				</Modal>
+				<Modal size="small" open={this.state.validateModal} onClose={this.handleCloseModal}>
+					<Modal.Header>Valider Devolution</Modal.Header>
+					<Modal.Content>
+						<p>Es-tu sure que tu veux valider la devolution?</p>
+					</Modal.Content>
+					<Modal.Actions>
+						<Button
+							className={styles.rightSpacing}
+							negative
+							icon="cancel"
+							labelPosition="right"
+							content="No"
+							onClick={this.handleCloseModal}
+						/>
+						<Button
+							className={styles.leftSpacing}
+							positive
+							icon="checkmark"
+							labelPosition="right"
+							content="Yes"
+							onClick={this.handleDelete}
+						/>
+					</Modal.Actions>
 				</Modal>
 				<Modal size="small" open={this.state.deleteModal} onClose={this.handleCloseModal}>
 					<Modal.Header>Eliminer Devolution</Modal.Header>
@@ -240,12 +267,11 @@ class DevolutionTable extends PureComponent {
 					<Table selectable compact celled striped size="small">
 						<Table.Header>
 							<Table.Row>
-								<Table.HeaderCell>Nom de Client</Table.HeaderCell>
-								<Table.HeaderCell>Nom de Vendeur</Table.HeaderCell>
+								<Table.HeaderCell>Client</Table.HeaderCell>
+								<Table.HeaderCell>Realisateur</Table.HeaderCell>
 								<Table.HeaderCell>Etat</Table.HeaderCell>
-								<Table.HeaderCell>Nom de Valideur</Table.HeaderCell>
+								<Table.HeaderCell>Valideur</Table.HeaderCell>
 								<Table.HeaderCell>Date</Table.HeaderCell>
-								<Table.HeaderCell>Total</Table.HeaderCell>
 								<Table.HeaderCell>Actions</Table.HeaderCell>
 							</Table.Row>
 						</Table.Header>
@@ -271,8 +297,8 @@ class DevolutionTable extends PureComponent {
 	}
 }
 
-function mapStateToProps({ order }) {
-	return { order };
+function mapStateToProps({ devolution }) {
+	return { devolution };
 }
 
 export default connect(mapStateToProps)(DevolutionTable);

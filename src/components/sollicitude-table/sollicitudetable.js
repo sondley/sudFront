@@ -145,7 +145,7 @@ class TauxTable extends PureComponent {
 			const rows = data.map(item => {
 				const estado = item.etat === "0" ? "check" : "close";
 				const color = item.etat === "0" ? "green" : "red";
-				const total = "$" + item.quantite + ".00 HTG";
+				const total = "$" + item.quantite + ".00 HTD";
 				const date = new Date(item.created);
 				if (this.props.user.authedUser.role === "caissier") {
 					if (item.etat === "0") {
@@ -282,10 +282,10 @@ class TauxTable extends PureComponent {
 				<Modal.Content>
 					<Form>
 						<Form.Field>
-							<label>Argent Disponible: ${this.props.compte.moneyCompte}.00 HTG</label>
+							<label>Argent Disponible: ${this.props.compte.moneyCompte}.00 HTD</label>
 						</Form.Field>
 						<Form.Field>
-							<label>Montant Demandé: ${this.state.data.quantite}.00 HTG</label>
+							<label>Montant Demandé: ${this.state.data.quantite}.00 HTD</label>
 						</Form.Field>
 						<Form.Field required>
 							<label className={styles.basicFormSpacing}>Montant</label>

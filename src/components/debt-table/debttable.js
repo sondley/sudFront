@@ -116,7 +116,7 @@ class DebtTable extends PureComponent {
 	renderTableRows = data => {
 		if (!isEmpty(data)) {
 			const rows = data.map(item => {
-				const salaire = "$" + item.quantite + ".00 HTG";
+				const salaire = "$" + item.quantite + ".00 HTD";
 				if (this.state.type === "payer") {
 					return (
 						<Table.Row key={item._id} negative>
@@ -163,8 +163,8 @@ class DebtTable extends PureComponent {
 		const totalItems = allItems.length;
 		const message =
 			type === "payer"
-				? "Montant a Payer: $" + data.quantite + ".00 HTG"
-				: "Montant a Recevoir: $" + data.quantite + ".00 HTG";
+				? "Montant a Payer: $" + data.quantite + ".00 HTD"
+				: "Montant a Recevoir: $" + data.quantite + ".00 HTD";
 
 		if (type === "payer") {
 			return (

@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import { Grid, Button, Modal } from "semantic-ui-react";
+import { Grid, Button, Modal, Dimmer, Loader } from "semantic-ui-react";
 import { connect } from "react-redux";
 
 //Components
@@ -7,9 +7,28 @@ import CustomMenu from "../../components/custom-menu/custom-menu";
 import BNRReport from "../../components/BNRRapport/bnrrapport";
 import BalanceReport from "../../components/BalanceRapport/balancerapport";
 import ResultatReport from "../../components/ResultatRapport/resultatrapport";
+//import Receipt from "../../components/receipt/receipt";
 
 //Logic
 import { endNavigation, getPageIndexByRoute } from "../../redux/actions/navigate";
+import { getAllData } from "../../redux/actions/finance";
+
+// const data = {
+// 	numero: 5,
+// 	totalDonne: 1500,
+// 	totalFinal: 1500,
+// 	client: "Jason",
+// 	vendeur: "Sondley",
+// 	arrayOrden: [
+// 		{
+// 			_id: "abc123",
+// 			quantite: 5,
+// 			nom: "riz",
+// 			prixUnite: 300,
+// 			total: 1500
+// 		}
+// 	]
+// };
 
 class AccountingRapports extends PureComponent {
 	constructor(props) {
@@ -25,6 +44,10 @@ class AccountingRapports extends PureComponent {
 		}
 		this.props.dispatch(getPageIndexByRoute(window.location.pathname));
 	}
+
+	componentDidMount = async () => {
+		await this.props.dispatch(getAllData());
+	};
 
 	handleCloseModal = () => {
 		this.setState({ bnrModal: false, bilanModal: false, resultatModal: false });
@@ -47,7 +70,10 @@ class AccountingRapports extends PureComponent {
 
 	render() {
 		return (
-			<React.Fragment>
+			<Dimmer.Dimmable blurring dimmed={this.props.finance.isFetching}>
+				<Dimmer page active={this.props.finance.isFetching}>
+					<Loader size="huge">Loading...</Loader>
+				</Dimmer>
 				<Modal open={this.state.bnrModal} onClose={this.handleCloseModal}>
 					<BNRReport />
 				</Modal>
@@ -80,13 +106,13 @@ class AccountingRapports extends PureComponent {
 						</Grid.Row>
 					</Grid>
 				</CustomMenu>
-			</React.Fragment>
+			</Dimmer.Dimmable>
 		);
 	}
 }
 
-function mapStateToProps({ navigation }) {
-	return { navigation };
+function mapStateToProps({ navigation, finance }) {
+	return { navigation, finance };
 }
 
 export default connect(mapStateToProps)(AccountingRapports);

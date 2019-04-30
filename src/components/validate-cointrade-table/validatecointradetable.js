@@ -101,7 +101,7 @@ class ValiderCoinTradeTable extends PureComponent {
 			const rows = data.map(item => {
 				const estado = item.etat === "0" ? "check" : "close";
 				const color = item.etat === "0" ? "green" : "red";
-				const parsedtotal = "$" + item.total + ".00 HTG";
+				const parsedtotal = "$" + item.total + ".00 HTD";
 				const date = new Date(item.created);
 				const moneyCell = type => {
 					if (type === "vendre") return <Table.Cell positive>{parsedtotal}</Table.Cell>;

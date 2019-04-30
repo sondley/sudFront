@@ -246,14 +246,14 @@ class BuyForm extends PureComponent {
 		if (etat === "0") {
 			return (
 				<div className={styles.labelMultipleSpacing}>
-					<label className={styles.flexEnd}>Transport Frais: ${this.props.data.transportFrais}.00 HTG</label>
-					<label className={styles.flexEnd}>Autres: ${this.props.data.autres}.00 HTG</label>
+					<label className={styles.flexEnd}>Transport Frais: ${this.props.data.transportFrais}.00 HTD</label>
+					<label className={styles.flexEnd}>Autres: ${this.props.data.autres}.00 HTD</label>
 					<Divider />
-					<label className={styles.flexEnd}>Total: ${this.props.data.totalFinal}.00 HTG</label>
+					<label className={styles.flexEnd}>Total: ${this.props.data.totalFinal}.00 HTD</label>
 				</div>
 			);
 		}
-		return <div className={styles.labelSpacing}>Total: ${this.state.total}.00 HTG</div>;
+		return <div className={styles.labelSpacing}>Total: ${this.state.total}.00 HTD</div>;
 	};
 
 	render() {

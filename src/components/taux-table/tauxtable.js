@@ -82,8 +82,8 @@ class TauxTable extends PureComponent {
 	renderTableRows = data => {
 		if (!isEmpty(data)) {
 			const rows = data.map(item => {
-				const vente = "$" + item.prixVente + " HTG";
-				const achat = "$" + item.prixAchat + " HTG";
+				const vente = "$" + item.prixVente + " HTD";
+				const achat = "$" + item.prixAchat + " HTD";
 				return (
 					<Table.Row key={item._id}>
 						<Table.Cell>{item.nom}</Table.Cell>

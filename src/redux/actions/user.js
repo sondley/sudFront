@@ -272,10 +272,16 @@ export function login(username, password, rememberMe) {
 									index: 6
 								},
 								{
+									name: "/finances",
+									icon: "law",
+									label: "Finances",
+									index: 7
+								},
+								{
 									name: "/accounting_reports",
 									icon: "chart bar outline",
 									label: "Rapports",
-									index: 7
+									index: 8
 								}
 							];
 							break;

@@ -8,6 +8,7 @@ import BuyForm from "../buy-form/buyform";
 
 //Logic
 import { getBuys, deleteBuy, validateBuy } from "../../redux/actions/buys";
+import { currencyFormat } from "../../assets/utils";
 
 //Styles
 import styles from "./buytable.module.css";
@@ -30,6 +31,7 @@ class BuyTable extends PureComponent {
 			data: {},
 			transportFrais: 0,
 			autres: 0,
+			rabais: 0,
 			ammount: ""
 		};
 	}
@@ -120,7 +122,8 @@ class BuyTable extends PureComponent {
 				idAchat: this.state.data,
 				transportFrais: this.state.transportFrais,
 				autres: this.state.autres,
-				montant: this.state.ammount
+				montant: this.state.ammount,
+				rabais: this.state.rabais
 			};
 			return this.props.dispatch(validateBuy(valider, this.handleCloseModal));
 		}
@@ -142,8 +145,8 @@ class BuyTable extends PureComponent {
 			const rows = data.map(item => {
 				const estado = item.etat === "0" ? "check" : "close";
 				const color = item.etat === "0" ? "green" : "red";
-				const total = "$" + item.total + ".00 HTG";
-				const totalFinal = "$" + item.totalFinal + ".00 HTG";
+				const total = currencyFormat(item.total) + " HTD";
+				const totalFinal = currencyFormat(parseInt(item.totalFinal)) + " HTD";
 				const date = new Date(item.created);
 				if (this.props.user.authedUser.role === "contable") {
 					if (item.etat === "0") {
@@ -287,8 +290,8 @@ class BuyTable extends PureComponent {
 	};
 
 	renderEffectif = payer => {
-		const monnaie = this.state.ammount - payer;
-		const text = monnaie > 0 ? "Monnaie: $" + monnaie + ".00 HTG" : "Dette: $" + monnaie + ".00 HTG";
+		const monnaie = currencyFormat(this.state.ammount - payer);
+		const text = monnaie > 0 ? "Monnaie: " + monnaie + " HTD" : "Dette: " + monnaie + " HTD";
 		return (
 			<div>
 				<Form.Field required>
@@ -309,14 +312,18 @@ class BuyTable extends PureComponent {
 	};
 
 	renderModal = validateModal => {
-		const payer = parseInt(this.state.data.total) + parseInt(this.state.autres) + parseInt(this.state.transportFrais);
+		const payer =
+			parseInt(this.state.data.total) +
+			parseInt(this.state.autres) +
+			parseInt(this.state.transportFrais) -
+			parseInt(this.state.rabais);
 		return (
 			<Modal size="small" open={validateModal} onClose={this.handleCloseModal}>
 				<Modal.Header>Valider Achat</Modal.Header>
 				<Modal.Content>
 					<Form>
 						<Form.Field className={styles.centered}>
-							Total Achat: <strong>${parseInt(this.state.data.total)}.00 HTG</strong>
+							Total Achat: <strong>{currencyFormat(parseInt(this.state.data.total))} HTD</strong>
 						</Form.Field>
 						<Form.Field required>
 							<label className={styles.basicFormSpacing}>Transport Frais</label>
@@ -342,8 +349,20 @@ class BuyTable extends PureComponent {
 								value={this.state.autres}
 							/>
 						</Form.Field>
+						<Form.Field required>
+							<label className={styles.basicFormSpacing}>Rabais</label>
+							<Input
+								icon="money"
+								iconPosition="left"
+								placeholder="Rabais"
+								name="rabais"
+								type="number"
+								onChange={this.handleInputOnChange}
+								value={this.state.rabais}
+							/>
+						</Form.Field>
 						<Form.Field className={styles.centered}>
-							Montant a Payer: <strong>${payer}.00 HTG</strong>
+							Montant a Payer: <strong>{currencyFormat(payer)} HTD</strong>
 						</Form.Field>
 						{this.renderEffectif(payer)}
 					</Form>

@@ -171,12 +171,12 @@ class CoinTradeForm extends PureComponent {
 		if (Monnaie !== undefined) {
 			Recevoir =
 				this.state.type === "vendre"
-					? "$" + this.state.quantite + " HTG"
+					? "$" + this.state.quantite + " HTD"
 					: "$" + this.state.quantite + " " + Monnaie.nom;
 			Payer =
 				this.state.type === "vendre"
 					? "$" + this.state.quantite / Monnaie.prixVente + " " + Monnaie.nom
-					: "$" + this.state.quantite * Monnaie.prixAchat + " HTG";
+					: "$" + this.state.quantite * Monnaie.prixAchat + " HTD";
 		}
 
 		return (
@@ -202,10 +202,10 @@ class CoinTradeForm extends PureComponent {
 		const options =
 			this.state.type === "vendre"
 				? this.props.taux.monnaies.map(item => {
-						return { text: item.nom + " $" + item.prixVente + " HTG", value: item._id };
+						return { text: item.nom + " $" + item.prixVente + " HTD", value: item._id };
 				  })
 				: this.props.taux.monnaies.map(item => {
-						return { text: item.nom + " $" + item.prixAchat + " HTG", value: item._id };
+						return { text: item.nom + " $" + item.prixAchat + " HTD", value: item._id };
 				  });
 		let title = "Entrain de Ajouter";
 		let label = "Ajouter";

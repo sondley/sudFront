@@ -64,7 +64,7 @@ class ReceiptMonnaie extends PureComponent {
 								<Text style={styles.endTableColumnLast}>{this.currencyFormat(total)}</Text>
 							</View>
 							<View style={styles.payment}>
-								<Text style={styles.bigText}>Total: {this.currencyFormat(total)} HTG</Text>
+								<Text style={styles.bigText}>Total: {this.currencyFormat(total)} HTD</Text>
 							</View>
 						</View>
 					</Page>

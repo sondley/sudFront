@@ -140,7 +140,8 @@ export function validateOrder(item, onClose) {
 				idUser: item.idUser,
 				idCommande: item.idCommande,
 				typePaiement: item.typePaiement,
-				totalDonne: item.totalDonne
+				totalDonne: item.totalDonne,
+				rabais: item.rabais
 			})
 			.then(objResponse => {
 				if (objResponse.data.success) {

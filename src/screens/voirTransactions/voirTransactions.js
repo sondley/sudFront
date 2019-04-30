@@ -32,7 +32,7 @@ class VoirTransactions extends PureComponent {
 					<Grid className={styles.noMarginBottom}>
 						<Grid.Row>
 							<Grid.Column textAlign="center">
-								<label className={styles.moneyTitle}>Argent Disponible: ${moneyCompte}.00 HTG</label>
+								<label className={styles.moneyTitle}>Argent Disponible: ${moneyCompte}.00 HTD</label>
 							</Grid.Column>
 						</Grid.Row>
 						<Grid.Row>

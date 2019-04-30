@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import { Button, Icon, Grid, Dimmer, Modal, Header, Input } from "semantic-ui-react";
+import { Button, Icon, Grid, Dimmer, Modal, Header, Input, Message } from "semantic-ui-react";
 import { connect } from "react-redux";
 
 //Components
@@ -23,6 +23,7 @@ class TradeCoin extends PureComponent {
 
 		this.state = {
 			modalIsOpen: false,
+			errorModal: false,
 			type: "",
 			startDate: dateString,
 			endDate: dateString
@@ -35,12 +36,18 @@ class TradeCoin extends PureComponent {
 
 	handleAddVendre = e => {
 		e.preventDefault();
-		this.setState({ modalIsOpen: true, type: "vendre" });
+		if (this.props.compte.caisse.etat !== "0") {
+			return this.setState({ modalIsOpen: true, type: "vendre" });
+		}
+		return this.setState({ errorModal: true });
 	};
 
 	handleAddAcheter = e => {
 		e.preventDefault();
-		this.setState({ modalIsOpen: true, type: "acheter" });
+		if (this.props.compte.caisse.etat !== "0") {
+			return this.setState({ modalIsOpen: true, type: "acheter" });
+		}
+		return this.setState({ errorModal: true });
 	};
 
 	handleCloseModal = () => {
@@ -58,11 +65,28 @@ class TradeCoin extends PureComponent {
 		if (name === "endDate" && value >= this.state.startDate) return this.setState({ [name]: value });
 	};
 
+	handleCloseErrorModal = () => {
+		this.setState({ errorModal: false });
+	};
+
 	render() {
 		return (
 			<Dimmer.Dimmable blurring dimmed={this.state.modalIsOpen}>
 				<Modal open={this.state.modalIsOpen} onClose={this.handleCloseModal}>
 					<CoinTradeForm type={this.state.type} onClose={this.handleCloseModal} />
+				</Modal>
+				<Modal open={this.state.errorModal} onClose={this.handleCloseErrorModal} className={styles.dimmerMargin}>
+					<Message className={styles.dimmerMargin} error>
+						<Message.Item className={styles.noStyleList}>
+							<Icon name="warning sign" size="huge" />
+						</Message.Item>
+						<Message.List
+							items={[
+								"Desolé, aucun transaction ne peut etre realiser en ce moment.Veillez attendre la Ouverture du caisse."
+							]}
+							className={styles.paddingBottom}
+						/>
+					</Message>
 				</Modal>
 				<CustomMenu screenName="Changemente Monnaie">
 					<div>
@@ -129,8 +153,8 @@ class TradeCoin extends PureComponent {
 	}
 }
 
-function mapStateToProps({ navigation }) {
-	return { navigation };
+function mapStateToProps({ navigation, compte }) {
+	return { navigation, compte };
 }
 
 export default connect(mapStateToProps)(TradeCoin);

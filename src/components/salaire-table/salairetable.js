@@ -96,7 +96,7 @@ class SalaireTable extends PureComponent {
 	renderTableRows = data => {
 		if (!isEmpty(data)) {
 			const rows = data.map(item => {
-				const salaire = "$" + item.salaire + ".00 HTG";
+				const salaire = "$" + item.salaire + ".00 HTD";
 				return (
 					<Table.Row key={item._id}>
 						<Table.Cell>{item.prenom}</Table.Cell>

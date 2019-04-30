@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import { Button, Icon, Grid, Dimmer, Modal } from "semantic-ui-react";
+import { Button, Icon, Grid, Dimmer, Modal, Message } from "semantic-ui-react";
 import { connect } from "react-redux";
 
 //Components
@@ -18,7 +18,8 @@ class Commande extends PureComponent {
 		super(props);
 
 		this.state = {
-			modalIsOpen: false
+			modalIsOpen: false,
+			errorModal: false
 		};
 		if (this.props.navigation.navigate) {
 			this.props.dispatch(endNavigation());
@@ -28,11 +29,18 @@ class Commande extends PureComponent {
 
 	handleAdd = e => {
 		e.preventDefault();
-		this.setState({ modalIsOpen: true });
+		if (this.props.compte.caisse.etat !== "0") {
+			return this.setState({ modalIsOpen: true });
+		}
+		return this.setState({ errorModal: true });
 	};
 
 	handleCloseModal = () => {
 		this.setState({ modalIsOpen: false });
+	};
+
+	handleCloseErrorModal = () => {
+		this.setState({ errorModal: false });
 	};
 
 	render() {
@@ -40,6 +48,19 @@ class Commande extends PureComponent {
 			<Dimmer.Dimmable blurring dimmed={this.state.modalIsOpen}>
 				<Modal open={this.state.modalIsOpen} onClose={this.handleCloseModal}>
 					<CommandeForm onClose={this.handleCloseModal} />
+				</Modal>
+				<Modal open={this.state.errorModal} onClose={this.handleCloseErrorModal} className={styles.dimmerMargin}>
+					<Message className={styles.dimmerMargin} error>
+						<Message.Item className={styles.noStyleList}>
+							<Icon name="warning sign" size="huge" />
+						</Message.Item>
+						<Message.List
+							items={[
+								"Desolé, aucun transaction ne peut etre realiser en ce moment.Veillez attendre la Ouverture du caisse."
+							]}
+							className={styles.paddingBottom}
+						/>
+					</Message>
 				</Modal>
 				<CustomMenu screenName="Commande">
 					<div>
@@ -60,8 +81,8 @@ class Commande extends PureComponent {
 	}
 }
 
-function mapStateToProps({ navigation }) {
-	return { navigation };
+function mapStateToProps({ navigation, compte }) {
+	return { navigation, compte };
 }
 
 export default connect(mapStateToProps)(Commande);

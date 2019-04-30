@@ -117,7 +117,7 @@ class CommandeTable extends PureComponent {
 			const rows = data.map(item => {
 				const estado = item.etat === "0" ? "check" : "close";
 				const color = item.etat === "0" ? "green" : "red";
-				const total = "$" + item.totalFinal + ".00 HTG";
+				const total = "$" + item.totalFinal + ".00 HTD";
 				const date = new Date(item.created);
 				if (item.etat === "0" && this.props.proxy) {
 					return (
@@ -305,7 +305,7 @@ class CommandeTable extends PureComponent {
 							/>
 							{this.renderItemCount(itemRange, currentItems, totalItems)}
 						</div>
-						<div className={styles.labelSpacing}>Total: ${this.renderTotal(this.props.order.orders)}.00 HTG</div>
+						<div className={styles.labelSpacing}>Total: ${this.renderTotal(this.props.order.orders)}.00 HTD</div>
 					</div>
 				</Dimmer.Dimmable>
 			);

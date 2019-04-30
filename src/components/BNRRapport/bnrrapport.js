@@ -66,7 +66,7 @@ class BNRReport extends PureComponent {
 							<View style={styles.table}>
 								<View style={styles.tableRow}>
 									<Text style={styles.tableLeft}>Benefice non repartis du Debut</Text>
-									<Text style={styles.tableRight}>${JeySon.bnrDebut}.00 HTG</Text>
+									<Text style={styles.tableRight}>${JeySon.bnrDebut}.00 HTD</Text>
 								</View>
 								<View style={styles.tableRow}>
 									<Text style={{ flex: 1, fontSize: 18, borderBottom: 1, paddingLeft: 2 }}>plus</Text>
@@ -75,11 +75,11 @@ class BNRReport extends PureComponent {
 									<Text style={styles.tableLeft}>
 										Benefice du mois {thisMonth} {thisYear}
 									</Text>
-									<Text style={styles.tableRight}>${JeySon.beneficeMois}.00 HTG</Text>
+									<Text style={styles.tableRight}>${JeySon.beneficeMois}.00 HTD</Text>
 								</View>
 								<View style={styles.tableRow}>
 									<Text style={styles.lastTableLeft}>Benefice non repartis fin</Text>
-									<Text style={styles.lastTableRight}>${JeySon.bnrFin}.00 HTG</Text>
+									<Text style={styles.lastTableRight}>${JeySon.bnrFin}.00 HTD</Text>
 								</View>
 							</View>
 						</View>

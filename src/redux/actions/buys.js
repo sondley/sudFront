@@ -138,7 +138,8 @@ export function validateBuy(item, onClose) {
 				idAchat: item.idAchat,
 				transportFrais: parseInt(item.transportFrais),
 				autres: parseInt(item.autres),
-				montant: parseInt(item.montant)
+				montant: parseInt(item.montant),
+				rabais: parseInt(item.rabais)
 			})
 			.then(objResponse => {
 				if (objResponse.data.success) {

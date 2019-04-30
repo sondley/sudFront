@@ -75,15 +75,20 @@ class Receipt extends PureComponent {
 								{this.renderTableRows(arrayOrden)}
 							</View>
 							<View style={styles.payment}>
-								<Text style={styles.normalText}>SubTotal: {this.currencyFormat(totalFinal)} HTG</Text>
-								<Text style={styles.normalText}>Impot: {this.currencyFormat(0)} HTG</Text>
+								<Text style={styles.normalText}>SubTotal: {this.currencyFormat(totalFinal)} HTD</Text>
+								<Text style={styles.normalText}>Rabais: {this.currencyFormat(0)} HTD</Text>
 								<Text style={[styles.normalText, { borderTop: 0.2 }]}>
-									Total: {this.currencyFormat(totalFinal)} HTG
+									Total: {this.currencyFormat(totalFinal)} HTD
 								</Text>
 							</View>
 							<View style={[styles.payment, { paddingTop: 5 }]}>
-								<Text style={styles.normalText}>Total Donné: {this.currencyFormat(totalDonne)} HTG</Text>
-								<Text style={styles.normalText}>Changement: {this.currencyFormat(changement)} HTG</Text>
+								<Text style={styles.normalText}>Total Donné: {this.currencyFormat(totalDonne)} HTD</Text>
+								<Text style={styles.normalText}>Remise: {this.currencyFormat(changement)} HTD</Text>
+							</View>
+							<View style={{ flex: 1, paddingTop: 10 }}>
+								<Text style={styles.normalText}>
+									Verifye Machandiz la Byen avan ou ale, nou pap aksepte okenn retou
+								</Text>
 							</View>
 						</View>
 					</Page>

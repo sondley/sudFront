@@ -1,15 +1,11 @@
 import React, { PureComponent } from "react";
 import { connect } from "react-redux";
-import { Form, Input, Button, Message, Dimmer, Icon, Card, Search, Table, Modal } from "semantic-ui-react";
-import { createOrder, modifyOrder } from "../../redux/actions/order";
-import { getProducts } from "../../redux/actions/product";
-import { escapeRegExp, filter, debounce, isEmpty, slice, find } from "lodash";
-
-//
-import CommandeProduitForm from "../commande-product-form/commandeproductform";
+import { Form, Input, Button, Message, Dimmer, Icon, Card, Table } from "semantic-ui-react";
+import { getOrderByNumber, createDevolution, modifyDevolution } from "../../redux/actions/devolution";
+import { isEmpty, find } from "lodash";
 
 //Styles
-import styles from "./commandeform.module.css";
+import styles from "./devolutionform.module.css";
 
 class DevolutionForm extends PureComponent {
 	constructor(props) {
@@ -19,32 +15,49 @@ class DevolutionForm extends PureComponent {
 			edit: false || this.props.edit,
 			view: false || this.props.view,
 			headerErrorMessage: "",
-			clientName: "",
-			total: 0,
-			products: "",
-			productList: [],
-			productModalType: "new",
-			clientNameError: false,
+			contentErrorMessage: "vous devez retourner au moins un produit",
+			numero: "",
+			client: "",
+			orderList: [],
+			devolutionList: [],
+			quantiteList: [],
 			formError: false,
 			isModalOpen: false,
-			isProductModalOpen: false,
-			results: [],
-			item: {},
-			isLoading: false
+			isRenderable: false
 		};
-		if (!this.state.view) {
-			this.props.dispatch(getProducts());
-		}
 	}
 
-	componentDidMount = () => {
+	componentDidMount = async () => {
 		if (this.state.edit || this.state.view) {
+			await this.props.dispatch(getOrderByNumber(this.props.data.numero));
+			const quantiteList = this.props.data.arrayOrden.map(item => {
+				return item.quantite;
+			});
 			this.setState({
-				clientName: this.props.data.client,
-				total: this.props.data.totalFinal,
-				productList: this.props.data.arrayOrden
+				numero: this.props.data.numero,
+				client: this.props.data.client,
+				isRenderable: true,
+				orderList: this.props.devolution.printOrder.arrayOrden,
+				devolutionList: this.props.data.arrayOrden,
+				quantiteList
 			});
 		}
+	};
+
+	handleSearchOrder = async e => {
+		e.preventDefault();
+		await this.props.dispatch(getOrderByNumber(this.state.numero));
+		const orderList = this.props.devolution.printOrder.arrayOrden;
+		const quantiteList = orderList.map(() => {
+			return 0;
+		});
+		this.setState({
+			isRenderable: true,
+			orderList,
+			devolutionList: orderList,
+			quantiteList,
+			client: this.props.devolution.printOrder.client
+		});
 	};
 
 	handleChange = event => {
@@ -54,156 +67,78 @@ class DevolutionForm extends PureComponent {
 	};
 
 	handleModalClose = () => {
-		this.setState({ isModalOpen: false, isProductModalOpen: false });
-	};
-
-	addToList = (id, name, priceUnit, quantity) => {
-		const newProduct = {
-			idproduit: id,
-			nom: name,
-			prixUnite: priceUnit,
-			quantite: quantity,
-			total: parseInt(priceUnit) * parseInt(quantity)
-		};
-		const newList = this.state.productList.concat(newProduct);
-		this.setState({ productList: newList });
-	};
-
-	reduceToList = (id, quantity) => {
-		let repeatedItem = find(this.state.productList, { idproduit: id });
-		const newProduct = {
-			...repeatedItem,
-			quantite: quantity + repeatedItem.quantite,
-			total: parseInt(repeatedItem.prixUnite) * parseInt(quantity + repeatedItem.quantite)
-		};
-		const newList = this.state.productList.map(item => {
-			if (item.idproduit !== newProduct.idproduit) {
-				return item;
-			}
-			return { ...item, ...newProduct };
-		});
-		this.setState({ productList: newList });
-	};
-
-	resetComponent = name => this.setState({ isLoading: false, results: [], [name]: "" });
-
-	handleResultSelect = (e, data) => {
-		const getProduct = id => filter(this.props.product.products, { _id: id });
-		const item = getProduct(data.result.id);
-		let repeatedItem = find(this.state.productList, { idproduit: item[0]._id });
-		if (repeatedItem) {
-			return this.setState({
-				results: [],
-				product: "",
-				isProductModalOpen: true,
-				item: item[0],
-				productModalType: "repeat"
-			});
-		} else {
-			return this.setState({
-				results: [],
-				product: "",
-				isProductModalOpen: true,
-				item: item[0],
-				productModalType: "new"
-			});
-		}
-	};
-
-	handleSearchChange = (e, { value, name }) => {
-		this.setState({ [name]: value, isLoading: true });
-
-		setTimeout(() => {
-			if (this.state[name].length < 1) return this.resetComponent(name);
-			let source = this.props.product.products.map(item => {
-				return { id: item._id, title: item.nom };
-			});
-			let trimmedString = new RegExp(escapeRegExp(this.state[name]), "i");
-			const isMatch = result => trimmedString.test(result.title);
-			const matchedResults = filter(source, isMatch);
-			const limitedResults = slice(matchedResults, 0, 5);
-			return this.setState({
-				isLoading: false,
-				results: limitedResults
-			});
-		}, 500);
-	};
-
-	handleInputError = event => {
-		const { name, value } = event.target;
-		if (name === "clientName") {
-			if (value.length === 0) {
-				return this.setState({
-					clientNameError: true,
-					formError: true
-				});
-			} else {
-				return this.setState({
-					clientNameError: false,
-					formError: false
-				});
-			}
-		}
+		this.setState({ isModalOpen: false });
 	};
 
 	handleSubmit = event => {
 		event.preventDefault();
-		const { clientName, productList } = this.state;
-		if (!this.state.formError) {
+		const { devolutionList, quantiteList } = this.state;
+		if (
+			find(quantiteList, x => {
+				return x !== 0;
+			})
+		) {
 			if (this.state.edit) {
-				const order = {
+				const devolution = {
 					...this.props.data,
-					client: clientName,
-					vendeur: this.props.user.authedUser._id,
-					arrayOrden: productList.map(item => {
-						return { idproduit: item.idproduit, quantite: item.quantite };
+					idRealisateur: this.props.user.authedUser._id,
+					arrayOrden: devolutionList.map((item, index) => {
+						return { idproduit: item.idproduit, prixUnite: item.prixUnite, quantite: quantiteList[index] };
 					})
 				};
-				return this.props.dispatch(modifyOrder(order, this.props.onClose));
+				return this.props.dispatch(modifyDevolution(devolution, this.props.onClose));
 			}
-			const order = {
-				client: clientName,
-				vendeur: this.props.user.authedUser._id,
-				arrayOrden: productList.map(item => {
-					return { idproduit: item.idproduit, quantite: item.quantite };
+			const devolution = {
+				numero: this.state.numero,
+				idRealisateur: this.props.user.authedUser._id,
+				client: this.state.client,
+				arrayOrden: devolutionList.map((item, index) => {
+					return { idproduit: item.idproduit, prixUnite: item.prixUnite, quantite: quantiteList[index] };
 				})
 			};
-			this.props.dispatch(createOrder(order, this.props.onClose));
+			this.props.dispatch(createDevolution(devolution, this.props.onClose));
 		} else {
 			this.setState({ isModalOpen: true });
 		}
 	};
 
-	handleDeleteRow = (e, id) => {
+	handleSubstract = (e, value, index) => {
 		e.preventDefault();
-		const newList = this.state.productList.filter(({ _id }) => _id !== id);
-		this.setState({ productList: newList });
-	};
-
-	renderMessages = field => {
-		let list = [];
-		let error = field.concat("Error");
-		switch (field) {
-			case "clientName":
-				list = ["Le Nom du Client ne peut pas être vide"];
-				break;
-			default:
-				list = [];
+		let newList = [...this.state.quantiteList];
+		if (newList[index] > 0) {
+			newList[index] = value - 1;
+			this.setState({ quantiteList: newList });
 		}
-		return (
-			<Message style={this.state[error] ? { display: "block" } : { display: "none" }} error size="small" list={list} />
-		);
 	};
 
-	renderTotal = data => {
-		const total = data.reduce((intTotal, objItem) => {
-			return intTotal + parseInt(objItem.total);
-		}, 0);
-
-		return total;
+	handleAdd = (e, value, index) => {
+		e.preventDefault();
+		let newList = [...this.state.quantiteList];
+		if (newList[index] < this.state.orderList[index].quantite) {
+			newList[index] = value + 1;
+			this.setState({ quantiteList: newList });
+		}
 	};
 
-	renderTableRows = data => {
+	renderOrderTableRows = data => {
+		if (!isEmpty(data)) {
+			let rows;
+			rows = data.map(item => {
+				return (
+					<Table.Row key={item._id}>
+						<Table.Cell>{item.nom}</Table.Cell>
+						<Table.Cell>{item.prixUnite}</Table.Cell>
+						<Table.Cell>{item.quantite}</Table.Cell>
+						<Table.Cell>{item.total}</Table.Cell>
+					</Table.Row>
+				);
+			});
+			return rows;
+		}
+		return;
+	};
+
+	renderDevolutionTableRows = data => {
 		if (!isEmpty(data)) {
 			let rows;
 			if (this.state.view) {
@@ -213,26 +148,33 @@ class DevolutionForm extends PureComponent {
 							<Table.Cell>{item.nom}</Table.Cell>
 							<Table.Cell>{item.prixUnite}</Table.Cell>
 							<Table.Cell>{item.quantite}</Table.Cell>
-							<Table.Cell>{item.total}</Table.Cell>
 						</Table.Row>
 					);
 				});
 			} else {
-				rows = data.map(item => {
+				rows = data.map((item, index) => {
 					return (
-						<Table.Row key={item.idproduit}>
+						<Table.Row key={item._id}>
 							<Table.Cell>{item.nom}</Table.Cell>
 							<Table.Cell>{item.prixUnite}</Table.Cell>
-							<Table.Cell>{item.quantite}</Table.Cell>
-							<Table.Cell>{item.total}</Table.Cell>
+							<Table.Cell>{this.state.quantiteList[index]}</Table.Cell>
 							<Table.Cell collapsing>
-								<Button
-									icon="minus square"
-									color="red"
-									onClick={e => {
-										this.handleDeleteRow(e, item._id);
-									}}
-								/>
+								<div className={styles.cellSpacing}>
+									<Button
+										icon="minus square"
+										color="red"
+										onClick={e => {
+											this.handleSubstract(e, this.state.quantiteList[index], index);
+										}}
+									/>
+									<Button
+										icon="plus square"
+										color="green"
+										onClick={e => {
+											this.handleAdd(e, this.state.quantiteList[index], index);
+										}}
+									/>
+								</div>
 							</Table.Cell>
 						</Table.Row>
 					);
@@ -244,75 +186,18 @@ class DevolutionForm extends PureComponent {
 	};
 
 	render() {
-		const { isLoading, results } = this.state;
-		let title = "Entrain de Ajouter une Commande";
+		let title = "Entrain de Ajouter une Devolution";
 		let label = "Ajouter";
 		if (this.state.edit) {
-			title = "Entrain de Modifier le Commande";
+			title = "Entrain de Modifier le Devolution";
 			label = "Modifier";
 		} else if (this.state.view) {
-			title = "Entrain de Voir le Commande";
+			title = "Entrain de Voir le Devolution";
 		}
 
-		if (this.state.view) {
-			return (
-				<Dimmer.Dimmable dimmed={this.state.isModalOpen}>
-					<Dimmer verticalAlign="top" active={this.state.isModalOpen} page onClickOutside={this.handleModalClose}>
-						<Message className={styles.dimmerMargin} negative>
-							<Message.Item className={styles.noStyleList}>
-								<Icon name="warning sign" size="huge" />
-							</Message.Item>
-							<Message.Header>{this.state.headerErrorMessage}</Message.Header>
-							<Message.Content>{this.state.contentErrorMessage}</Message.Content>
-						</Message>
-					</Dimmer>
-					<Card fluid centered className={styles.boxContainerWide}>
-						<Card.Content>
-							<Card.Header className="font font-18" textAlign="center">
-								{title}
-							</Card.Header>
-							<Card.Meta className="font font-16" textAlign="center">
-								Completer les champs du formulaire
-							</Card.Meta>
-							<div className={styles.basicFormContainer}>
-								<Form className={styles.basicFormWidth}>
-									<Form.Group grouped>
-										<Form.Field required>
-											<label className={styles.basicFormSpacing}>Nom du Client</label>
-											<Input
-												disabled={this.state.view}
-												icon="code"
-												iconPosition="left"
-												placeholder="Nom du Client"
-												name="clientName"
-												value={this.state.clientName}
-											/>
-										</Form.Field>
-										<div className={styles.basicFormSpacing}>
-											<Table selectable compact celled striped size="small">
-												<Table.Header>
-													<Table.Row>
-														<Table.HeaderCell>Nom de Produit</Table.HeaderCell>
-														<Table.HeaderCell>Prix per Unite</Table.HeaderCell>
-														<Table.HeaderCell>Quantite</Table.HeaderCell>
-														<Table.HeaderCell>Total</Table.HeaderCell>
-													</Table.Row>
-												</Table.Header>
-												<Table.Body>{this.renderTableRows(this.state.productList)}</Table.Body>
-											</Table>
-										</div>
-										<div className={styles.labelSpacing}>Total: {this.state.total}</div>
-									</Form.Group>
-								</Form>
-							</div>
-						</Card.Content>
-					</Card>
-				</Dimmer.Dimmable>
-			);
-		}
 		return (
 			<Dimmer.Dimmable dimmed={this.state.isModalOpen}>
-				<Dimmer verticalAlign="top" active={this.state.isModalOpen} page onClickOutside={this.handleModalClose}>
+				<Dimmer active={this.state.isModalOpen} page onClickOutside={this.handleModalClose}>
 					<Message className={styles.dimmerMargin} negative>
 						<Message.Item className={styles.noStyleList}>
 							<Icon name="warning sign" size="huge" />
@@ -321,79 +206,74 @@ class DevolutionForm extends PureComponent {
 						<Message.Content>{this.state.contentErrorMessage}</Message.Content>
 					</Message>
 				</Dimmer>
-				<Modal open={this.state.isProductModalOpen} onClose={this.handleModalClose}>
-					<CommandeProduitForm
-						type={this.state.productModalType}
-						item={this.state.item}
-						addToList={this.addToList}
-						reduceToList={this.reduceToList}
-						onClose={this.handleModalClose}
-					/>
-				</Modal>
 				<Card fluid centered className={styles.boxContainerWide}>
 					<Card.Content>
 						<Card.Header className="font font-18" textAlign="center">
 							{title}
 						</Card.Header>
-						<Card.Meta className="font font-16" textAlign="center">
-							Completer les champs du formulaire
-						</Card.Meta>
 						<div className={styles.basicFormContainer}>
 							<Form className={styles.basicFormWidth}>
 								<Form.Group grouped>
-									<Form.Field required>
-										<label className={styles.basicFormSpacing}>Nom du Client</label>
-										<Input
-											disabled={this.state.view}
-											icon="code"
-											iconPosition="left"
-											placeholder="Nom du Client"
-											name="clientName"
-											onChange={this.handleChange}
-											value={this.state.clientName}
-											onKeyUp={this.handleInputError}
-											onBlur={this.state.clientNameError ? null : this.handleInputError}
-										/>
-										{this.renderMessages("clientName")}
+									<Form.Field style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+										<label className={styles.basicFormSpacing}>Numéro de Commande</label>
+										<div style={{ display: "flex" }}>
+											<Input
+												style={{ flex: 3, paddingRight: "10px" }}
+												disabled={this.state.view}
+												icon="hashtag"
+												iconPosition="left"
+												placeholder="Numéro de Commande"
+												name="numero"
+												value={this.state.numero}
+												onChange={this.handleChange}
+											/>
+											<Button
+												style={{ flex: 1 }}
+												icon="search"
+												color="teal"
+												onClick={this.handleSearchOrder}
+												content="Rechercher"
+												disabled={this.state.view}
+											/>
+										</div>
 									</Form.Field>
-									<Form.Field required>
-										<label className={styles.basicFormSpacing}>Search a Produit</label>
-										<Search
-											input={{ icon: "search", iconPosition: "left" }}
-											size="small"
-											disabled={this.state.view}
-											placeholder="Search a Produit"
-											loading={isLoading}
-											onResultSelect={this.handleResultSelect}
-											onSearchChange={debounce(this.handleSearchChange, 500, {
-												leading: true
-											})}
-											results={results}
-											value={this.state.product}
-											name="product"
-										/>
-									</Form.Field>
-									<div className={styles.basicFormSpacing}>
-										<Table selectable compact celled striped size="small">
-											<Table.Header>
-												<Table.Row>
-													<Table.HeaderCell>Nom de Produit</Table.HeaderCell>
-													<Table.HeaderCell>Prix per Unite</Table.HeaderCell>
-													<Table.HeaderCell>Quantite</Table.HeaderCell>
-													<Table.HeaderCell>Total</Table.HeaderCell>
-													<Table.HeaderCell>Actions</Table.HeaderCell>
-												</Table.Row>
-											</Table.Header>
-
-											<Table.Body>{this.renderTableRows(this.state.productList)}</Table.Body>
-										</Table>
+									<div style={this.state.isRenderable ? { display: "block" } : { display: "none" }}>
+										<label className={styles.basicTitleSpacing}>Produits du Commande #{this.state.numero}</label>
+										<div className={styles.basicFormSpacing}>
+											<Table selectable compact celled striped size="small">
+												<Table.Header>
+													<Table.Row>
+														<Table.HeaderCell>Produit</Table.HeaderCell>
+														<Table.HeaderCell>Prix per Unite</Table.HeaderCell>
+														<Table.HeaderCell>Quantite</Table.HeaderCell>
+														<Table.HeaderCell>Total</Table.HeaderCell>
+													</Table.Row>
+												</Table.Header>
+												<Table.Body>{this.renderOrderTableRows(this.state.orderList)}</Table.Body>
+											</Table>
+										</div>
+										<label className={styles.basicTitleSpacing}>Produits à Retourner</label>
+										<div className={styles.basicFormSpacing}>
+											<Table selectable compact celled striped size="small">
+												<Table.Header>
+													<Table.Row>
+														<Table.HeaderCell>Produit</Table.HeaderCell>
+														<Table.HeaderCell>Prix per Unite</Table.HeaderCell>
+														<Table.HeaderCell>Quantite</Table.HeaderCell>
+														<Table.HeaderCell style={this.state.view ? { display: "none" } : { display: "block" }}>
+															Actions
+														</Table.HeaderCell>
+													</Table.Row>
+												</Table.Header>
+												<Table.Body>{this.renderDevolutionTableRows(this.state.devolutionList)}</Table.Body>
+											</Table>
+										</div>
+									</div>
+									<div style={this.state.view || !this.state.isRenderable ? { display: "none" } : { display: "block" }}>
+										<Button fluid size="small" color="teal" content={label} onClick={this.handleSubmit} />
 									</div>
 								</Form.Group>
 							</Form>
-						</div>
-						<div className={styles.labelSpacing}>Total: {this.renderTotal(this.state.productList)}</div>
-						<div style={this.state.view ? { display: "none" } : { display: "block" }}>
-							<Button fluid size="small" color="teal" content={label} onClick={this.handleSubmit} />
 						</div>
 					</Card.Content>
 				</Card>
@@ -402,8 +282,8 @@ class DevolutionForm extends PureComponent {
 	}
 }
 
-function mapStateToProps({ product, user }) {
-	return { product, user };
+function mapStateToProps({ devolution, user }) {
+	return { devolution, user };
 }
 
 export default connect(mapStateToProps)(DevolutionForm);
