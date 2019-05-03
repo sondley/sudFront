@@ -1,0 +1,61 @@
+.basicFormContainer {
+	display: flex !important;
+	justify-content: space-between !important;
+}
+
+@media only screen and (max-width: 768px) {
+	.basicFormContainer {
+		display: block !important;
+	}
+}
+
+.basicFormSecond {
+	width: 100% !important;
+	margin: 0px !important;
+}
+
+.basicFormSpacing {
+	font-weight: bold !important;
+	font-size: 14px !important;
+	padding: 5px 0px !important;
+}
+
+.tagSpacing {
+	margin-top: 22px !important;
+}
+
+.boxContainerWide {
+	width: 300px !important;
+	padding: 20px !important;
+}
+
+@media (min-width: 768px) {
+	.boxContainerWide {
+		width: 700px !important;
+	}
+}
+
+@media (min-width: 425px) and (max-width: 567.98px) {
+	.boxContainerWide {
+		width: 400px !important;
+	}
+}
+
+.basicFormWidth {
+	width: 100% !important;
+}
+
+.labelSpacing {
+	display: flex !important;
+	justify-content: flex-end !important;
+	margin-top: 10px !important;
+	margin-right: 20px !important;
+	font-weight: bold !important;
+	font-size: 18px !important;
+	padding: 5px 0px !important;
+}
+
+.centered {
+	text-align: center !important;
+	justify-content: center !important;
+}
