@@ -1,8 +1,0 @@
-.rightAligned {
-	display: flex !important;
-	justify-content: flex-end !important;
-}
-
-.noMarginBottom {
-	margin-bottom: 0px !important;
-}
