@@ -58,12 +58,15 @@ class ProductForm extends PureComponent {
 			});
 		}
 		if (this.state.achat) {
-			console.log(this.props.data);
 			const provider = filter(this.props.provider.providers, { nom: this.props.data });
 			this.setState({
 				fournisseur: this.props.data,
 				item: provider[0]
 			});
+		}
+		if (!this.state.achat && !this.state.edit && !this.state.view) {
+			const provider = this.props.provider.providers[0];
+			this.setState({ fournisseur: provider.nom, item: provider });
 		}
 	}
 

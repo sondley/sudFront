@@ -9,6 +9,7 @@ import Receipt from "../receipt/receipt";
 
 //Logic
 import { getOrders, validateOrder } from "../../redux/actions/order";
+import { getNotifications } from "../../redux/actions/notifications";
 import { currencyFormat } from "../../assets/utils";
 
 //Styles
@@ -93,7 +94,8 @@ class ValidateCommandeTable extends PureComponent {
 	handleSubmit = async e => {
 		e.preventDefault();
 		if (this.state.value === "cheque" || this.state.ammount !== "") {
-			const totalDonne = this.state.value === "effectif" ? this.state.ammount : this.state.data.totalFinal;
+			const totalDonne =
+				this.state.value === "effectif" ? this.state.ammount : this.state.data.totalFinal - this.state.rabais;
 			const valider = {
 				idUser: this.props.user.authedUser._id,
 				idCommande: this.state.data._id,
@@ -102,6 +104,7 @@ class ValidateCommandeTable extends PureComponent {
 				rabais: this.state.rabais
 			};
 			await this.props.dispatch(validateOrder(valider, this.handleCloseModal));
+			await this.props.dispatch(getNotifications());
 			return this.setState({ printModal: true, ammount: "" });
 		}
 		this.setState({ errorModal: true });
@@ -204,8 +207,11 @@ class ValidateCommandeTable extends PureComponent {
 
 	renderEffectif = value => {
 		if (value === "effectif") {
-			const monnaie = currencyFormat(this.state.ammount - this.state.data.totalFinal);
-			const text = monnaie > 0 ? "Monnaie: " + monnaie + " HTD" : "Dette: " + monnaie + " HTD";
+			const monnaie = currencyFormat(this.state.ammount - (this.state.data.totalFinal - this.state.rabais));
+			const text =
+				this.state.ammount - (this.state.data.totalFinal - this.state.rabais) > 0
+					? "Monnaie: " + monnaie + " HTD"
+					: "Dette: " + monnaie + " HTD";
 			return (
 				<div>
 					<Form.Field required>
@@ -220,7 +226,7 @@ class ValidateCommandeTable extends PureComponent {
 							value={this.state.ammount}
 						/>
 					</Form.Field>
-					<Form.Field className={styles.centered}>{text}</Form.Field>
+					<Form.Field className={styles.bigText}>{text}</Form.Field>
 				</div>
 			);
 		}
@@ -244,7 +250,7 @@ class ValidateCommandeTable extends PureComponent {
 								value={this.state.rabais}
 							/>
 						</Form.Field>
-						<Form.Field className={styles.centered}>
+						<Form.Field className={styles.bigText}>
 							Montant a Payer: <strong>{currencyFormat(this.state.data.totalFinal - this.state.rabais)} HTD</strong>
 						</Form.Field>
 						<Form.Field className={styles.spacing}>
@@ -310,7 +316,7 @@ class ValidateCommandeTable extends PureComponent {
 					</Message>
 				</Modal>
 				<Modal open={this.state.printModal} onClose={this.handleCloseModal}>
-					<Receipt data={this.props.order.printOrder} />
+					<Receipt data={this.props.order.printOrder} rabais={this.state.rabais} />
 				</Modal>
 				{this.renderModal(this.state.validateModal)}
 				<div style={{ display: "none" }} />

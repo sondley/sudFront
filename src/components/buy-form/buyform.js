@@ -42,6 +42,8 @@ class BuyForm extends PureComponent {
 		if (!this.state.view) {
 			await this.props.dispatch(getProviders());
 			await this.props.dispatch(getProducts());
+			const provider = this.props.provider.providers[0];
+			this.setState({ fournisseur: provider, clientName: provider.nom });
 		}
 		if (this.state.edit || this.state.view) {
 			const provider = filter(this.props.provider.providers, { nom: this.props.data.provider });

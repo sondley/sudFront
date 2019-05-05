@@ -82,7 +82,7 @@ export function login(username, password, rememberMe) {
 									index: 2
 								},
 								{
-									name: "/vendor_reports",
+									name: "/reports",
 									icon: "chart bar outline",
 									label: "Rapports",
 									index: 3
@@ -92,15 +92,15 @@ export function login(username, password, rememberMe) {
 						case "caissier":
 							Options = [
 								{
-									name: "/validate_solicitude",
-									icon: "check square",
-									label: "Valider Sollicitude",
-									index: 0
-								},
-								{
 									name: "/validate_order",
 									icon: "clipboard check",
 									label: "Valider Commande",
+									index: 0
+								},
+								{
+									name: "/validate_solicitude",
+									icon: "check square",
+									label: "Valider Sollicitude",
 									index: 1
 								},
 								{
@@ -120,7 +120,7 @@ export function login(username, password, rememberMe) {
 						case "directeur":
 							Options = [
 								{
-									name: "/director_reports",
+									name: "/reports",
 									icon: "chart line",
 									label: "Rapports",
 									index: 0
@@ -184,19 +184,13 @@ export function login(username, password, rememberMe) {
 									icon: "sync",
 									label: "Devolution du Produit",
 									index: 10
-								},
-								{
-									name: "/comite_monitor",
-									icon: "sign-in",
-									label: "Rentrez de Comite",
-									index: 11
 								}
 							];
 							break;
 						case "comite":
 							Options = [
 								{
-									name: "/comite_reports",
+									name: "/reports",
 									icon: "chart line",
 									label: "Rapports",
 									index: 0
@@ -236,39 +230,39 @@ export function login(username, password, rememberMe) {
 									index: 0
 								},
 								{
+									name: "/products",
+									icon: "box",
+									label: "Produits",
+									index: 1
+								},
+								{
 									name: "/buys",
 									icon: "cart",
 									label: "Achats",
-									index: 1
+									index: 2
 								},
 								{
 									name: "/sales",
 									icon: "tags",
 									label: "Ventes",
-									index: 2
+									index: 3
 								},
 								{
 									name: "/payment",
 									icon: "payment",
 									label: "Realiser Paiement",
-									index: 3
+									index: 4
 								},
 								{
 									name: "/debt_payable",
 									icon: "payment",
 									label: "Comptes à Payer",
-									index: 4
+									index: 5
 								},
 								{
 									name: "/debt_recievable",
 									icon: "payment",
 									label: "Comptes à Recevoir",
-									index: 5
-								},
-								{
-									name: "/banking",
-									icon: "lock",
-									label: "Banque",
 									index: 6
 								},
 								{
@@ -278,7 +272,7 @@ export function login(username, password, rememberMe) {
 									index: 7
 								},
 								{
-									name: "/accounting_reports",
+									name: "/reports",
 									icon: "chart bar outline",
 									label: "Rapports",
 									index: 8
@@ -306,7 +300,7 @@ export function login(username, password, rememberMe) {
 									index: 2
 								},
 								{
-									name: "/assistance_reports",
+									name: "/reports",
 									icon: "chart bar outline",
 									label: "Rapports",
 									index: 3

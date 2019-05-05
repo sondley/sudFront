@@ -7,7 +7,7 @@ import CustomMenu from "../../components/custom-menu/custom-menu";
 import BNRReport from "../../components/BNRRapport/bnrrapport";
 import BalanceReport from "../../components/BalanceRapport/balancerapport";
 import ResultatReport from "../../components/ResultatRapport/resultatrapport";
-//import Receipt from "../../components/receipt/receipt";
+// import Receipt from "../../components/receipt/receipt";
 
 //Logic
 import { endNavigation, getPageIndexByRoute } from "../../redux/actions/navigate";
@@ -19,6 +19,7 @@ import { getAllData } from "../../redux/actions/finance";
 // 	totalFinal: 1500,
 // 	client: "Jason",
 // 	vendeur: "Sondley",
+// 	rabais: 200,
 // 	arrayOrden: [
 // 		{
 // 			_id: "abc123",
@@ -75,13 +76,14 @@ class AccountingRapports extends PureComponent {
 					<Loader size="huge">Loading...</Loader>
 				</Dimmer>
 				<Modal open={this.state.bnrModal} onClose={this.handleCloseModal}>
-					<BNRReport />
+					{/* <Receipt data={data} rabais={data.rabais} /> */}
+					<BNRReport data={this.props.finance.allData.bnr} />
 				</Modal>
 				<Modal open={this.state.bilanModal} onClose={this.handleCloseModal}>
-					<BalanceReport />
+					<BalanceReport data={this.props.finance.allData.balance} />
 				</Modal>
 				<Modal open={this.state.resultatModal} onClose={this.handleCloseModal}>
-					<ResultatReport />
+					<ResultatReport data={this.props.finance.allData.resultats} />
 				</Modal>
 				<CustomMenu screenName="Rapports">
 					<Grid>

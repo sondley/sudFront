@@ -8,6 +8,7 @@ import BuyForm from "../buy-form/buyform";
 
 //Logic
 import { getBuys, deleteBuy, validateBuy } from "../../redux/actions/buys";
+import { getNotifications } from "../../redux/actions/notifications";
 import { currencyFormat } from "../../assets/utils";
 
 //Styles
@@ -114,7 +115,7 @@ class BuyTable extends PureComponent {
 		this.setState({ editModal: false, deleteModal: false, viewModal: false, validateModal: false, errorModal: false });
 	};
 
-	handleSubmit = e => {
+	handleSubmit = async e => {
 		e.preventDefault();
 		if (this.state.ammount !== "") {
 			const valider = {
@@ -125,7 +126,8 @@ class BuyTable extends PureComponent {
 				montant: this.state.ammount,
 				rabais: this.state.rabais
 			};
-			return this.props.dispatch(validateBuy(valider, this.handleCloseModal));
+			await this.props.dispatch(validateBuy(valider, this.handleCloseModal));
+			return this.props.dispatch(getNotifications());
 		}
 		this.setState({ errorModal: true });
 	};
@@ -291,7 +293,7 @@ class BuyTable extends PureComponent {
 
 	renderEffectif = payer => {
 		const monnaie = currencyFormat(this.state.ammount - payer);
-		const text = monnaie > 0 ? "Monnaie: " + monnaie + " HTD" : "Dette: " + monnaie + " HTD";
+		const text = this.state.ammount - payer > 0 ? "Monnaie: " + monnaie + " HTD" : "Dette: " + monnaie + " HTD";
 		return (
 			<div>
 				<Form.Field required>
@@ -306,7 +308,7 @@ class BuyTable extends PureComponent {
 						value={this.state.ammount}
 					/>
 				</Form.Field>
-				<Form.Field className={styles.centered}>{text}</Form.Field>
+				<Form.Field className={styles.bigText}>{text}</Form.Field>
 			</div>
 		);
 	};
@@ -361,7 +363,7 @@ class BuyTable extends PureComponent {
 								value={this.state.rabais}
 							/>
 						</Form.Field>
-						<Form.Field className={styles.centered}>
+						<Form.Field className={styles.bigText}>
 							Montant a Payer: <strong>{currencyFormat(payer)} HTD</strong>
 						</Form.Field>
 						{this.renderEffectif(payer)}

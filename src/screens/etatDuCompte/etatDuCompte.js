@@ -11,6 +11,7 @@ import CompteTable from "../../components/compte-table/comptetable";
 import { endNavigation, getPageIndexByRoute } from "../../redux/actions/navigate";
 import { OpenCaisse, CloseCaisse } from "../../redux/actions/compte";
 import { getUsers } from "../../redux/actions/user";
+import { currencyFormat } from "../../assets/utils";
 
 //Styles
 import styles from "./etatducompte.module.css";
@@ -164,12 +165,19 @@ class EtatDuCompte extends PureComponent {
 	};
 
 	renderCloseModal = isOpen => {
+		const { moneyCompte, caisse } = this.props.compte;
 		if (isOpen) {
 			return (
 				<Modal size="small" open={isOpen} onClose={this.handleCloseModal}>
 					<Modal.Header>Fermer Caisse</Modal.Header>
 					<Modal.Content>
-						<p>êtes vous sure que vous voulez l'eliminer?</p>
+						<p>êtes vous sure que vous voulez fermeture du caisse?</p>
+						<p>
+							Montant Ouverture: <strong>{currencyFormat(caisse.quantiteDonnee)} HTD</strong>
+						</p>
+						<p>
+							Montant en Caisse: <strong>{currencyFormat(moneyCompte)} HTD</strong>
+						</p>
 					</Modal.Content>
 					<Modal.Actions>
 						<Button
@@ -239,7 +247,7 @@ class EtatDuCompte extends PureComponent {
 							</Grid.Row>
 							<Grid.Row>
 								<Grid.Column textAlign="center">
-									<label className={styles.moneyTitle}>Argent Disponible: ${moneyCompte}.00 HTD</label>
+									<label className={styles.moneyTitle}>Argent Disponible: {currencyFormat(moneyCompte)} HTD</label>
 								</Grid.Column>
 							</Grid.Row>
 							<Grid.Row>

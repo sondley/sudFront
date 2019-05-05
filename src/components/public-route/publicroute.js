@@ -8,7 +8,7 @@ class PublicRoute extends PureComponent {
 		if (isLoggedIn && user !== null) {
 			switch (user.role) {
 				case "caissier":
-					page = "/validate_solicitude";
+					page = "/validate_order";
 					break;
 				case "directeur":
 					page = "/cash_status";

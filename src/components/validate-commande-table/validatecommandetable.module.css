@@ -22,6 +22,13 @@
 	justify-content: center !important;
 }
 
+.bigText {
+	font-size: 18px !important;
+	font-weight: 700 !important;
+	text-align: center !important;
+	justify-content: center !important;
+}
+
 .basicFormSpacing {
 	font-weight: bold !important;
 	font-size: 14px !important;

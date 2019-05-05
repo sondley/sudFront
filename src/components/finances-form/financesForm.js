@@ -9,10 +9,12 @@ import { createFinance, modifyFinance } from "../../redux/actions/finance";
 import styles from "./financesform.module.css";
 
 const options = [
-	{ text: "Passif a long termes", value: "Passif a long termes" },
-	{ text: "Passif a court termes", value: "Passif a court termes" },
-	{ text: "Actif a long termes", value: "Actif a long termes" },
-	{ text: "Actif a court termes", value: "Actif a court termes" },
+	// { text: "Passif a long termes", value: "Passif a long termes" },
+	// { text: "Passif a court termes", value: "Passif a court termes" },
+	// { text: "Actif a long termes", value: "Actif a long termes" },
+	// { text: "Actif a court termes", value: "Actif a court termes" },
+	{ text: "Actif", value: "Actif a court termes" },
+	{ text: "Passif", value: "Passif a court termes" },
 	{ text: "Depenses", value: "Depenses" }
 ];
 

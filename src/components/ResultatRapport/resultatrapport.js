@@ -2,6 +2,7 @@ import React, { PureComponent } from "react";
 import { connect } from "react-redux";
 import { Document, View, Text, Page, StyleSheet, PDFViewer, Image } from "@react-pdf/renderer";
 import { isEmpty } from "lodash";
+import { currencyFormat } from "../../assets/utils";
 
 import Logo from "../../assets/ThuRealLogo.png";
 
@@ -20,42 +21,6 @@ const monthNames = [
 	"Décembre"
 ];
 
-const JeySon = {
-	total: 100000000,
-	data: [
-		{
-			title: "Revenu des ventes",
-			netTitle: "Ventes nettes",
-			total: 120000,
-			items: [
-				{
-					nom: "ventes",
-					montant: 150000
-				},
-				{
-					nom: "RR/v",
-					montant: -30000
-				}
-			]
-		},
-		{
-			title: "Cout des Marchandises Vendues",
-			netTitle: "Ventes nettes",
-			total: 120000,
-			items: [
-				{
-					nom: "Stock",
-					montant: 14000
-				},
-				{
-					nom: "Achat du mois",
-					montant: -30000
-				}
-			]
-		}
-	]
-};
-
 class ResultsReport extends PureComponent {
 	constructor(props) {
 		super(props);
@@ -63,41 +28,13 @@ class ResultsReport extends PureComponent {
 		this.state = {};
 	}
 
-	currencyFormat = num => {
-		return num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
-	};
-
-	renderItem = data => {
-		if (!isEmpty(data)) {
-			const rows = data.map((item, index) => {
-				return (
-					<View style={{ borderBottom: 1 }} key={index}>
-						<View style={styles.tableRowTitle}>
-							<Text style={styles.tableColumnFirst}>{item.title}</Text>
-							<Text style={styles.tableColumn}> </Text>
-							<Text style={styles.tableColumnLast}> </Text>
-						</View>
-						{this.renderDetails(item.items)}
-						<View style={styles.tableRow}>
-							<Text style={styles.tableColumnFirst}>{item.netTitle}</Text>
-							<Text style={styles.tableColumn}> </Text>
-							<Text style={styles.tableColumnLast}>{this.currencyFormat(item.total)}</Text>
-						</View>
-					</View>
-				);
-			});
-			return rows;
-		}
-		return;
-	};
-
 	renderDetails = data => {
 		if (!isEmpty(data)) {
 			const rows = data.map((item, index) => {
 				return (
 					<View style={styles.tableRow} key={index}>
 						<Text style={styles.tableColumnFirst}>{item.nom}</Text>
-						<Text style={styles.tableColumn}>{this.currencyFormat(item.montant)}</Text>
+						<Text style={styles.tableColumn}>{currencyFormat(item.montant)}</Text>
 						<Text style={styles.tableColumnLast}> </Text>
 					</View>
 				);
@@ -108,6 +45,15 @@ class ResultsReport extends PureComponent {
 	};
 
 	render() {
+		const {
+			ventes,
+			merchandises,
+			explotation,
+			totalVentes,
+			totalMerchandises,
+			totalExplotation,
+			beneficeNet
+		} = this.props.data;
 		const width = window.innerWidth - window.innerWidth * 0.15;
 		const height = window.innerHeight - window.innerHeight * 0.1;
 		const thisMonth = monthNames[new Date().getMonth()];
@@ -139,15 +85,47 @@ class ResultsReport extends PureComponent {
 								</Text>
 							</View>
 							<View style={styles.table}>
-								{this.renderItem(JeySon.data)}
+								<View style={styles.tableRowTitle}>
+									<Text style={styles.tableColumnFirst}>Revenu des Ventes</Text>
+									<Text style={styles.tableColumn}> </Text>
+									<Text style={styles.tableColumnLast}> </Text>
+								</View>
+								{this.renderDetails(ventes)}
+								<View style={styles.tableNetTitle}>
+									<Text style={styles.tableColumnFirst}>Ventes Nettes</Text>
+									<Text style={styles.tableColumn}> </Text>
+									<Text style={styles.tableColumnLast}>{currencyFormat(totalVentes)}</Text>
+								</View>
+								<View style={styles.tableRowTitle}>
+									<Text style={styles.tableColumnFirst}>Cout des Merchandises Vendeus</Text>
+									<Text style={styles.tableColumn}> </Text>
+									<Text style={styles.tableColumnLast}> </Text>
+								</View>
+								{this.renderDetails(merchandises)}
+								<View style={styles.tableNetTitle}>
+									<Text style={styles.tableColumnFirst}>Total Cout des Merchandises Vendeus</Text>
+									<Text style={styles.tableColumn}> </Text>
+									<Text style={styles.tableColumnLast}>{currencyFormat(totalMerchandises)}</Text>
+								</View>
+								<View style={styles.tableRowTitle}>
+									<Text style={styles.tableColumnFirst}>Charge d'Exploitation</Text>
+									<Text style={styles.tableColumn}> </Text>
+									<Text style={styles.tableColumnLast}> </Text>
+								</View>
+								{this.renderDetails(explotation)}
+								<View style={styles.tableNetTitle}>
+									<Text style={styles.tableColumnFirst}>Total Charge d'Exploitation</Text>
+									<Text style={styles.tableColumn}> </Text>
+									<Text style={styles.tableColumnLast}>{currencyFormat(totalExplotation)}</Text>
+								</View>
 								<View style={styles.tableRowTitle}>
 									<Text style={styles.endTableColumnFirst}>Benefice Net</Text>
 									<Text style={styles.endTableColumn}> </Text>
-									<Text style={styles.endTableColumnLast}>{this.currencyFormat(JeySon.total)}</Text>
+									<Text style={styles.endTableColumnLast}>{currencyFormat(beneficeNet)}</Text>
 								</View>
 							</View>
 							<View style={{ flex: 1, paddingTop: 20, textAlign: "left" }}>
-								<Text>*** Toutes les valeurs sont en gourde</Text>
+								<Text>*** Tous les valeurs sont en gourdes</Text>
 							</View>
 						</View>
 					</Page>
@@ -196,9 +174,15 @@ const styles = StyleSheet.create({
 		justifyContent: "space-evenly",
 		backgroundColor: "#BCBCBC"
 	},
+	tableNetTitle: {
+		flex: 1,
+		flexDirection: "row",
+		justifyContent: "space-evenly",
+		backgroundColor: "#DEDEDE"
+	},
 	tableColumnFirst: {
 		padding: 2,
-		flex: 4,
+		flex: 6,
 		borderBottom: 1,
 		borderRight: 1,
 		textAlign: "center",
@@ -221,7 +205,7 @@ const styles = StyleSheet.create({
 	},
 	endTableColumnFirst: {
 		padding: 2,
-		flex: 4,
+		flex: 6,
 		borderRight: 1,
 		textAlign: "center",
 		fontSize: 16

@@ -6,6 +6,7 @@ import { Dimmer, Loader, Message, Icon, Modal } from "semantic-ui-react";
 import { resetError } from "./redux/actions/utils";
 import { checkSession, logout, resetToken } from "./redux/actions/user";
 import { getCaisseStatus } from "./redux/actions/compte";
+import { getNotifications } from "./redux/actions/notifications";
 import PublicRoute from "./components/public-route/publicroute";
 import ProtectedRoute from "./components/protected-route/protectedroute";
 
@@ -32,16 +33,13 @@ import TradeCoin from "./screens/tradeCoin/tradecoin";
 //Comite Screens
 import ComiteRapports from "./screens/comiteRapports/comiteRapports";
 //Contable Screens
-import AccountingRapports from "./screens/accountingRapports/accountingRapports";
-import Banque from "./screens/banque/banque";
+import Rapports from "./screens/accountingRapports/accountingRapports";
 import ComptesPayer from "./screens/comptesPayer/comptespayer";
 import ComptesRecevoir from "./screens/comptesRecevoir/comptesrecevoir";
 import Finances from "./screens/finances/finances";
 //Assistance Screens
-import AssistanceRapports from "./screens/assistanceRapports/assistanceRapports";
 import Fournisseurs from "./screens/fournisseurs/fournisseurs";
 //Directeur Screens
-import DirecteurRapports from "./screens/directeurRapports/directeurRapports";
 import Utilisateurs from "./screens/utilisateurs/utilisateurs";
 import Salaire from "./screens/salaire/salaire";
 import ComiteMonitor from "./screens/comiteMonitor/comiteMonitor";
@@ -61,6 +59,7 @@ class App extends PureComponent {
 		};
 		this.idleTimer = null;
 		this.props.dispatch(getCaisseStatus());
+		this.props.dispatch(getNotifications());
 		this.props.dispatch(checkSession());
 	}
 
@@ -102,7 +101,8 @@ class App extends PureComponent {
 			debt,
 			tax,
 			devolution,
-			finance
+			finance,
+			notifications
 		} = this.props.state;
 		if (user.error) {
 			return this.setState({ errorModal: true, message: user.message });
@@ -132,6 +132,8 @@ class App extends PureComponent {
 			return this.setState({ errorModal: true, message: devolution.message });
 		} else if (finance.error) {
 			return this.setState({ errorModal: true, message: finance.message });
+		} else if (notifications.error) {
+			return this.setState({ errorModal: true, message: notifications.message });
 		} else {
 			return this.setState({ errorModal: false });
 		}
@@ -186,12 +188,9 @@ class App extends PureComponent {
 							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/cash_status"} component={EtatDuCompte} />
 							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/buys"} component={Achats} />
 							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/sales"} component={Ventes} />
-							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/banking"} component={Banque} />
-							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/accounting_reports"} component={AccountingRapports} />
+							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/reports"} component={Rapports} />
 							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/warehouse"} component={Stock} />
 							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/suppliers"} component={Fournisseurs} />
-							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/assistance_reports"} component={AssistanceRapports} />
-							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/director_reports"} component={DirecteurRapports} />
 							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/users"} component={Utilisateurs} />
 							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/salary"} component={Salaire} />
 							<ProtectedRoute isLoggedIn={isLoggedIn} path={"/solicitude"} component={Solicitude} />

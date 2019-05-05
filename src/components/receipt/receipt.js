@@ -36,19 +36,21 @@ class Receipt extends PureComponent {
 	};
 
 	render() {
+		const { rabais } = this.props;
 		const { numero, arrayOrden, client, vendeur, totalFinal, totalDonne } = this.props.data;
-		const changement = totalDonne - totalFinal > 0 ? totalDonne - totalFinal : 0;
+		const total = totalFinal - parseInt(rabais);
+		const changement = totalDonne - total > 0 ? totalDonne - total : 0;
 		const width = window.innerWidth - window.innerWidth * 0.15;
 		const height = window.innerHeight - window.innerHeight * 0.1;
 		const today = new Date().toLocaleString("en-US");
 		return (
 			<PDFViewer width={width} height={height}>
 				<Document title={"Receipt " + numero}>
-					<Page size={[136, 842]}>
+					<Page size={[180, 842]}>
 						<View style={styles.container}>
 							<View style={styles.companyInfo}>
 								<View>
-									<Text style={{ fontSize: 10 }}>J.J Marché Grand Sud</Text>
+									<Text style={{ fontSize: 14 }}>J.J Marché Grand Sud</Text>
 								</View>
 								<View>
 									<Text style={styles.companyInfoText}>Provisions Alimentaires</Text>
@@ -76,10 +78,8 @@ class Receipt extends PureComponent {
 							</View>
 							<View style={styles.payment}>
 								<Text style={styles.normalText}>SubTotal: {this.currencyFormat(totalFinal)} HTD</Text>
-								<Text style={styles.normalText}>Rabais: {this.currencyFormat(0)} HTD</Text>
-								<Text style={[styles.normalText, { borderTop: 0.2 }]}>
-									Total: {this.currencyFormat(totalFinal)} HTD
-								</Text>
+								<Text style={styles.normalText}>Rabais: {this.currencyFormat(parseInt(rabais))} HTD</Text>
+								<Text style={[styles.normalText, { borderTop: 0.2 }]}>Total: {this.currencyFormat(total)} HTD</Text>
 							</View>
 							<View style={[styles.payment, { paddingTop: 5 }]}>
 								<Text style={styles.normalText}>Total Donné: {this.currencyFormat(totalDonne)} HTD</Text>
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
 		flex: 1
 	},
 	companyInfoText: {
-		fontSize: 5,
+		fontSize: 6,
 		color: "#353535"
 	},
 	imageContainer: {
@@ -139,27 +139,27 @@ const styles = StyleSheet.create({
 		textAlign: "center"
 	},
 	normalText: {
-		fontSize: 6
+		fontSize: 9
 	},
 	bigText: {
-		fontSize: 8
+		fontSize: 11
 	},
 	tableColumn: {
-		fontSize: 6,
+		fontSize: 9,
 		borderRight: 0.5
 	},
 	tableColumnLast: {
 		flex: 3,
-		fontSize: 6
+		fontSize: 9
 	},
 	endTableColumn: {
-		fontSize: 6,
+		fontSize: 9,
 		borderRight: 0.5,
 		borderBottom: 0.5
 	},
 	endTableColumnLast: {
 		flex: 3,
-		fontSize: 6,
+		fontSize: 9,
 		borderBottom: 0.5
 	},
 	payment: {

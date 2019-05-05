@@ -16,6 +16,7 @@ import debt from "./debt";
 import tax from "./tax";
 import devolution from "./devolution";
 import finance from "./finance";
+import notifications from "./notifications";
 
 export default combineReducers({
 	user,
@@ -32,5 +33,6 @@ export default combineReducers({
 	debt,
 	tax,
 	devolution,
-	finance
+	finance,
+	notifications
 });

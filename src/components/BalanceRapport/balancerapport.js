@@ -2,6 +2,7 @@ import React, { PureComponent } from "react";
 import { connect } from "react-redux";
 import { Document, View, Text, Page, StyleSheet, PDFViewer, Image } from "@react-pdf/renderer";
 import { isEmpty } from "lodash";
+import { currencyFormat } from "../../assets/utils";
 
 import Logo from "../../assets/ThuRealLogo.png";
 
@@ -20,65 +21,12 @@ const monthNames = [
 	"Décembre"
 ];
 
-const JeySon = {
-	actifs: [
-		{
-			nom: "Encaisse",
-			montant: 50000
-		},
-		{
-			nom: "Compte a Recevoir",
-			montant: 10000
-		},
-		{
-			nom: "Fourniture",
-			montant: 5000
-		},
-		{
-			nom: "Stock de Marchandise",
-			montant: 35000
-		}
-	],
-	passifs: [
-		{
-			nom: "Rebo S.A",
-			montant: 15000
-		},
-		{
-			nom: "Tingue",
-			montant: 10000
-		}
-	],
-	capitaux: [
-		{
-			nom: "Apport",
-			montant: 2200000
-		},
-
-		{
-			nom: "BNR",
-			montant: 500000
-		},
-		{
-			nom: "Benefice Net",
-			montant: 300000
-		}
-	],
-	totalActif: 100000,
-	totalPassif: 25000,
-	totalCapitaux: 3000000
-};
-
 class BalanceReport extends PureComponent {
 	constructor(props) {
 		super(props);
 
 		this.state = {};
 	}
-
-	currencyFormat = num => {
-		return num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
-	};
 
 	renderActifs = data => {
 		if (!isEmpty(data)) {
@@ -87,7 +35,7 @@ class BalanceReport extends PureComponent {
 					<View style={styles.tableRow} key={index}>
 						<Text style={styles.tableColumnFirst}>{item.nom}</Text>
 						<Text style={styles.tableColumn}> </Text>
-						<Text style={styles.tableColumnLast}>{this.currencyFormat(item.montant)}</Text>
+						<Text style={styles.tableColumnLast}>{currencyFormat(item.montant)}</Text>
 					</View>
 				);
 			});
@@ -102,7 +50,7 @@ class BalanceReport extends PureComponent {
 				return (
 					<View style={styles.tableRow} key={index}>
 						<Text style={styles.tableColumnFirst}>{item.nom}</Text>
-						<Text style={styles.tableColumn}>{this.currencyFormat(item.montant)}</Text>
+						<Text style={styles.tableColumn}>{currencyFormat(item.montant)}</Text>
 						<Text style={styles.tableColumnLast}> </Text>
 					</View>
 				);
@@ -113,6 +61,7 @@ class BalanceReport extends PureComponent {
 	};
 
 	render() {
+		const { actifs, passifs, capitaux, totalActif, totalPassif, totalCapitaux } = this.props.data;
 		const width = window.innerWidth - window.innerWidth * 0.15;
 		const height = window.innerHeight - window.innerHeight * 0.1;
 		const thisMonth = monthNames[new Date().getMonth()];
@@ -149,21 +98,21 @@ class BalanceReport extends PureComponent {
 									<Text style={styles.tableColumn}> </Text>
 									<Text style={styles.tableColumnLast}> </Text>
 								</View>
-								{this.renderActifs(JeySon.actifs)}
+								{this.renderActifs(actifs)}
 								<View style={styles.tableRow}>
 									<Text style={styles.tableColumnFirst}>Total Actif</Text>
 									<Text style={styles.tableColumn}> </Text>
-									<Text style={styles.tableColumnLast}>{this.currencyFormat(JeySon.totalActif)}</Text>
+									<Text style={styles.tableColumnLast}>{currencyFormat(totalActif)}</Text>
 								</View>
 								<View style={styles.tableRowTitle}>
 									<Text style={styles.tableColumnFirst}>Passif a court terme</Text>
 									<Text style={styles.tableColumn}> </Text>
 									<Text style={styles.tableColumnLast}> </Text>
 								</View>
-								{this.renderPassifsAndCapitaux(JeySon.passifs)}
+								{this.renderPassifsAndCapitaux(passifs)}
 								<View style={styles.tableRow}>
 									<Text style={styles.tableColumnFirst}>Total Passif</Text>
-									<Text style={styles.tableColumn}>{this.currencyFormat(JeySon.totalPassif)}</Text>
+									<Text style={styles.tableColumn}>{currencyFormat(totalPassif)}</Text>
 									<Text style={styles.tableColumnLast}> </Text>
 								</View>
 								<View style={styles.tableRowTitle}>
@@ -171,10 +120,10 @@ class BalanceReport extends PureComponent {
 									<Text style={styles.tableColumn}> </Text>
 									<Text style={styles.tableColumnLast}> </Text>
 								</View>
-								{this.renderPassifsAndCapitaux(JeySon.capitaux)}
+								{this.renderPassifsAndCapitaux(capitaux)}
 								<View style={styles.tableRow}>
 									<Text style={styles.endTableColumnFirst}>Total Capitaux Propres</Text>
-									<Text style={styles.endTableColumn}>{this.currencyFormat(JeySon.totalCapitaux)}</Text>
+									<Text style={styles.endTableColumn}>{currencyFormat(totalCapitaux)}</Text>
 									<Text style={styles.endTableColumnLast}> </Text>
 								</View>
 							</View>
