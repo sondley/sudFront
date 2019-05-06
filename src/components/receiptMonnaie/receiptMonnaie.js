@@ -1,25 +1,9 @@
 import React, { PureComponent } from "react";
 import { connect } from "react-redux";
 import { Document, View, Text, Page, StyleSheet, PDFViewer } from "@react-pdf/renderer";
-
-// const we = {
-// 	client: "pierre",
-// 	created: "2019-03-29T15:44:50.824Z",
-// 	etat: "0",
-// 	monnaie: "dollar",
-// 	quantite: "10",
-// 	total: 850,
-// 	type: "vendre",
-// 	validationDate: "2019-04-16T03:11:41.441Z",
-// 	valideur: "Desvarennes  Natacha ",
-// 	vendeur: "Louis Vasthy"
-// };
+import { currencyFormat } from "../../assets/utils";
 
 class ReceiptMonnaie extends PureComponent {
-	currencyFormat = num => {
-		return "$" + num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
-	};
-
 	render() {
 		const { client, vendeur, total, monnaie, quantite } = this.props.data;
 		const prixUnite = total / parseInt(quantite);
@@ -29,11 +13,11 @@ class ReceiptMonnaie extends PureComponent {
 		return (
 			<PDFViewer width={width} height={height}>
 				<Document title={"Receipt Change Monnaie"}>
-					<Page size={[136, 842]}>
+					<Page size={[180, 842]}>
 						<View style={styles.container}>
 							<View style={styles.companyInfo}>
 								<View>
-									<Text style={{ fontSize: 10 }}>J.J Marché Grand Sud</Text>
+									<Text style={{ fontSize: 14 }}>J.J Marché Grand Sud</Text>
 								</View>
 								<View>
 									<Text style={styles.companyInfoText}>Provisions Alimentaires</Text>
@@ -61,10 +45,10 @@ class ReceiptMonnaie extends PureComponent {
 								<Text style={[{ flex: 1 }, styles.endTableColumn]}>{quantite}</Text>
 								<Text style={[{ flex: 4 }, styles.endTableColumn]}>{monnaie}</Text>
 								<Text style={[{ flex: 2 }, styles.endTableColumn]}>{prixUnite}</Text>
-								<Text style={styles.endTableColumnLast}>{this.currencyFormat(total)}</Text>
+								<Text style={styles.endTableColumnLast}>{currencyFormat(total)}</Text>
 							</View>
 							<View style={styles.payment}>
-								<Text style={styles.bigText}>Total: {this.currencyFormat(total)} HTD</Text>
+								<Text style={styles.bigText}>Total: {currencyFormat(total)} HTD</Text>
 							</View>
 						</View>
 					</Page>
@@ -90,7 +74,7 @@ const styles = StyleSheet.create({
 		flex: 1
 	},
 	companyInfoText: {
-		fontSize: 5,
+		fontSize: 6,
 		color: "#353535"
 	},
 	imageContainer: {
@@ -115,27 +99,27 @@ const styles = StyleSheet.create({
 		textAlign: "center"
 	},
 	normalText: {
-		fontSize: 6
+		fontSize: 9
 	},
 	bigText: {
-		fontSize: 8
+		fontSize: 11
 	},
 	tableColumn: {
-		fontSize: 6,
+		fontSize: 9,
 		borderRight: 0.5
 	},
 	tableColumnLast: {
 		flex: 3,
-		fontSize: 6
+		fontSize: 9
 	},
 	endTableColumn: {
-		fontSize: 6,
+		fontSize: 9,
 		borderRight: 0.5,
 		borderBottom: 0.5
 	},
 	endTableColumnLast: {
 		flex: 3,
-		fontSize: 6,
+		fontSize: 9,
 		borderBottom: 0.5
 	},
 	payment: {
