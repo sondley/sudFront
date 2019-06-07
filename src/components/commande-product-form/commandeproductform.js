@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import { Card, Form, Input, Button } from "semantic-ui-react";
+import { Card, Form, Input, Button, Radio } from "semantic-ui-react";
 import styles from "./commandeproduitform.module.css";
 
 class CommandeProductForm extends PureComponent {
@@ -8,7 +8,8 @@ class CommandeProductForm extends PureComponent {
 
 		this.state = {
 			quantite: "",
-			type: this.props.type
+			type: this.props.type,
+			value: "detaille"
 		};
 	}
 
@@ -23,12 +24,55 @@ class CommandeProductForm extends PureComponent {
 		this.setState({ [name]: value * 1 });
 	};
 
+	handleRadioChange = (e, { value }) => this.setState({ value });
+
 	handleSumbit = (e, item, addToList, reduceToList, onClose) => {
 		e.preventDefault();
 		if (this.state.type === "new") {
-			addToList(item._id, item.nom, item.sellPrice, this.state.quantite);
+			const sellPrice =
+				this.state.value === "detaille" ? item.sellPrice : this.state.quantite >= 3 ? item.grosPrice : item.caissePrice;
+			addToList(item._id, item.nom, sellPrice, this.state.quantite, this.state.value);
 		} else reduceToList(item._id, this.state.quantite);
 		onClose();
+	};
+
+	renderForm = (value, item) => {
+		if (value === "detaille") {
+			return (
+				<React.Fragment>
+					<Form.Field>
+						<label className={styles.basicFormSpacing}>Prix de Vente</label>
+						<Input disabled icon="code" iconPosition="left" value={item.sellPrice} />
+					</Form.Field>
+					<Form.Field>
+						<label className={styles.basicFormSpacing}>Quantite dans le Reserve</label>
+						<Input disabled icon="code" iconPosition="left" value={item.unit} />
+					</Form.Field>
+				</React.Fragment>
+			);
+		} else {
+			return (
+				<React.Fragment>
+					<Form.Field>
+						<label className={styles.basicFormSpacing}>Prix de Vente</label>
+						<Input disabled icon="code" iconPosition="left" value={item.caissePrice || ""} />
+					</Form.Field>
+					<Form.Field>
+						<label className={styles.basicFormSpacing}>Prix en Gros</label>
+						<Input disabled icon="code" iconPosition="left" value={item.grosPrice || ""} />
+					</Form.Field>
+					<Form.Field>
+						<label className={styles.basicFormSpacing}>Quantite dans le Reserve</label>
+						<Input
+							disabled
+							icon="code"
+							iconPosition="left"
+							value={Math.floor(parseInt(item.unit) / parseInt(item.qtyCaisse)) || ""}
+						/>
+					</Form.Field>
+				</React.Fragment>
+			);
+		}
 	};
 
 	render() {
@@ -47,13 +91,45 @@ class CommandeProductForm extends PureComponent {
 									<Input disabled icon="code" iconPosition="left" value={item.nom} />
 								</Form.Field>
 								<Form.Field>
+									<label className={styles.basicFormSpacing}>Mode de Vente</label>
+									<div className={styles.spacing}>
+										<Radio
+											label="Detaillé"
+											value="detaille"
+											checked={this.state.value === "detaille"}
+											onChange={this.handleRadioChange}
+										/>
+										<Radio
+											label="Caisse"
+											value="caisse"
+											checked={this.state.value === "caisse"}
+											onChange={this.handleRadioChange}
+										/>
+									</div>
+								</Form.Field>
+								{this.renderForm(this.state.value, item)}
+								{/* <Form.Field>
 									<label className={styles.basicFormSpacing}>Prix de Vente</label>
-									<Input disabled icon="code" iconPosition="left" value={item.sellPrice} />
+									<Input
+										disabled
+										icon="code"
+										iconPosition="left"
+										value={this.state.value === "detaille" ? item.sellPrice : item.caissePrice || ""}
+									/>
 								</Form.Field>
 								<Form.Field>
 									<label className={styles.basicFormSpacing}>Quantite dans le Reserve</label>
-									<Input disabled icon="code" iconPosition="left" value={item.unit} />
-								</Form.Field>
+									<Input
+										disabled
+										icon="code"
+										iconPosition="left"
+										value={
+											this.state.value === "detaille"
+												? item.unit
+												: Math.floor(parseInt(item.unit) / parseInt(item.qtyCaisse)) || ""
+										}
+									/>
+								</Form.Field> */}
 								<Form.Field required>
 									<label className={styles.basicFormSpacing}>Quantite</label>
 									<Input

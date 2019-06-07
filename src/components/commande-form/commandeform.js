@@ -57,13 +57,14 @@ class CommandeForm extends PureComponent {
 		this.setState({ isModalOpen: false, isProductModalOpen: false });
 	};
 
-	addToList = (id, name, priceUnit, quantity) => {
+	addToList = (id, name, priceUnit, quantity, mode) => {
 		const newProduct = {
 			idproduit: id,
 			nom: name,
 			prixUnite: priceUnit,
 			quantite: quantity,
-			total: parseInt(priceUnit) * parseInt(quantity)
+			total: parseInt(priceUnit) * parseInt(quantity),
+			mode
 		};
 		const newList = this.state.productList.concat(newProduct);
 		this.setState({ productList: newList });
@@ -156,7 +157,7 @@ class CommandeForm extends PureComponent {
 					client: clientName,
 					vendeur: this.props.user.authedUser._id,
 					arrayOrden: productList.map(item => {
-						return { idproduit: item.idproduit, quantite: item.quantite };
+						return { idproduit: item.idproduit, quantite: item.quantite, mode: item.mode };
 					})
 				};
 				return this.props.dispatch(modifyOrder(order, this.props.onClose));
@@ -165,7 +166,7 @@ class CommandeForm extends PureComponent {
 				client: clientName,
 				vendeur: this.props.user.authedUser._id,
 				arrayOrden: productList.map(item => {
-					return { idproduit: item.idproduit, quantite: item.quantite };
+					return { idproduit: item.idproduit, quantite: item.quantite, mode: item.mode };
 				})
 			};
 			this.props.dispatch(createOrder(order, this.props.onClose));
@@ -211,6 +212,7 @@ class CommandeForm extends PureComponent {
 					return (
 						<Table.Row key={item._id}>
 							<Table.Cell>{item.nom}</Table.Cell>
+							<Table.Cell>{item.mode}</Table.Cell>
 							<Table.Cell>{item.prixUnite}</Table.Cell>
 							<Table.Cell>{item.quantite}</Table.Cell>
 							<Table.Cell>{item.total}</Table.Cell>
@@ -222,6 +224,7 @@ class CommandeForm extends PureComponent {
 					return (
 						<Table.Row key={item.idproduit}>
 							<Table.Cell>{item.nom}</Table.Cell>
+							<Table.Cell>{item.mode}</Table.Cell>
 							<Table.Cell>{item.prixUnite}</Table.Cell>
 							<Table.Cell>{item.quantite}</Table.Cell>
 							<Table.Cell>{item.total}</Table.Cell>
@@ -293,6 +296,7 @@ class CommandeForm extends PureComponent {
 												<Table.Header>
 													<Table.Row>
 														<Table.HeaderCell>Nom de Produit</Table.HeaderCell>
+														<Table.HeaderCell>Mode</Table.HeaderCell>
 														<Table.HeaderCell>Prix per Unite</Table.HeaderCell>
 														<Table.HeaderCell>Quantite</Table.HeaderCell>
 														<Table.HeaderCell>Total</Table.HeaderCell>
@@ -378,6 +382,7 @@ class CommandeForm extends PureComponent {
 											<Table.Header>
 												<Table.Row>
 													<Table.HeaderCell>Nom de Produit</Table.HeaderCell>
+													<Table.HeaderCell>Mode</Table.HeaderCell>
 													<Table.HeaderCell>Prix per Unite</Table.HeaderCell>
 													<Table.HeaderCell>Quantite</Table.HeaderCell>
 													<Table.HeaderCell>Total</Table.HeaderCell>

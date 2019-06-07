@@ -15,7 +15,7 @@ const options = [
 	// { text: "Actif a court termes", value: "Actif a court termes" },
 	{ text: "Actif", value: "Actif a court termes" },
 	{ text: "Passif", value: "Passif a court termes" },
-	{ text: "Depenses", value: "Depenses" }
+	{ text: "Charge d'Exploitation", value: "Charge d'Exploitation" }
 ];
 
 class FinancesForm extends PureComponent {

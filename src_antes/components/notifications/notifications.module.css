@@ -1,0 +1,53 @@
+.notificationTextColor {
+	color: teal !important;
+}
+
+.notificationAlignContent {
+	display: flex;
+	align-items: center;
+}
+
+.content .extra {
+	margin: 0px !important;
+	padding-left: 5px !important;
+}
+
+.notificationEvent:hover {
+	cursor: pointer;
+	border-radius: 5px;
+}
+
+.notificationEvent {
+	padding: 5px !important;
+}
+
+.notificationTimeStyle {
+	display: flex;
+	justify-content: flex-end;
+	margin-top: 5px !important;
+	color: #eeeeee;
+}
+
+.notificationContainer {
+	background-color: "#ededed";
+	cursor: pointer;
+	margin-top: 10px;
+	margin-right: 12px;
+	padding: 10px;
+	border-radius: 4px;
+	border: 0.5px solid;
+}
+
+.notificationContainer:hover {
+	background-color: rgba(0, 153, 159, 0.5) !important;
+}
+
+.notificationHeader {
+	font-weight: bold;
+}
+
+.notificationCounterContainer {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}

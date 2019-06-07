@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import { Card, Form, Input, Button } from "semantic-ui-react";
+import { Card, Form, Input, Button, Radio } from "semantic-ui-react";
 import styles from "./buyproductform.module.css";
 
 class BuyProductForm extends PureComponent {
@@ -9,7 +9,8 @@ class BuyProductForm extends PureComponent {
 		this.state = {
 			quantite: "",
 			prixUnite: "",
-			type: this.props.type
+			type: this.props.type,
+			value: "detaille"
 		};
 	}
 
@@ -22,10 +23,12 @@ class BuyProductForm extends PureComponent {
 		this.setState({ [name]: value * 1 });
 	};
 
+	handleRadioChange = (e, { value }) => this.setState({ value });
+
 	handleSumbit = (e, item, method, onClose) => {
 		e.preventDefault();
 		if (this.state.type === "new") {
-			method(item._id, item.nom, this.state.prixUnite, this.state.quantite);
+			method(item._id, item.nom, this.state.prixUnite, this.state.quantite, this.state.value);
 			onClose();
 		} else {
 			method(item._id, this.state.quantite);
@@ -48,6 +51,23 @@ class BuyProductForm extends PureComponent {
 									<Form.Field>
 										<label className={styles.basicFormSpacing}>Nom du Produit</label>
 										<Input disabled icon="code" iconPosition="left" value={item.nom} />
+									</Form.Field>
+									<Form.Field>
+										<label className={styles.basicFormSpacing}>Mode d'Achat</label>
+										<div className={styles.spacing}>
+											<Radio
+												label="Detaillé"
+												value="detaille"
+												checked={this.state.value === "detaille"}
+												onChange={this.handleRadioChange}
+											/>
+											<Radio
+												label="Caisse"
+												value="caisse"
+												checked={this.state.value === "caisse"}
+												onChange={this.handleRadioChange}
+											/>
+										</div>
 									</Form.Field>
 									<Form.Field required>
 										<label className={styles.basicFormSpacing}>Prix Unite</label>

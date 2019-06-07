@@ -55,7 +55,10 @@ export function createProduct(product, onClose) {
 				buyPrice: product.buyPrice,
 				size: product.size,
 				Description: product.description,
-				limit: parseInt(product.limit)
+				limit: parseInt(product.limit),
+				caissePrice: product.caissePrice,
+				qtyCaisse: product.qtyCaisse,
+				grosPrice: product.grosPrice
 			})
 			.then(objResponse => {
 				if (objResponse.data.success) {
@@ -83,7 +86,10 @@ export function modifyProduct(product, onClose) {
 				buyPrice: product.buyPrice,
 				size: product.size,
 				Description: product.description,
-				limit: parseInt(product.limit)
+				limit: parseInt(product.limit),
+				caissePrice: product.caissePrice,
+				qtyCaisse: product.qtyCaisse,
+				grosPrice: product.grosPrice
 			})
 			.then(objResponse => {
 				if (objResponse.data.success) {

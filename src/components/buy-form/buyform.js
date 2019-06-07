@@ -71,13 +71,14 @@ class BuyForm extends PureComponent {
 		});
 	};
 
-	addToList = (id, name, priceUnit, quantity) => {
+	addToList = (id, name, priceUnit, quantity, mode) => {
 		const newProduct = {
 			idProduit: id,
 			nom: name,
 			prixUnite: priceUnit,
 			quantite: quantity,
-			total: parseInt(priceUnit) * parseInt(quantity)
+			total: parseInt(priceUnit) * parseInt(quantity),
+			mode
 		};
 		const newList = this.state.productList.concat(newProduct);
 		this.setState({ productList: newList });
@@ -174,7 +175,7 @@ class BuyForm extends PureComponent {
 					idProvider: fournisseur._id,
 					idUser: this.props.user.authedUser._id,
 					arrayAchat: productList.map(item => {
-						return { idProduit: item.idProduit, quantite: item.quantite, prixUnite: item.prixUnite };
+						return { idProduit: item.idProduit, quantite: item.quantite, prixUnite: item.prixUnite, mode: item.mode };
 					})
 				};
 				return this.props.dispatch(modifyBuy(achat, this.props.onClose));
@@ -183,7 +184,7 @@ class BuyForm extends PureComponent {
 				idProvider: fournisseur._id,
 				idUser: this.props.user.authedUser._id,
 				arrayAchat: productList.map(item => {
-					return { idProduit: item.idProduit, quantite: item.quantite, prixUnite: item.prixUnite };
+					return { idProduit: item.idProduit, quantite: item.quantite, prixUnite: item.prixUnite, mode: item.mode };
 				})
 			};
 			this.props.dispatch(createBuy(achat, this.props.onClose));
@@ -214,6 +215,7 @@ class BuyForm extends PureComponent {
 					return (
 						<Table.Row key={item._id}>
 							<Table.Cell>{item.nom}</Table.Cell>
+							<Table.Cell>{item.mode}</Table.Cell>
 							<Table.Cell>{item.prixUnite}</Table.Cell>
 							<Table.Cell>{item.quantite}</Table.Cell>
 							<Table.Cell>{item.total}</Table.Cell>
@@ -223,6 +225,7 @@ class BuyForm extends PureComponent {
 					return (
 						<Table.Row key={item.idProduit}>
 							<Table.Cell>{item.nom}</Table.Cell>
+							<Table.Cell>{item.mode}</Table.Cell>
 							<Table.Cell>{item.prixUnite}</Table.Cell>
 							<Table.Cell>{item.quantite}</Table.Cell>
 							<Table.Cell>{item.total}</Table.Cell>
@@ -305,6 +308,7 @@ class BuyForm extends PureComponent {
 												<Table.Header>
 													<Table.Row>
 														<Table.HeaderCell>Nom du Produit</Table.HeaderCell>
+														<Table.HeaderCell>Mode</Table.HeaderCell>
 														<Table.HeaderCell>Prix Unite</Table.HeaderCell>
 														<Table.HeaderCell>Quantite</Table.HeaderCell>
 														<Table.HeaderCell>Total</Table.HeaderCell>
@@ -425,6 +429,7 @@ class BuyForm extends PureComponent {
 											<Table.Header>
 												<Table.Row>
 													<Table.HeaderCell>Nom du Produit</Table.HeaderCell>
+													<Table.HeaderCell>Mode</Table.HeaderCell>
 													<Table.HeaderCell>Prix Unite</Table.HeaderCell>
 													<Table.HeaderCell>Quantite</Table.HeaderCell>
 													<Table.HeaderCell>Total</Table.HeaderCell>

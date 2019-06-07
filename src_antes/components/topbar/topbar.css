@@ -1,0 +1,37 @@
+.topbar-container {
+	height: 60px;
+	padding: 0px 37px 0px 17px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+}
+
+.topbar-notification {
+	margin-right: 30px;
+}
+
+.topbar-profile-notification-container {
+	display: flex;
+	align-items: center;
+}
+
+.searchbar-container {
+	width: 50%;
+}
+
+.menu-button-margin {
+	margin-right: 10px !important;
+}
+
+.small-notifications {
+	max-height: 200px;
+	overflow-y: scroll;
+	width: 250px;
+}
+
+.large-notification {
+	max-height: 400px;
+	overflow-y: scroll;
+	width: 450px;
+}

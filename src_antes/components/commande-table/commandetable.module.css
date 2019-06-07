@@ -1,0 +1,49 @@
+.cellSpacing {
+	width: 95px !important;
+	display: flex !important;
+	justify-content: space-between !important;
+}
+
+.rightSpacing {
+	margin-right: 10px !important;
+}
+
+.leftSpacing {
+	margin-left: 10px !important;
+}
+
+.labelSpacing {
+	display: flex !important;
+	justify-content: flex-end !important;
+	margin-top: 10px !important;
+	margin-right: 140px;
+	font-weight: bold !important;
+	font-size: 24px !important;
+	padding: 5px 0px !important;
+}
+
+.itemCount {
+	font-size: 22px !important;
+	font-weight: 700 !important;
+	margin-left: 20px !important;
+}
+
+.pagination {
+	display: flex !important;
+	align-items: center !important;
+}
+
+@media only screen and (max-width: 767px) {
+	.itemCount {
+		font-size: 22px !important;
+		font-weight: 700 !important;
+		margin-left: 0px !important;
+	}
+	.pagination {
+		height: 80px !important;
+		display: flex !important;
+		flex-direction: column !important;
+		align-items: flex-start !important;
+		justify-content: space-between !important;
+	}
+}

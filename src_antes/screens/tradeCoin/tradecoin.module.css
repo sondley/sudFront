@@ -1,0 +1,74 @@
+.rightAligned {
+	display: flex !important;
+	justify-content: flex-end !important;
+}
+
+.noMarginBottom {
+	margin-bottom: 0px !important;
+}
+
+.buttonSpacing {
+	width: 100% !important;
+	display: flex !important;
+	justify-content: space-between !important;
+}
+
+.centered {
+	text-align: center !important;
+	justify-content: center !important;
+}
+
+.spacing {
+	margin-left: 4px !important;
+	margin-right: 4px !important;
+}
+
+.timeRange {
+	display: flex;
+	align-items: flex-start;
+	justify-content: center;
+}
+
+.matchPadding {
+	padding-top: 15px !important;
+	padding-bottom: 15px !important;
+	margin-left: 4px !important;
+	margin-right: 4px !important;
+}
+
+@media only screen and (max-width: 720px) {
+	.timeRange {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		justify-content: center;
+	}
+	.spacing {
+		margin-top: 4px !important;
+		margin-bottom: 4px !important;
+	}
+	.matchPadding {
+		padding-top: 15px !important;
+		padding-bottom: 15px !important;
+		margin-top: 4px !important;
+		margin-bottom: 4px !important;
+	}
+}
+
+.noStyleList {
+	text-decoration: none !important;
+	list-style: none !important;
+	padding: 10px 0px 25px 0px !important;
+}
+
+.dimmerMargin {
+	width: 400px !important;
+	display: flex !important;
+	flex-direction: column !important;
+	justify-content: space-around !important;
+	text-align: center !important;
+}
+
+.paddingBottom {
+	padding-bottom: 10px !important;
+}

@@ -44,3 +44,8 @@
 .basicFormWidth {
 	width: 100% !important;
 }
+
+.spacing {
+	display: flex !important;
+	justify-content: space-around !important;
+}

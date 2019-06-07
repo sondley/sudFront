@@ -1,0 +1,19 @@
+.rightAligned {
+	display: flex !important;
+	justify-content: flex-end !important;
+}
+
+.noMarginBottom {
+	margin-bottom: 0px !important;
+}
+
+.buttonSpacing {
+	width: 100% !important;
+	display: flex !important;
+	justify-content: space-between !important;
+}
+
+.moneyTitle {
+	font-size: 36px !important;
+	font-weight: 700 !important;
+}

@@ -21,14 +21,20 @@ class ProductForm extends PureComponent {
 			fournisseur: "",
 			size: "",
 			qty: "",
+			qtyCaisse: "",
 			sellPrice: "",
+			caissePrice: "",
 			buyPrice: "",
 			description: "",
 			limit: "",
+			grosPrice: "",
+			grosPriceError: false,
 			nameError: false,
 			sizeError: false,
 			qtyError: false,
+			qtyCaisseError: false,
 			sellPriceError: false,
+			caissePriceError: false,
 			buyPriceError: false,
 			limitError: false,
 			formError: false,
@@ -39,7 +45,7 @@ class ProductForm extends PureComponent {
 		};
 	}
 
-	async componentDidMount() {
+	componentDidMount = async () => {
 		if (isEmpty(this.props.provider.providers)) {
 			await this.props.dispatch(getProviders());
 		}
@@ -54,7 +60,10 @@ class ProductForm extends PureComponent {
 				buyPrice: this.props.data.buyPrice,
 				description: this.props.data.Description,
 				limit: this.props.data.limit,
-				item: provider[0]
+				item: provider[0],
+				qtyCaisse: this.props.data.qtyCaisse || "",
+				caissePrice: this.props.data.caissePrice || "",
+				grosPrice: this.props.data.grosPrice || ""
 			});
 		}
 		if (this.state.achat) {
@@ -68,7 +77,7 @@ class ProductForm extends PureComponent {
 			const provider = this.props.provider.providers[0];
 			this.setState({ fournisseur: provider.nom, item: provider });
 		}
-	}
+	};
 
 	handleChange = event => {
 		event.preventDefault();
@@ -109,6 +118,36 @@ class ProductForm extends PureComponent {
 				});
 			}
 		}
+
+		// if (name === "caissePrice") {
+		// 	const numVal = parseInt(value);
+		// 	if (value.length === 0 || numVal < 0) {
+		// 		return this.setState({
+		// 			caissePriceError: true,
+		// 			formError: true
+		// 		});
+		// 	} else {
+		// 		return this.setState({
+		// 			caissePriceError: false,
+		// 			formError: false
+		// 		});
+		// 	}
+		// }
+
+		// if (name === "grosPrice") {
+		// 	const numVal = parseInt(value);
+		// 	if (value.length === 0 || numVal < 0) {
+		// 		return this.setState({
+		// 			grosPriceError: true,
+		// 			formError: true
+		// 		});
+		// 	} else {
+		// 		return this.setState({
+		// 			grosPriceError: false,
+		// 			formError: false
+		// 		});
+		// 	}
+		// }
 
 		if (name === "sellPrice") {
 			const numVal = parseInt(value);
@@ -153,6 +192,22 @@ class ProductForm extends PureComponent {
 				});
 			}
 		}
+
+		// if (name === "qtyCaisse") {
+		// 	const numVal = parseInt(value);
+		// 	if (value.length === 0 || numVal < 0) {
+		// 		return this.setState({
+		// 			qtyCaisseError: true,
+		// 			formError: true
+		// 		});
+		// 	} else {
+		// 		return this.setState({
+		// 			qtyCaisseError: false,
+		// 			formError: false
+		// 		});
+		// 	}
+		// }
+
 		if (name === "limit") {
 			const numVal = parseInt(value);
 			if (value.length === 0 || numVal < 0) {
@@ -184,7 +239,19 @@ class ProductForm extends PureComponent {
 
 	handleSubmit = event => {
 		event.preventDefault();
-		const { name, qty, size, sellPrice, buyPrice, description, item, limit } = this.state;
+		const {
+			name,
+			qty,
+			qtyCaisse,
+			size,
+			sellPrice,
+			caissePrice,
+			buyPrice,
+			description,
+			item,
+			limit,
+			grosPrice
+		} = this.state;
 		if (!this.state.formError && this.state.fournisseur.length > 0) {
 			if (this.state.edit) {
 				const product = {
@@ -196,7 +263,10 @@ class ProductForm extends PureComponent {
 					sellPrice,
 					buyPrice,
 					description,
-					limit
+					limit,
+					caissePrice,
+					qtyCaisse,
+					grosPrice
 				};
 				return this.props.dispatch(modifyProduct(product, this.props.onClose));
 			} else if (this.state.achat) {
@@ -208,7 +278,10 @@ class ProductForm extends PureComponent {
 					sellPrice: 0,
 					buyPrice: 0,
 					description,
-					limit: 0
+					limit: 0,
+					caissePrice: 0,
+					qtyCaisse: 0,
+					grosPrice: 0
 				};
 				this.props.dispatch(createProduct(product, this.props.onClose));
 			} else {
@@ -220,7 +293,10 @@ class ProductForm extends PureComponent {
 					sellPrice,
 					buyPrice,
 					description,
-					limit
+					limit,
+					caissePrice,
+					qtyCaisse,
+					grosPrice
 				};
 				this.props.dispatch(createProduct(product, this.props.onClose));
 			}
@@ -266,14 +342,23 @@ class ProductForm extends PureComponent {
 			case "size":
 				list = ["La Taille ne peut pas être vide"];
 				break;
+			case "caissePrice":
+				list = ["Le Prix par boîte ne peut pas être vide", "Le Prix par boîte doit être un numero >= 0"];
+				break;
+			case "grosPrice":
+				list = ["Le Prix par boîte ne peut pas être vide", "Le Prix par boîte doit être un numero >= 0"];
+				break;
 			case "sellPrice":
-				list = ["Le Prix de Vente ne peut pas être vide", "Le Prix de Vente doit être un numero >= 0"];
+				list = ["Le Prix en Detaille ne peut pas être vide", "Le Prix en Detaille doit être un numero >= 0"];
 				break;
 			case "buyPrice":
 				list = ["Le Prix d'Achat ne peut pas être vide", "Le Prix d'Achat doit être un numero >= 0"];
 				break;
 			case "qty":
 				list = ["La Quantité ne peut pas être vide", "La Quantité doit être un numero >= 0"];
+				break;
+			case "qtyCaisse":
+				list = ["La Quantité Par Caisse ne peut pas être vide", "La Quantité Par Caisse doit être un numero >= 0"];
 				break;
 			case "limit":
 				list = ["La Limite ne peut pas être vide", "La Limite doit être un numero >= 0"];
@@ -367,13 +452,13 @@ class ProductForm extends PureComponent {
 										{this.renderMessages("size")}
 									</Form.Field>
 									<Form.Field required style={this.state.achat ? { display: "none" } : { display: "block" }}>
-										<label className={styles.basicFormSpacing}>Prix de Vente</label>
+										<label className={styles.basicFormSpacing}>Prix en Detaille</label>
 										<Input
 											disabled={this.state.view}
 											type="number"
 											icon="money"
 											iconPosition="left"
-											placeholder="Prix de Vente"
+											placeholder="Prix en Detaille"
 											name="sellPrice"
 											onChange={this.handleChange}
 											value={this.state.sellPrice}
@@ -401,7 +486,8 @@ class ProductForm extends PureComponent {
 									<Form.Field
 										required
 										style={
-											(this.state.edit && this.props.user.authedUser.role !== "directeur") || this.state.achat
+											(this.state.edit && this.props.user.authedUser.role !== ("directeur" || "contable")) ||
+											this.state.achat
 												? { display: "none" }
 												: { display: "block" }
 										}
@@ -420,6 +506,61 @@ class ProductForm extends PureComponent {
 											onBlur={this.state.qtyError ? null : this.handleInputError}
 										/>
 										{this.renderMessages("qty")}
+									</Form.Field>
+									<Form.Field
+										style={
+											(this.state.edit && this.props.user.authedUser.role !== ("directeur" || "contable")) ||
+											this.state.achat
+												? { display: "none" }
+												: { display: "block" }
+										}
+									>
+										<label className={styles.basicFormSpacing}>Quantite Par Caisse</label>
+										<Input
+											disabled={this.state.view}
+											type="number"
+											icon="archive"
+											iconPosition="left"
+											placeholder="Quantite Par Caisse"
+											name="qtyCaisse"
+											onChange={this.handleChange}
+											value={this.state.qtyCaisse}
+											onKeyUp={this.handleInputError}
+											onBlur={this.state.qtyCaisseError ? null : this.handleInputError}
+										/>
+										{this.renderMessages("qtyCaisse")}
+									</Form.Field>
+									<Form.Field style={this.state.achat ? { display: "none" } : { display: "block" }}>
+										<label className={styles.basicFormSpacing}>Prix Par Caisse</label>
+										<Input
+											disabled={this.state.view}
+											type="number"
+											icon="money"
+											iconPosition="left"
+											placeholder="Prix Par Caisse"
+											name="caissePrice"
+											onChange={this.handleChange}
+											value={this.state.caissePrice}
+											onKeyUp={this.handleInputError}
+											onBlur={this.state.caissePriceError ? null : this.handleInputError}
+										/>
+										{this.renderMessages("caissePrice")}
+									</Form.Field>
+									<Form.Field style={this.state.achat ? { display: "none" } : { display: "block" }}>
+										<label className={styles.basicFormSpacing}>Prix en Gros</label>
+										<Input
+											disabled={this.state.view}
+											type="number"
+											icon="money"
+											iconPosition="left"
+											placeholder="Prix en Gros"
+											name="grosPrice"
+											onChange={this.handleChange}
+											value={this.state.grosPrice}
+											onKeyUp={this.handleInputError}
+											onBlur={this.state.grosPriceError ? null : this.handleInputError}
+										/>
+										{this.renderMessages("grosPrice")}
 									</Form.Field>
 									<Form.Field required style={this.state.achat ? { display: "none" } : { display: "block" }}>
 										<label className={styles.basicFormSpacing}>Limite</label>
